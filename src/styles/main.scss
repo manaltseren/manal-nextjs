@@ -1,0 +1,166 @@
+@import "variables";
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+body {
+    background-color: #201f24  !important;
+}
+.text-primary {
+    color: $primary-color;
+}
+* {
+    font-family: 'Raleway', sans-serif;
+}
+
+.header {
+    .ant-menu-item-selected {
+        background-color: transparent !important;
+    }
+}
+.contact {
+    .bubble {
+        top: -10px;
+        right: -40px;
+        background-color: $primary-color;
+        padding: 5px 8px;
+
+        &:before {
+            content: "";
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            background-color: $primary-color;
+            position: absolute;
+            top: 30px;
+            left: -10px;
+            z-index: 10;
+            opacity: .7;
+        }
+    
+    }
+
+    .social-link {
+        background-color: rgba(0,0,0,.4);
+        .la {
+            font-size: 24px;
+            line-height: 32px;
+        }
+    }
+
+    .btn-add {
+        background-color: $secondary-color;
+        &:hover {
+            background-color: $primary-color !important;
+            color: #fff !important;
+        }
+    }
+}
+
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+
+.career-timeline {
+    .ant-timeline-item-head {
+        background-color: transparent !important;
+        top: 35px !important;
+        border-color: #595959;
+    }
+
+    .ant-timeline-item-content {
+        inset-block-start: 0px !important;
+        margin-inline-start: 20px;
+    }
+
+    .ant-timeline-item-tail {
+        border-color: rgb(255 255 255 / 6%);
+    }
+    .ant-timeline-item-tail {
+        height: 100%;
+        inset-block-start: 0px !important;
+    }
+
+    .ant-timeline-item-last {
+        padding-bottom: 0;
+    }
+
+    .ant-timeline-item-last >.ant-timeline-item-tail{
+        display: block !important;
+    }
+}
+:where(.css-dev-only-do-not-override-cdzvx5).ant-timeline .ant-timeline-item {
+    padding-bottom: 10px;
+}
+
+.xp {
+    .my-level {
+        top:calc( 100% - 30px );
+        right:-15px;
+        color:$secondary-color;
+        background-color: #000;
+        border: solid 2px $secondary-color;
+        width: 32px;
+        height: 32px;
+        line-height: 28px;
+        text-align: center;
+        border-radius: 100%;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .skill {
+        cursor: pointer;
+
+        .icon {
+            border:solid 2px rgba(255,255,255,.1)
+        }
+        .label {
+            color:rgba(255,255,255,.5);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .level {
+            flex-grow: 1;
+            display: flex;
+            gap: 3px;
+            padding: 0 7px;
+            justify-content: center;
+            div {
+                flex-basis: 20%;
+                height: 2px;
+                background: $secondary-color;
+            }
+        }
+
+        &:hover {
+            .icon {
+                border-color:rgba(255,255,255,.2);
+            }
+            .label {
+                color: #fff;
+            }
+        }
+    }
+
+}
+
+
+@keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+}
+  
+.animate-float {
+animation: float 6s ease-in-out infinite;
+}

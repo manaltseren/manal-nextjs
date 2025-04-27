@@ -1,0 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+:root {
+  --bg-custom-dark: rgba(25, 25, 31, 0.75);
+}
+
+.text-primary {
+  color: #7a5dff;
+}
+
+* {
+  font-family: "Raleway", sans-serif;
+}
+
+.header .ant-menu-item-selected {
+  background-color: transparent !important;
+}
+
+.contact .bubble {
+  top: -10px;
+  right: -40px;
+  background-color: rgba(78, 219, 236, 0.7882352941);
+  padding: 5px 8px;
+  border-radius: 16px;
+}
+.contact .bubble:before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 100%;
+  background-color: rgba(78, 219, 236, 0.5803921569);
+  position: absolute;
+  top: 20px;
+  left: -10px;
+  z-index: 10;
+}
+.contact .social-link {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.contact .social-link .la {
+  font-size: 24px;
+  line-height: 32px;
+}
+.contact .btn-add {
+  background-color: #4edbec;
+}
+.contact .btn-add:hover {
+  background-color: #7a5dff !important;
+  color: #fff !important;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}/*# sourceMappingURL=main.css.map */
