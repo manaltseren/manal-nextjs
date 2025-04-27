@@ -15,7 +15,7 @@ const tools = [
         name: "VS Code", 
         description: "Legendary Code Editor. +50% coding speed, +30% happiness.", 
         rarity: "Epic", 
-        icon: "🖊️" 
+        icon: "/images/xp/items/vscode.png" 
     },
     {
         name: "WordPress",
@@ -44,7 +44,7 @@ const tools = [
     },
     {
         name: "Tailwind CSS",
-        icon: "🌬️",
+        icon: "/images/xp/items/tailwindcss.png",
         rarity: "Uncommon",
         description: "Fast and efficient UI builder with utility-first magic."
     },
@@ -52,15 +52,16 @@ const tools = [
       name: "Postman", 
       description: "Master of APIs and requests. +35% network stability.", 
       rarity: "Rare", 
-      icon: "📬" 
+      icon: "/images/xp/items/postman.png" 
     }
 ];
+ 
   
 const rarityColors = {
-    Common: "gray-400",
-    Rare: "blue-400",
-    Epic: "purple-400",
-    Legendary: "yellow-400",
+    Common: "border-gray-400",
+    Rare: "border-blue-400",
+    Epic: "border-purple-400",
+    Legendary: "border-yellow-400",
 };
 
 function RandomSparkle({ color = "white", size = 6 }) {
@@ -98,9 +99,10 @@ function RandomSparkle({ color = "white", size = 6 }) {
     );
 }
 
-export default function XpPage() {
+export default function HeroInventory() {
     const [hoveredTool, setHoveredTool] = useState(null);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    
     return (
         <div className="max-w-3xl mx-auto text-gray-100 flex flex-col items-center  my-20">
             <h2 className="text-2xl font-bold mb-10 text-yellow-400 text-start">🎒 Inventory</h2>
@@ -112,7 +114,7 @@ export default function XpPage() {
                     onHoverStart={() => setHoveredTool(tool)}
                     onHoverEnd={() => setHoveredTool(null)}
                     onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-                    className={`bg-gray-800 rounded-lg p-4 border border-2 border-${
+                    className={`bg-gray-800 rounded-lg p-4 border border-2 ${
                     rarityColors[tool.rarity]
                     } hover:shadow-[0_0_15px_5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center text-center space-y-2`}
                 >
@@ -120,7 +122,7 @@ export default function XpPage() {
 
                         <img src={`${tool.icon}`} className="w-[30px]" />
                     </div>
-                    <div className="text-sm font-semibold">{tool.name}</div>
+                    <div className="text-base font-semibold">{tool.name}</div>
                 </motion.div>
                 ))}
 
@@ -138,7 +140,7 @@ export default function XpPage() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className={`absolute p-4 shadow-2xl rounded-xl text-center z-50 pointer-events-none overflow-hidden border border-2 border-${
+                    className={`absolute p-4 shadow-2xl rounded-xl text-center z-50 pointer-events-none overflow-hidden border border-2 ${
                     rarityColors[hoveredTool.rarity]
                     }`}
                     style={{

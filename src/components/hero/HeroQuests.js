@@ -8,6 +8,7 @@ const quests = [
       years: "Jan 2022 - Present",
       description: "Forged a modular eCommerce system, infused with cutting-edge technologies. Established a stable IT realm for the company and led a guild of developers toward continuous growth and mastery.",
       reward: ["+8000 XP", "+5 Leadership Skills", "+1 Legendary Artifact (Own System)"],
+      completed: false
     },
     {
       title: "Senior Web Developer",
@@ -15,6 +16,7 @@ const quests = [
       years: "Nov 2018 - Nov 2023",
       description: "Ventured into larger digital territories, commanding junior developers, assigning quests, and mentoring fledgling coders. Delivered high-level system enhancements across massive projects.",
       reward: ["+6000 XP", "+4 Mentorship Badges","+2 Advanced Projects Completed"],
+      completed: true
     },
     {
       title: "Web Developer",
@@ -22,6 +24,7 @@ const quests = [
       years: "Feb 2018 - Nov 2018",
       description: "Crafted custom systems, honing coding abilities and battle-hardened logic through teamwork quests. Leveled up key software engineering skills.",
       reward: ["+3000 XP", "+2 Teamwork Medals"],
+      completed: true
     },
     {
       title: "Fullstack Developer",
@@ -29,6 +32,7 @@ const quests = [
       years: "Jan 2018 - Dec 2021",
       description: "Revived and enhanced ancient eCommerce codebases. Conjured new systems like user points and payment gateways. Studied architecture scrolls to master high-traffic optimizations.",
       reward: ["+5000 XP", "+3 System Architect Runes"],
+      completed: true
     },
     {
       title: "Web Developer",
@@ -36,6 +40,7 @@ const quests = [
       years: "Jun 2015 - Jan 2018",
       description: "Operated within the music commerce kingdom — redesigning, refactoring, and devising strategies to boost treasure sales. Embarked on side quests involving online radio and streaming magics.",
       reward: ["+4000 XP", "+2 Specializations (Radio & Streaming)"],
+      completed: true
     },
     {
       title: "Web Developer",
@@ -43,6 +48,7 @@ const quests = [
       years: "Jun 2013",
       description: "Began the journey. Forged early web designs and coded first commercial systems — specializing in enchanted hotel reservation platforms.",
       reward: ["+2000 XP", "+1 Novice Web Spellbook"],
+      completed: true
     },
 ];
 
@@ -73,11 +79,11 @@ export default function HeroQuests() {
                         <p className="text-gray-400 text-sm">🏰 {quest.company} | 📅 {quest.years}</p>
                         <div className="mt-2 mt-5 text-base/7">
                             <div className="flex gap-6 flex-column mb-3">
-                                <div className="font-semibold w-[70px]  text-right">Quest:</div> 
+                                <div className="font-semibold w-[60px] ">Quest:</div> 
                                 <div className="flex-1 text-gray-400">{quest.description}</div>
                             </div>
                             <div className="flex gap-6 flex-column">
-                                <div className="font-semibold w-[70px] text-right">Reward:</div> 
+                                <div className="font-semibold w-[60px] ">Reward:</div> 
                                 <div className="flex-1 text-gray-400">
                                     {quest.reward.map((reward, i) => (
                                         <div>{reward}</div>
@@ -87,13 +93,15 @@ export default function HeroQuests() {
                         
                         </div>
                     </div>
-
+                    
                     {/* "Quest Completed!" Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <div className="text-3xl text-yellow-400 font-extrabold animate-bounce">
                         🎉 Quest Completed!
                         </div>
                     </div>
+                   
+                    
                 </div>
             ))}
         </div>

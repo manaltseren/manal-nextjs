@@ -39,7 +39,7 @@ const skills = [
 export default function HeroAvatar() {
     return (
         <div className="max-w-3xl mx-auto  text-gray-100 flex items-center flex-col my-20">
-            <h2 className="text-2xl font-bold mb-10 text-yellow-400 text-start">🌟 Professional skills</h2>
+            <h2 className="text-2xl font-bold mb-10 text-yellow-400 text-start">🌟 Skills</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full max-w-6xl">
                 {skills.map((skill, idx) => (
@@ -68,9 +68,9 @@ export default function HeroAvatar() {
                                     ))}
                                 </div>
                             </div>
-                            <div className="text-sm text-gray-400">{skill.type} Skill - Level {skill.level}</div>
-                            <div className="text-sm">{skill.effect}</div>
-                            <div className="text-sm/6 text-green-400">
+                            <div className="text-sm text-gray-500">{skill.type} Skill - Level {skill.level}</div>
+                            <div className="text-base text-gray-400">{skill.effect}</div>
+                            <div className="text-base/7 text-green-400">
                                 {skill.bonus.map((bonus, i) => (
                                     <div>{bonus}</div>
                                 ))}

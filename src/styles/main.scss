@@ -1,15 +1,11 @@
 @import "variables";
-@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
-
+// @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
     background-color: #201f24  !important;
 }
 .text-primary {
     color: $primary-color;
-}
-* {
-    font-family: 'Raleway', sans-serif;
 }
 
 .header {

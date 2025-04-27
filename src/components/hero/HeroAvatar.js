@@ -14,7 +14,7 @@ export default function HeroAvatar() {
       />
 
       {/* Name */}
-      <h1 className="text-4xl font-bold text-white mb-2 tracking-wide">
+      <h1 className="text-3xl font-bold text-white mb-2 tracking-wide">
         Manalaa B.
       </h1>
 
