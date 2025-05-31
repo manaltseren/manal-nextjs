@@ -78,7 +78,7 @@ export default function HeroQuests() {
                     {/* Normal Quest Info */}
                     <div className="transition-opacity duration-300 group-hover:opacity-0">
                         <h3 className="text-xl font-medium mb-2">{quest.title}</h3>
-                        <div className="text-gray-500 text-sm flex  gap-5">
+                        <div className="text-gray-500 space-y-1 text-sm md:flex md:gap-4 md:space-y-0">
                             <div>🏰 {quest.company}</div>
                             <div>📅 {quest.years}</div> 
 
