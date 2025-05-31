@@ -36,5 +36,5 @@ export default function VantaBackground({ children }) {
   animate={{ opacity: 1 }}
   transition={{
     duration: 0.5, ease: "easeOut"
-  }} ref={vantaRef} className="fixed top-0 left-0 w-full h-[100px] -z-10"></motion.div >;
+  }} ref={vantaRef} className="fixed top-0 left-0 w-full h-full -z-10"></motion.div >;
 }

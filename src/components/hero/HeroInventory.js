@@ -104,9 +104,11 @@ export default function HeroInventory() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     
     return (
-        <div className="max-w-3xl mx-auto text-gray-100 flex flex-col items-center  my-20">
-            <h2 className="text-2xl font-bold mb-10 text-yellow-400 text-start">🎒 Inventory</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 w-full ">
+        <div className="max-w-3xl mx-auto text-gray-100 flex flex-col items-center my-20 px-5">
+            <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 text-center mb-8">
+                Inventory
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 w-full">
                 {tools.map((tool, idx) => (
                 <motion.div
                     style={{ backgroundColor: 'var(--bg-custom-dark)' }} 
@@ -119,10 +121,9 @@ export default function HeroInventory() {
                     } hover:shadow-[0_0_15px_5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center text-center space-y-2`}
                 >
                     <div className="text-4xl">
-
                         <img src={`${tool.icon}`} className="w-[30px]" />
                     </div>
-                    <div className="text-base font-semibold">{tool.name}</div>
+                    <div className="text-base font-medium">{tool.name}</div>
                 </motion.div>
                 ))}
 

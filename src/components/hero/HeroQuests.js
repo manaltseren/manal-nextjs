@@ -62,8 +62,10 @@ export default function HeroQuests() {
     }, []);
 
     return (
-        <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-10 text-yellow-400 text-center">🗺️ Quest Log</h2>
+        <div className="max-w-3xl mx-auto px-5">
+            <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 text-center mb-8">
+                Quest Log
+            </h2>
 
             {quests.map((quest, index) => (
                 <div
@@ -75,18 +77,18 @@ export default function HeroQuests() {
                 >
                     {/* Normal Quest Info */}
                     <div className="transition-opacity duration-300 group-hover:opacity-0">
-                        <h3 className="text-xl font-semibold mb-2">{quest.title}</h3>
-                        <p className="text-gray-400 text-sm">🏰 {quest.company} | 📅 {quest.years}</p>
-                        <div className="mt-2 mt-5 text-base/7">
+                        <h3 className="text-xl font-medium mb-2">{quest.title}</h3>
+                        <p className="text-gray-500 text-sm">🏰 {quest.company} | 📅 {quest.years}</p>
+                        <div className="mt-5 text-base/7">
                             <div className="flex gap-6 flex-column mb-3">
-                                <div className="font-semibold w-[60px] ">Quest:</div> 
+                                <div className="font-normal text-gray-300 w-[60px] ">Quest:</div> 
                                 <div className="flex-1 text-gray-400">{quest.description}</div>
                             </div>
                             <div className="flex gap-6 flex-column">
-                                <div className="font-semibold w-[60px] ">Reward:</div> 
-                                <div className="flex-1 text-gray-400">
+                                <div className="font-normal w-[60px] text-gray-300">Reward:</div> 
+                                <div className="flex-1 text-yellow-400">
                                     {quest.reward.map((reward, i) => (
-                                        <div>{reward}</div>
+                                        <div key={i}>{reward}</div>
                                     ))}
                                 </div>
                             </div>

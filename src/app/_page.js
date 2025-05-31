@@ -60,7 +60,7 @@ export default function Home() {
           </Flex>
           <div className="text-center items-center justify-center">
             <Button className="btn-add font-bold mt-4 py-6 rounded border-none" block href="/vcard.vcf" >
-              {/* <i class="las la-plus-square text-xl"></i> */}
+              {/* <i className="las la-plus-square text-xl"></i> */}
               Add to Contact
             </Button>
           </div>
