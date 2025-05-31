@@ -14,10 +14,10 @@ export default function XpPage() {
 
     return (
         <div className="
-        bg-[url(https://cdn.steamstatic.com/steamcommunity/public/images/items/105600/0d184618c836603f7d729141e9b5856b1caae972.jpg)] 
+        bg-[url('/images/background.jpg')] 
         bg-no-repeat 
         bg-130-auto 
-        md:bg-contain 
+        md:bg-auto-960
         bg-top-center
 
         ">

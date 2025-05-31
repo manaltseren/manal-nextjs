@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       backgroundSize: {
         '130-auto': '130% auto',
+        'auto-960': 'auto 960px',
       },
       backgroundPosition: {
         'top-center': 'top center',
