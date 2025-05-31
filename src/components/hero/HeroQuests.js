@@ -63,7 +63,7 @@ export default function HeroQuests() {
 
     return (
         <div className="max-w-3xl mx-auto px-5">
-            <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 text-center mb-8">
+            <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 text-center mb-8">
                 Quest Log
             </h2>
 
