@@ -14,7 +14,7 @@ export default function XpPage() {
 
     return (
         <div className="
-        bg-[url('/images/background.jpg')] 
+        bg-[url('/images/background-tr.jpg')] 
         bg-no-repeat 
         bg-130-auto 
         md:bg-auto-960
