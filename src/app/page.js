@@ -9,25 +9,6 @@ import HeroSkills from "@/components/hero/HeroSkills";
 import HeroInventory from "@/components/hero/HeroInventory"; 
 import HeroQuests from "@/components/hero/HeroQuests"; 
 
-export const metadata = {
-  title: 'Manalaa B - Web Developer',
-  description: 'If the code doesnt bother you, dont bother it.',
-  openGraph: {
-    title: 'Manalaa B - Web Developer',
-    description: 'If the code doesnt bother you, dont bother it.',
-    url: 'https://manal.dev',
-    images: [
-      {
-        url: 'https://kinsta.com/wp-content/uploads/2021/07/how-to-become-a-web-developer.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'manal.dev',
-      },
-    ],
-    locale: 'en_US',
-    type: 'website',
-  }
-};
 
 export default function Home() {
     const [XpModalOpen, setXpModalOpen] = useState(false);
