@@ -13,11 +13,21 @@ export default function XpPage() {
     const [XpModalOpen, setXpModalOpen] = useState(false);
 
     return (
-        <div>
+        <div className="
+        bg-[url(https://cdn.steamstatic.com/steamcommunity/public/images/items/105600/0d184618c836603f7d729141e9b5856b1caae972.jpg)] 
+        bg-no-repeat 
+        bg-130-auto 
+        md:bg-contain 
+        bg-top-center
+
+        ">
+            <div className="items-center justify-center text-white pt-[100px]">
              <HeroAvatar />
              <HeroSkills />
              <HeroInventory />
              <HeroQuests />
+            </div>
         </div>
+        
     );
 }

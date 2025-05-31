@@ -78,20 +78,29 @@ export default function HeroQuests() {
                     {/* Normal Quest Info */}
                     <div className="transition-opacity duration-300 group-hover:opacity-0">
                         <h3 className="text-xl font-medium mb-2">{quest.title}</h3>
-                        <p className="text-gray-500 text-sm">🏰 {quest.company} | 📅 {quest.years}</p>
+                        <div className="text-gray-500 text-sm flex  gap-5">
+                            <div>🏰 {quest.company}</div>
+                            <div>📅 {quest.years}</div> 
+
+                        </div>
                         <div className="mt-5 text-base/7">
                             <div className="flex gap-6 flex-column mb-3">
-                                <div className="font-normal text-gray-300 w-[60px] ">Quest:</div> 
-                                <div className="flex-1 text-gray-400">{quest.description}</div>
-                            </div>
-                            <div className="flex gap-6 flex-column">
-                                <div className="font-normal w-[60px] text-gray-300">Reward:</div> 
-                                <div className="flex-1 text-yellow-400">
-                                    {quest.reward.map((reward, i) => (
-                                        <div key={i}>{reward}</div>
-                                    ))}
+                                <div className="font-normal text-gray-300 w-[48px] ">Quest:</div> 
+                                <div className="flex-1 text-gray-400">
+                                    
+                                    <div className="mb-3">{quest.description}</div>
+
+                                    <div className="flex-1 text-yellow-400 text-sm/6">
+                                        {quest.reward.map((reward, i) => (
+                                            <div key={i}>{reward}</div>
+                                        ))}
+                                    </div>
+
                                 </div>
+
+                                
                             </div>
+
                         
                         </div>
                     </div>

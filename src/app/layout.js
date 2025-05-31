@@ -23,12 +23,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en"  data-theme="dark">
       <body className={roboto.className}>
-        {/* <Header /> */}
-        <main className="flex flex-col items-center justify-center min-h-[calc(100vh-78px)] text-white mt-[78px]">
+        <main className='bg-black'>
           {/* <VantaBackground /> */}
           {children}
+          <Footer />
         </main>
-        <Footer />
+        
       </body>
     </html>
   );

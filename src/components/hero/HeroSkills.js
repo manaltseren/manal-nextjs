@@ -38,8 +38,8 @@ const skills = [
 
 export default function HeroAvatar() {
     return (
-        <div className="max-w-3xl mx-auto  text-gray-100 flex items-center flex-col my-20 px-5">
-            <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 text-center mb-8">
+        <div className="max-w-3xl mx-auto  text-gray-100 flex items-center flex-col mt-10 mb-[150px] px-5">
+            <h2 class="text-2xl font-bold text-gray-300 text-center mb-8">
                 Abilities
             </h2>
 

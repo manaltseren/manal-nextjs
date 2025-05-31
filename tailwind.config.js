@@ -7,6 +7,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundSize: {
+        '130-auto': '130% auto',
+      },
+      backgroundPosition: {
+        'top-center': 'top center',
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

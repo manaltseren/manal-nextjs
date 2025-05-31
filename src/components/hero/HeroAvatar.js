@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function HeroAvatar() {
   return (
-    <div className="max-w-3xl px-11 flex flex-col md:flex-row justify-between items-center mb-5 gap-7  md:gap-20">
+    <div className="max-w-3xl px-11 flex flex-col md:flex-row justify-between items-center mb-5 gap-7 mx-auto md:gap-20">
         <div className="flex flex-wrap">
           <div className="flex flex-col md:flex-row text-center md:text-left items-center gap-7">
             {/* Avatar */}
@@ -21,7 +21,7 @@ export default function HeroAvatar() {
               </h1>
 
               {/* Class / Level / XP */}
-              <div className="text-sm flex items-center gap-4 text-gray-400 text-base">
+              <div className="text-sm flex items-center gap-4 text-gray-100 text-base">
                 <span>⚔️ FullStack Wizard</span>
                 <span>⚡ level 13</span>
               </div>
@@ -39,8 +39,9 @@ export default function HeroAvatar() {
 
           </div>
         </div>
-        <div>
-          <button className="bg-black px-5 py-3 block rounded-md font-medium text-sm" href="/vcard.vcf">Add to the Contacts</button>
+        <div className="text-center  justify-end flex flex-row space-y-0 md:space-y-3 md:flex-col gap-3 md:gap-0">
+          <button className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-5 py-2 rounded-md text-sm hover:bg-white/20 transition inline-block">Mission Archive</button>
+          <a className="text-center bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 text-white font-medium px-5 py-2 rounded-md text-sm shadow-md hover:scale-105 transform transition duration-200 inline-block" href="/vcard.vcf">Contact me</a>
         </div>
     </div>
 
