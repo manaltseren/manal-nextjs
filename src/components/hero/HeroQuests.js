@@ -84,7 +84,7 @@ export default function HeroQuests() {
 
                         </div>
                         <div className="mt-5 text-base/7">
-                            <div className="flex gap-6 flex-column mb-3">
+                            <div className="md:flex md:flex-column md:gap-6  mb-3">
                                 <div className="font-normal text-gray-300 w-[48px] ">Quest:</div> 
                                 <div className="flex-1 text-gray-400">
                                     
