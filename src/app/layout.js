@@ -23,8 +23,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en"  data-theme="dark">
       <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
+        <link rel="icon" href="favicon.ico" />
       </head>
       <body className={roboto.className}>
         <main className='bg-black'>
