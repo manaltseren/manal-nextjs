@@ -22,9 +22,6 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en"  data-theme="dark">
-      <head>
-        <link rel="icon" href="favicon.ico" />
-      </head>
       <body className={roboto.className}>
         <main className='bg-black'>
           {/* <VantaBackground /> */}
