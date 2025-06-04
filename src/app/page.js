@@ -15,7 +15,10 @@ export const metadata = {
       },
     ],
     type: "website",
-  }
+  },
+  other: {
+    "fb:app_id": "1722966035765577",
+  },
 };
 
 import {Col, Row ,Flex, Image, Button, Card, Space, Timeline, Avatar, Modal  } from "antd";
