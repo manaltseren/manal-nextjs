@@ -7,9 +7,9 @@ export default function HeroAvatar() {
           <div className="flex flex-col md:flex-row text-center md:text-left items-center gap-7">
             {/* Avatar */}
             <img
-              src="/images/avatar.jpg"
+              src="/images/manal.png"
               alt="Hero Avatar"
-              className="w-32 h-32 rounded-md  shadow-[0_0_0_7px_rgba(255,255,255,0.05)]"
+              className="w-32 h-32 rounded-md  shadow-[0_0_0_7px_rgba(255,255,255,0.2)]"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 120 }}

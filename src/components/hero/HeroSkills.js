@@ -21,7 +21,7 @@ const skills = [
     {
       name: "Bug Slayer",
       level: 3,
-      type: "Active",
+      type: "Passive",
       effect: "Detects and exterminates bugs in record time.",
       bonus: ["+50% debug speed", "+15% stress resistance"],
       icon: "/images/xp/skills/skill1.png",
