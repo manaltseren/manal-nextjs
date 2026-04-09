@@ -16,7 +16,7 @@ const skills = [
       type: "Active",
       effect: "Weaves REST APIs into any project with ease.",
       bonus: ["+20% fetch speed", "-10% integration errors"],
-      icon: "/images/xp/skills/skill3.png",
+      icon: "/images/xp/skills/skill3.png", 
     },
     {
       name: "Bug Slayer",
