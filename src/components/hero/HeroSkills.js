@@ -14,7 +14,7 @@ const skills = [
       name: "API Summoner",
       level: 4,
       type: "Active",
-      effect: "Weaves REST and GraphQL APIs into any project with ease.",
+      effect: "Weaves REST APIs into any project with ease.",
       bonus: ["+20% fetch speed", "-10% integration errors"],
       icon: "/images/xp/skills/skill3.png",
     },
