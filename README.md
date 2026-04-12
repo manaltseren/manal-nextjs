@@ -4,7 +4,7 @@ Product & Inventory Management — Next.js 16, React 19, PostgreSQL, Prisma 7
 
 ## Tech Stack
 
-| Technology |
+| Layer | Technology |
 |---|---|
 | Framework | Next.js 16 |
 | UI | React 19, Tailwind CSS |
@@ -69,8 +69,6 @@ http://localhost:3000 дээр нээгдэнэ.
 | `/inventory` | Нөөцийн удирдлага |
 
 ## Architecture
-
-### Server Actions vs Route Handlers
 
 Энэ апп **Server Actions** ашигладаг:
 
