@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Inventory Shop
+
+Product & Inventory Management — Next.js 16, React 19, PostgreSQL, Prisma 7
+
+## Tech Stack
+
+| Technology |
+|---|---|
+| Framework | Next.js 16 |
+| UI | React 19, Tailwind CSS |
+| Database | PostgreSQL 18 |
+| ORM | Prisma 7 |
+| State | Zustand (cart) |
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/inventory-shop.git
+cd inventory-shop
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Setup environment variables
+
+```bash
+cp .env.example .env
+```
+
+### 4. Generate Prisma client
+
+```bash
+npx prisma generate
+```
+
+### 5. Run migrations
+
+```bash
+npx prisma migrate dev
+```
+
+### 6. Seed database
+
+```bash
+npx prisma db seed
+```
+
+### 7. Start development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000 дээр нээгдэнэ.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+| Route | Description |
+|---|---|
+| `/` | Бүтээгдэхүүний жагсаалт, хайлт, ангиллаар шүүх |
+| `/products/new` | Шинээр бүтээгдэхүүн нэмэх |
+| `/products/[id]` | Бүтээгдэхүүн засах - Бүтээгдэхүүн харах хуудсыг edit хуудсаар орлуулав |
+| `/inventory` | Нөөцийн удирдлага |
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+### Server Actions vs Route Handlers
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Энэ апп **Server Actions** ашигладаг:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Form submit, CRUD үйлдлүүд → Server Actions
+- Захиалга → Prisma Transaction ашиглан атомик байдлаар хийгдэнэ
 
-## Deploy on Vercel
+### Reusable Components
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Кодын давхцлаас зайлсхийхийн тулд нийтлэг хэрэглэгдэх элементүүдийг component болгож тусд нь гаргасан.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+**ProductForm** — бүтээгдэхүүн нэмэх болон засах хуудас хоёулаа нэг form component ашигладаг. `action` prop-оор `createProduct` эсвэл `updateProduct` server action дамжуулна. Ингэснээр form-ын логик, validation, UI нэг газарт төвлөрч, давхардал үүсэхгүй.
+
+**DeleteButton** — ямар ч entity устгах үйлдэлд ашиглаж болох нийтлэг component. `onDelete` prop-оор дурын delete action дамжуулна. Товчны class, text зэргийг дурын хэлбэрээр өөрчлөх боломжтой.
+
+### Cart
+Cart буюу хэрэглэгчийн сагсыг header хэсэгт dropdown-оор шийдэж өгсөн ба үүнийг ecommerce системүүдэд түгээмэл ашигладаг. Тиймээс энэхүү app-д /cart route одоохондоо шаардлагагүй гэж үзсэн. 
+
+Сагсыг **Zustand + localStorage**-д хадгалдаг
+
+## Bonus Features
+- Prisma transaction
+- Debounce хайлт (300ms)
+- Zod validation
+- next/image
