@@ -33,25 +33,47 @@ npm install
 cp .env.example .env
 ```
 
+### 4. Create database
+
+**pgAdmin ашиглах:**
+1. pgAdmin нээх
+2. Зүүн талд `Servers → PostgreSQL` дээр right-click
+3. `Create → Database` сонгох
+4. Database нэрийг `inventory_db` гэж оруулах
+5. `Save` дарах
+
+**Терминалаар:**
+```bash
+psql -U postgres
+CREATE DATABASE inventory_db;
+\q
+```
+
 ### 4. Generate Prisma client
 
 ```bash
 npx prisma generate
 ```
 
-### 5. Run migrations
+### 5. Generate Prisma client
+
+```bash
+npx prisma generate
+```
+
+### 6. Run migrations
 
 ```bash
 npx prisma migrate dev
 ```
 
-### 6. Seed database
+### 7. Seed database
 
 ```bash
 npx prisma db seed
 ```
 
-### 7. Start development server
+### 8. Start development server
 
 ```bash
 npm run dev
@@ -79,7 +101,7 @@ http://localhost:3000 дээр нээгдэнэ.
 
 Кодын давхцлаас зайлсхийхийн тулд нийтлэг хэрэглэгдэх элементүүдийг component болгож тусд нь гаргасан.
 
-**ProductForm** — бүтээгдэхүүн нэмэх болон засах хуудас хоёулаа нэг form component ашигладаг. `action` prop-оор `createProduct` эсвэл `updateProduct` server action дамжуулна. Ингэснээр form-ын логик, validation, UI нэг газарт төвлөрч, давхардал үүсэхгүй.
+**ProductForm** — бүтээгдэхүүн нэмэх болон засах хуудас хоёулаа нэг form component ашигладаг. `action` prop-оор `createProduct` эсвэл `updateProduct` server action дамжуулна. Ингэснээр form-ын логик, validation, UI нэг газарт төвлөрч, давхцал үүсэхгүй.
 
 **DeleteButton** — ямар ч entity устгах үйлдэлд ашиглаж болох нийтлэг component. `onDelete` prop-оор дурын delete action дамжуулна. Товчны class, text зэргийг дурын хэлбэрээр өөрчлөх боломжтой.
 
