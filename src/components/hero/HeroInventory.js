@@ -105,7 +105,7 @@ export default function HeroInventory() {
     
     return (
         <div className="max-w-3xl mx-auto text-gray-100 flex flex-col items-center mt-10 mb-20 md:mb-[150px] px-5">
-            <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 text-center mb-8">
+            <h2 className="text-2xl font-bold text-yellow-400 text-center mb-8 font-press-start">
                 Inventory
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6 w-full">
@@ -116,14 +116,14 @@ export default function HeroInventory() {
                     onHoverStart={() => setHoveredTool(tool)}
                     onHoverEnd={() => setHoveredTool(null)}
                     onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
-                    className={`bg-gray-800 rounded-lg p-4 border border-2 ${
+                    className={`bg-gray-800 rounded-md p-4 border border-2 ${
                     rarityColors[tool.rarity]
                     } hover:shadow-[0_0_15px_5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center text-center space-y-2`}
                 >
                     <div className="text-4xl">
                         <img src={`${tool.icon}`} className="w-[30px]" />
                     </div>
-                    <div className="text-base font-medium">{tool.name}</div>
+                    <div className="text-sm font-medium font-press-start">{tool.name}</div>
                 </motion.div>
                 ))}
 

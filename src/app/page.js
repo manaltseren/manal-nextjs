@@ -21,10 +21,6 @@ export const metadata = {
   },
 };
 
-import {Col, Row ,Flex, Image, Button, Card, Space, Timeline, Avatar, Modal  } from "antd";
-import { CarryOutOutlined, LoadingOutlined } from '@ant-design/icons';
-import { motion } from "framer-motion";
-
 import HeroAvatar from "@/components/hero/HeroAvatar"; 
 import HeroSkills from "@/components/hero/HeroSkills"; 
 import HeroInventory from "@/components/hero/HeroInventory"; 
@@ -34,14 +30,14 @@ export default function Home() {
 
     return (
         <div className="
-        bg-[url('/images/background-tr.jpg')] 
+        bg-[url('/images/background-tr.png')] 
         bg-no-repeat 
         bg-130-auto 
         md:bg-auto-960
         bg-top-center
 
         ">
-            <div className="items-center justify-center text-white pt-[100px]">
+            <div className="items-center justify-center text-white pt-[130px]">
              <HeroAvatar />
              <HeroSkills />
              <HeroInventory />

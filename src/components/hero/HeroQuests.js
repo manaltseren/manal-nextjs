@@ -63,39 +63,38 @@ export default function HeroQuests() {
 
     return (
         <div className="max-w-3xl mx-auto px-5">
-            <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 text-center mb-8">
-                Quest Log
+            <h2 className="text-2xl font-bold text-yellow-400 text-center mb-8 font-press-start">
+                Quests
             </h2>
 
             {quests.map((quest, index) => (
                 <div
                 key={index}
-                className={`relative group mb-8 p-6 rounded-md transition-all duration-500 hover:bg-gray-700 ${
+                className={`relative group mb-8 p-8 rounded-md transition-all duration-500 bg-indigo-950 hover:bg-indigo-900 ${
                     showQuests ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
                 }`}
-                style={{ transitionDelay: `${index * 150}ms`, backgroundColor: 'var(--bg-custom-dark)' }}
+                style={{ transitionDelay: `${index * 150}ms` }}
                 >
                     {/* Normal Quest Info */}
                     <div className="transition-opacity duration-300 group-hover:opacity-0">
-                        <h3 className="text-xl font-medium mb-2">{quest.title}</h3>
+                        <h3 className="text-xl text-yellow-400 font-medium mb-2 font-press-start">{quest.title}</h3>
                         <div className="text-gray-500 space-y-1 text-sm md:flex md:gap-4 md:space-y-0">
-                            <div>🏰 {quest.company}</div>
-                            <div>📅 {quest.years}</div> 
+                            <div>{quest.company}</div>
+                            <div>{quest.years}</div> 
 
                         </div>
                         <div className="mt-5 text-base/7">
-                            <div className="md:flex md:flex-column md:gap-6  mb-3">
-                                <div className="font-normal text-gray-300 w-[48px] ">Quest:</div> 
-                                <div className="flex-1 text-gray-400">
-                                    
-                                    <div className="mb-3">{quest.description}</div>
-
-                                    <div className="flex-1 text-yellow-400 text-sm/6">
+                            
+                            
+                            <div className="text-gray-300 mb-3">{quest.description}</div>
+                            <div className="md:flex md:flex-column md:gap-6 text-gray-400 mb-3">
+                                <div className="font-normal">Achievements:</div> 
+                                <div className="flex-1 ">
+                                    <div className="">
                                         {quest.reward.map((reward, i) => (
                                             <div key={i}>{reward}</div>
                                         ))}
                                     </div>
-
                                 </div>
 
                                 
@@ -107,7 +106,7 @@ export default function HeroQuests() {
                     
                     {/* "Quest Completed!" Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="text-3xl text-yellow-400 font-extrabold animate-bounce">
+                        <div className="text-2xl text-yellow-400 font-extrabold animate-bounce font-press-start">
                         🎉 Quest Completed!
                         </div>
                     </div>

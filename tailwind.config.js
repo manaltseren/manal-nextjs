@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'press-start': ['var(--font-press-start)'],
+      },
       backgroundSize: {
         '130-auto': '130% auto',
         'auto-960': 'auto 960px',

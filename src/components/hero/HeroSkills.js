@@ -1,6 +1,6 @@
 "use client";
+import { div } from "framer-motion/client";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 const skills = [ 
     {
       name: "Code Conjurer",
@@ -27,7 +27,7 @@ const skills = [
       icon: "/images/xp/skills/skill1.png",
     },
     {
-      name: "Architect of Scalability",
+      name: "System Forger",
       level: 2,
       type: "Ultimate",
       effect: "Builds systems ready for explosive growth without technical debt.",
@@ -38,59 +38,57 @@ const skills = [
 
 export default function HeroAvatar() {
     return (
-        <div className="max-w-3xl mx-auto  text-gray-100 flex items-center flex-col mt-10 mb-20 md:mb-[150px]  px-5">
-            <h2 className="text-2xl font-bold text-gray-300 text-center mb-8">
-                Abilities
-            </h2>
+        <div className="max-w-3xl mx-auto mb-[80px] px-5">
+            <div className="text-gray-100 flex items-center flex-col">
+                <h2 className="text-2xl font-bold text-white text-center mb-8 font-press-start">
+                    Abilities
+                </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full max-w-6xl">
-                {skills.map((skill, idx) => (
-                <motion.div
-                    key={idx}
-                    whileTap={{ scale: 0.98 }}
-                    style={{ backgroundColor: 'var(--bg-custom-dark)' }} 
-                    className="bg-gray-800 rounded-md p-6 shadow-lg flex flex-col space-y-3 transition-all hover:border-blue-500"
-                >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full max-w-6xl">
+                    {skills.map((skill, idx) => (
+                    <div
+                        key={idx}
+                        className="bg-indigo-950 rounded-md p-6 shadow-lg flex flex-col space-y-3 transition-all hover:border-blue-500"
+                    >
 
-                    <div className="">
+                        <div className="">
 
-                        <div className="flex gap-3">
-                            <div className="text-4xl mb-3">
-                                <img src={`${skill.icon}`} className="w-[84px]" />
-                            </div>
-                            <div className="space-y-3">
-                                <div className="text-lg font-bold">{skill.name}</div>
-                                <div className="flex items-center mb-2">
-                                    <div className="flex gap-1">
-                                        {Array.from({ length: 5 }).map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className={`w-2 h-2 rounded-full ${
-                                            i < skill.level ? "bg-yellow-400" : "bg-gray-600"
-                                            }`}
-                                        ></div>
-                                        ))}
-                                    </div>
+                            <div className="flex gap-3">
+                                <div className="text-4xl mb-3 w-[64px]">
+                                    <img src={`${skill.icon}`} className="" />
                                 </div>
-                                <div className="text-sm text-gray-500">{skill.type} Skill - Level {skill.level}</div>
+                                <div className="space-y-2">
+                                    <div className="text-sm font-bold  text-yellow-400 font-press-start">{skill.name}</div>
+                                    <div className="flex items-center mb-2">
+                                        <div className="flex gap-1">
+                                            {Array.from({ length: 5 }).map((_, i) => (
+                                            <div
+                                                key={i}
+                                                className={`w-2 h-2 rounded-full ${
+                                                i < skill.level ? "bg-yellow-400" : "bg-gray-600"
+                                                }`}
+                                            ></div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="text-sm text-gray-500">{skill.type} - {skill.level} level</div>
+                                </div>
                             </div>
-                        </div>
-                       
-                        <div className="space-y-3">
-                            
-                            <div className="text-base text-gray-300">{skill.effect}</div>
-                            <div className=" text-gray-400 text-sm/6">
-                                {skill.bonus.map((bonus, i) => (
-                                    <div key={i}>{bonus}</div>
-                                ))}
-                                
+                        
+                            <div className="space-y-3">
+                                <div className="text-base text-gray-300">{skill.effect}</div>
+                                <div className=" text-gray-400 text-sm/6">
+                                    {skill.bonus.map((bonus, i) => (
+                                        <div key={i}>{bonus}</div>
+                                    ))}
+                                    
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
-                    
-                </motion.div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
+       
     )}

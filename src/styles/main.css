@@ -1,14 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
 :root {
   --bg-custom-dark: rgba(25, 25, 31, 0.75);
 }
 
 .text-primary {
   color: #7a5dff;
-}
-
-* {
-  font-family: "Raleway", sans-serif;
 }
 
 .header .ant-menu-item-selected {
@@ -18,20 +13,20 @@
 .contact .bubble {
   top: -10px;
   right: -40px;
-  background-color: rgba(78, 219, 236, 0.7882352941);
+  background-color: #7a5dff;
   padding: 5px 8px;
-  border-radius: 16px;
 }
 .contact .bubble:before {
   content: "";
   width: 12px;
   height: 12px;
-  border-radius: 100%;
-  background-color: rgba(78, 219, 236, 0.5803921569);
+  border-radius: 3px;
+  background-color: #7a5dff;
   position: absolute;
-  top: 20px;
+  top: 30px;
   left: -10px;
   z-index: 10;
+  opacity: 0.7;
 }
 .contact .social-link {
   background-color: rgba(0, 0, 0, 0.4);
@@ -52,4 +47,89 @@
   50% {
     opacity: 0;
   }
+}
+.career-timeline .ant-timeline-item-head {
+  background-color: transparent !important;
+  top: 35px !important;
+  border-color: #595959;
+}
+.career-timeline .ant-timeline-item-content {
+  inset-block-start: 0px !important;
+  margin-inline-start: 20px;
+}
+.career-timeline .ant-timeline-item-tail {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.career-timeline .ant-timeline-item-tail {
+  height: 100%;
+  inset-block-start: 0px !important;
+}
+.career-timeline .ant-timeline-item-last {
+  padding-bottom: 0;
+}
+.career-timeline .ant-timeline-item-last > .ant-timeline-item-tail {
+  display: block !important;
+}
+
+:where(.css-dev-only-do-not-override-cdzvx5).ant-timeline .ant-timeline-item {
+  padding-bottom: 10px;
+}
+
+.xp .my-level {
+  top: calc(100% - 30px);
+  right: -15px;
+  color: #4edbec;
+  background-color: #000;
+  border: solid 2px #4edbec;
+  width: 32px;
+  height: 32px;
+  line-height: 28px;
+  text-align: center;
+  border-radius: 100%;
+  font-weight: 500;
+  font-size: 14px;
+}
+.xp .skill {
+  cursor: pointer;
+}
+.xp .skill .icon {
+  border: solid 2px rgba(255, 255, 255, 0.1);
+}
+.xp .skill .label {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  margin-top: 5px;
+}
+.xp .skill .level {
+  flex-grow: 1;
+  display: flex;
+  gap: 3px;
+  padding: 0 7px;
+  justify-content: center;
+}
+.xp .skill .level div {
+  flex-basis: 20%;
+  height: 2px;
+  background: #4edbec;
+}
+.xp .skill:hover .icon {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.xp .skill:hover .label {
+  color: #fff;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }/*# sourceMappingURL=main.css.map */
