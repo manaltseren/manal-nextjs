@@ -7,8 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 const currentLevel = new Date().getFullYear() - 2013;
 
 const navItems = [
-  { href: "/",          label: "Home",      slot: "01", key: "Q", desc: "Character overview" },
-  { href: "/portfolio", label: "Portfolio", slot: "02", key: "W", desc: "Completed quests" },
+  { href: "/",          label: "Portfolio",      slot: "01", key: "Q", desc: "Completed quests" },
+  { href: "/about", label: "About me", slot: "02", key: "W", desc: "Character overview" },
 ];
 
 function Scanlines() {

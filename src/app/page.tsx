@@ -1,35 +1,16 @@
+import ProjectGrid from '@/components/portfolio/ProjectGrid';
+
 export const metadata = {
-  description: 'Check out my portfolio web page showcasing my skills and projects.',
-  openGraph: {
-    title: 'Manalaa | Web Developer',
-    description: 'Check out my portfolio web page showcasing my skills and projects.',
-    url: 'https://manal.dev',
-    siteName: 'Manalaa | Web Developer',
-    type: 'website',
-  },
-  other: {
-    'fb:app_id': '1722966035765577',
-  },
+  title: 'Portfolio',
+  description: 'Projects and builds by Manalaa — web developer.',
 };
 
-import HeroAvatar from '@/components/hero/HeroAvatar';
-import HeroSkills from '@/components/hero/HeroSkills';
-import HeroInventory from '@/components/hero/HeroInventory';
-import HeroQuests from '@/components/hero/HeroQuests';
-import SectionDivider from '@/components/SectionDivider';
-
-export default function Home() {
+export default function PortfolioPage() {
   return (
     <div className="relative">
       {/* Content — sits over the global synthwave background */}
-      <div className="relative items-center justify-center text-white pt-32.5">
-        <HeroAvatar />
-        <SectionDivider />
-        <HeroSkills />
-        <SectionDivider />
-        <HeroInventory />
-        <SectionDivider />
-        <HeroQuests />
+      <div className="relative text-white pt-32.5 min-h-screen">
+        <ProjectGrid />
       </div>
     </div>
   );
