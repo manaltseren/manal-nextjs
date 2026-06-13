@@ -1,0 +1,6 @@
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="6" fill="#0b0a14"/>
+  <polyline points="9,10 16,16 9,22" fill="none" stroke="#4edbec" stroke-width="3"
+            stroke-linecap="square" stroke-linejoin="miter" shape-rendering="crispEdges"/>
+  <rect x="18" y="19" width="8" height="3" fill="#7a5dff" shape-rendering="crispEdges"/>
+</svg>

@@ -1,26 +1,286 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-press-start: var(--font-press-start);
+}
+
+@utility bg-130-auto {
+  background-size: 130% auto;
+}
+@utility bg-auto-960 {
+  background-size: auto 960px;
+}
+@utility bg-top-center {
+  background-position: top center;
+}
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card: var(--color-white);
+  --card-foreground: var(--color-zinc-950);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-zinc-950);
+  --primary: var(--color-blue-500);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-zinc-100);
+  --secondary-foreground: var(--color-zinc-900);
+  --muted: var(--color-zinc-100);
+  --muted-foreground: var(--color-zinc-500);
+  --accent: var(--color-zinc-100);
+  --accent-foreground: var(--color-zinc-900);
+  --destructive: var(--color-red-600);
+  --destructive-foreground: var(--color-white);
+  --border: oklch(94% 0.004 286.32);
+  --input: var(--color-zinc-200);
+  --ring: var(--color-zinc-400);
+  --radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: var(--color-zinc-950);
+  --card-foreground: var(--color-zinc-50);
+  --popover: var(--color-zinc-950);
+  --popover-foreground: var(--color-zinc-50);
+  --primary: var(--color-blue-600);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-zinc-800);
+  --secondary-foreground: var(--color-zinc-50);
+  --muted: var(--color-zinc-900);
+  --muted-foreground: var(--color-zinc-500);
+  --accent: var(--color-zinc-900);
+  --accent-foreground: var(--color-zinc-50);
+  --destructive: var(--color-red-600);
+  --destructive-foreground: var(--color-white);
+  --border: var(--color-zinc-800);
+  --input: var(--color-zinc-800);
+  --ring: var(--color-zinc-600);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
   }
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: #0b0a14;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Synthwave grid background (global animated backdrop)
+   Sky gradient + neon perspective grid floor scrolling toward the viewer.
+   Fixed to the viewport so the grid always sits on the "floor". No glow.
+--------------------------------------------------------------------------- */
+.synthwave-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+  /* Smooth, dark sky. Kept dark by the horizon (~66%) so that when the grid
+     group rises on scroll there's no bright band left exposed behind it — the
+     purple horizon glow lives in .synthwave-bg__glow, which scrolls WITH the
+     grid instead. */
+  background: linear-gradient(
+    to bottom,
+    #0b0a14 0%,
+    #130c28 36%,
+    #1a1038 52%,
+    #0b0a14 66%
+  );
+}
+
+/* Purple horizon glow — sits just above the horizon and rises with the grid
+   group on scroll (so it stays attached to the horizon instead of being a
+   fixed band that gets exposed). */
+.synthwave-bg__glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 33%;
+  height: 130px;
+  background: linear-gradient(to top, rgba(58, 29, 99, 0.55) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* twinkling pixel starfield in the upper sky */
+.synthwave-bg__stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  overflow: hidden;
+}
+.synthwave-bg__star {
+  position: absolute;
+  background: #cfe9ff;
+  animation-name: synthwave-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes synthwave-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* Clips everything below the horizon (67%) so the sun's lower edge can sink
+   behind the line. */
+.synthwave-bg__sunclip {
+  --sun-size: clamp(170px, 22vw, 260px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 67%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Positioning + glow wrapper. The glow lives here (not on .synthwave-bg__sun)
+   because `filter` is applied BEFORE `mask`; putting the drop-shadow on the
+   masked element would let the mask clip the glow away. On the wrapper it acts
+   on the already-masked stripes, so the glow follows the dome + each stripe and
+   bleeds into the scanline gaps. Its bottom ~28% dips below the horizon. */
+.synthwave-bg__sun-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--sun-size) * -0.28);
+  width: var(--sun-size);
+  height: var(--sun-size);
+  /* Horizontal centering (x: -50%), the scroll-driven sink (y), and the
+     scroll-fading glow (filter) are all applied by Framer Motion in
+     SynthwaveBackground.tsx — don't set transform/filter here. */
+}
+
+/* retro sun setting on the horizon, sliced by scanline gaps in its lower half. */
+.synthwave-bg__sun {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(
+    to bottom,
+    #fdf6b2 0%,
+    #ffe07a 20%,
+    #ff9ec0 46%,
+    #ff5fa6 70%,
+    #ff2d8f 100%
+  );
+  /* solid top, horizontal scanline gaps across the lower half (the gaps are
+     transparent so the sky shows through) */
+  -webkit-mask:
+    linear-gradient(#000, #000) top / 100% 48% no-repeat,
+    repeating-linear-gradient(to bottom, #000 0 5px, transparent 5px 13px) bottom / 100% 52% no-repeat;
+  -webkit-mask-composite: source-over;
+  mask:
+    linear-gradient(#000, #000) top / 100% 48% no-repeat,
+    repeating-linear-gradient(to bottom, #000 0 5px, transparent 5px 13px) bottom / 100% 52% no-repeat;
+  mask-composite: add;
+}
+
+/* Translate-only wrapper. Framer Motion drives its `y` (the scroll-driven grid
+   rise) — kept separate from .synthwave-bg__grid because that element's
+   perspective+rotateX transform can't be overwritten by Framer's translate. */
+.synthwave-bg__grid-wrap {
+  position: absolute;
+  left: -50%;
+  top: 67%;
+  width: 200%;
+  height: 65%;
+}
+
+/* the receding floor */
+.synthwave-bg__grid {
+  position: absolute;
+  inset: 0;
+  /* Shallower tilt + larger perspective so the far lines stay spread apart
+     instead of compressing into sub-pixel spacing (the cause of the shimmer). */
+  transform: perspective(440px) rotateX(72deg);
+  transform-origin: top center;
+  /* Soft (anti-aliased) line edges further reduce the flicker vs. hard 1px lines. */
+  background-image:
+    linear-gradient(to right, rgba(122, 93, 255, 0.6) 0, rgba(122, 93, 255, 0.6) 1px, transparent 2.5px),
+    linear-gradient(to bottom, rgba(78, 219, 236, 0.5) 0, rgba(78, 219, 236, 0.5) 1px, transparent 2.5px);
+  /* Bigger cells = fewer lines = they don't bunch up at the horizon. */
+  background-size: 70px 70px, 70px 70px;
+  animation: synthwave-scroll 2.6s linear infinite;
+  /* Fade the lines out well before the horizon so the dense, aliasing far
+     field is never drawn — only the well-spaced near lines show. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 58%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 58%);
+  backface-visibility: hidden;
+}
+
+@keyframes synthwave-scroll {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 0 0, 0 70px;
+  }
+}
+
+/* crisp horizon line */
+.synthwave-bg__horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 67%;
+  height: 2px;
+  background: #4edbec;
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .synthwave-bg__grid {
+    animation: none;
+  }
+  .synthwave-bg__star {
+    animation: none;
+    opacity: 0.7;
   }
 }

@@ -1,4 +1,4 @@
-@import "variables";
+@use "variables" as *;
 // @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
 
@@ -6,11 +6,6 @@
     color: $primary-color;
 }
 
-.header {
-    .ant-menu-item-selected {
-        background-color: transparent !important;
-    }
-}
 .contact {
     .bubble {
         top: -10px;
@@ -57,38 +52,6 @@
     }
 }
 
-
-.career-timeline {
-    .ant-timeline-item-head {
-        background-color: transparent !important;
-        top: 35px !important;
-        border-color: #595959;
-    }
-
-    .ant-timeline-item-content {
-        inset-block-start: 0px !important;
-        margin-inline-start: 20px;
-    }
-
-    .ant-timeline-item-tail {
-        border-color: rgb(255 255 255 / 6%);
-    }
-    .ant-timeline-item-tail {
-        height: 100%;
-        inset-block-start: 0px !important;
-    }
-
-    .ant-timeline-item-last {
-        padding-bottom: 0;
-    }
-
-    .ant-timeline-item-last >.ant-timeline-item-tail{
-        display: block !important;
-    }
-}
-:where(.css-dev-only-do-not-override-cdzvx5).ant-timeline .ant-timeline-item {
-    padding-bottom: 10px;
-}
 
 .xp {
     .my-level {
