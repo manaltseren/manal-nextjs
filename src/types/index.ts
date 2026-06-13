@@ -34,4 +34,8 @@ export interface Project {
   features: string[];
   link?: string;
   shipped: boolean;
+  /** Screenshot/cover. Path under /public (e.g. /images/projects/foo.png). Falls back to a themed placeholder when omitted. */
+  image?: string;
+  /** Pin one project as the full-width hero banner above the grid. */
+  featured?: boolean;
 }

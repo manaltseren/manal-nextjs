@@ -4,6 +4,12 @@ import { useState, useEffect } from "react";
 
 const nameChars = Array.from("MANALAA Bold");
 
+const socials = [
+  { href: "https://www.linkedin.com/in/manaltseren-b-5883b214b/", icon: "la-linkedin",        label: "LinkedIn",  hover: "hover:text-[#4edbec] hover:border-[#4edbec]/60" },
+  { href: "https://www.instagram.com/manal.dev/",                 icon: "la-instagram",       label: "Instagram", hover: "hover:text-[#c084fc] hover:border-[#c084fc]/60" },
+  { href: "https://www.facebook.com/noirmn",                      icon: "la-facebook-square", label: "Facebook",  hover: "hover:text-[#60a5fa] hover:border-[#60a5fa]/60" },
+];
+
 const containerVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.07 } },
@@ -25,14 +31,6 @@ function Sparkle({ x, y, delay }: { x: number; y: number; delay: number }) {
   );
 }
 
-// Stats grow with level (+4 per level, i.e. every year)
-const statLevel = new Date().getFullYear() - 2013;
-const quickStats = [
-  { label: "STR", value: String(33 + statLevel * 4), color: "#f87171" },
-  { label: "INT", value: String(40 + statLevel * 4), color: "#60a5fa" },
-  { label: "DEX", value: String(26 + statLevel * 4), color: "#4ade80" },
-];
-
 function calcYearXP() {
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 1).getTime();
@@ -46,6 +44,33 @@ export default function HeroAvatar() {
   const xpPercent = Math.round(targetXP / 100);
   const [xpCount, setXpCount] = useState(0);
   const [btnHover, setBtnHover] = useState(false);
+
+  // On mobile, open the Facebook app (deep link) and fall back to the web page
+  // if it isn't installed. On desktop, let the normal link through.
+  const openFacebook = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPhone|iPad|iPod/i.test(ua);
+    if (!isAndroid && !isIOS) return; // desktop → default href
+
+    const web = "https://www.facebook.com/noirmn";
+    e.preventDefault();
+
+    if (isAndroid) {
+      // Chrome resolves browser_fallback_url automatically if the app is absent.
+      window.location.href =
+        "intent://www.facebook.com/noirmn#Intent;package=com.facebook.katana;scheme=https;" +
+        "S.browser_fallback_url=" + encodeURIComponent(web) + ";end";
+      return;
+    }
+
+    // iOS — open the URL inside the FB app; if nothing handles fb://, fall back.
+    const start = Date.now();
+    setTimeout(() => {
+      if (Date.now() - start < 1500) window.location.href = web;
+    }, 1000);
+    window.location.href = "fb://facewebmodal/f?href=" + encodeURIComponent(web);
+  };
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -63,7 +88,7 @@ export default function HeroAvatar() {
 
   return (
     <div className="max-w-4xl mx-auto px-5">
-      <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start">
+      <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
 
         {/* ── Left: Avatar + quick stats ── */}
         <motion.div
@@ -72,8 +97,8 @@ export default function HeroAvatar() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Avatar + stat boxes — stacked, same width */}
-          <div className="flex flex-col gap-6" style={{ width: 180 }}>
+          {/* Avatar */}
+          <div style={{ width: 180 }}>
 
             {/* Avatar — full width of container */}
             <motion.div
@@ -159,30 +184,6 @@ export default function HeroAvatar() {
               <Sparkle x={182} y={10} delay={0.7} />
               <Sparkle x={175} y={100} delay={1.4} />
               <Sparkle x={-6} y={90} delay={0.4} />
-            </motion.div>
-
-            {/* 3 stat boxes — same width as avatar, each box flex-1 */}
-            <motion.div
-              className="flex gap-2"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.4 }}
-            >
-              {quickStats.map((s) => (
-                <div
-                  key={s.label}
-                  className="flex-1 flex flex-col items-center gap-0.5 py-2"
-                  style={{
-                    backgroundColor: "rgba(10,9,32,0.5)",
-                    border: `1px solid ${s.color}30`,
-                  }}
-                >
-                  <span className="font-press-start text-[13px]" style={{ color: s.color }}>{s.value}</span>
-                  <span className="font-press-start text-[7px]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                    {s.label}
-                  </span>
-                </div>
-              ))}
             </motion.div>
 
           </div>
@@ -289,12 +290,12 @@ export default function HeroAvatar() {
             </div>
           </motion.div>
 
-          {/* Contact button */}
+          {/* Contact button + social links */}
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.25, duration: 0.4 }}
-            className="flex justify-center md:justify-start mt-4"
+            className="flex flex-wrap items-center gap-3 justify-center md:justify-start mt-4"
           >
             <motion.a
               href="/vcard.vcf"
@@ -322,6 +323,23 @@ export default function HeroAvatar() {
               </motion.span>
               CONTACT ME
             </motion.a>
+
+            {/* Social links — pixel-framed icon buttons */}
+            <div className="flex items-center gap-2">
+              {socials.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  onClick={s.label === "Facebook" ? openFacebook : undefined}
+                  className={`inline-flex items-center justify-center w-11 h-11 border-2 border-white/10 bg-[#12102e] text-gray-400 transition-colors ${s.hover}`}
+                >
+                  <i className={`lab ${s.icon} text-2xl`} />
+                </a>
+              ))}
+            </div>
           </motion.div>
 
         </div>

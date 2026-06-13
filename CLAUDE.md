@@ -33,10 +33,10 @@ npm run lint     # eslint .
 src/
 ├── app/
 │   ├── layout.tsx          # Root layout — fonts, SynthwaveBackground, Header, Footer
-│   ├── page.tsx            # Home (/) — 4 hero sections + OpenGraph metadata
+│   ├── page.tsx            # Home (/) — project grid (portfolio showcase)
 │   ├── globals.css         # Tailwind imports, CSS variables, synthwave background styles
-│   └── portfolio/
-│       └── page.tsx        # /portfolio — project grid
+│   └── about/
+│       └── page.tsx        # /about — 4 hero sections (RPG character sheet) + OpenGraph metadata
 ├── components/
 │   ├── Header.tsx              # Fixed nav + animated mobile menu (client)
 │   ├── Footer.tsx              # Social links, dynamic year (server)
@@ -49,7 +49,7 @@ src/
 │   │   ├── HeroInventory.tsx# Tool inventory grid w/ rarity borders + tooltip (client)
 │   │   └── HeroQuests.tsx   # Work history as RPG quests w/ hover overlay (client)
 │   └── portfolio/
-│       └── ProjectGrid.tsx # Portfolio project cards + category filter (client)
+│       └── ProjectShowcase.tsx # Portfolio cards w/ cover image + search/filter/pagination (client)
 ├── styles/
 │   ├── variables.scss      # $primary-color, $secondary-color, --bg-custom-dark
 │   └── main.scss           # A few component styles (social links, float anim, etc.)
@@ -70,10 +70,10 @@ import TypingTitle from '@/components/TypingTitle';
 
 | Route | File | Notes |
 |---|---|---|
-| `/` | `src/app/page.tsx` | Home — 4 hero sections over the synthwave background |
-| `/portfolio` | `src/app/portfolio/page.tsx` | Project grid |
+| `/` | `src/app/page.tsx` | Home — the portfolio project grid (`ProjectGrid`) over the synthwave background |
+| `/about` | `src/app/about/page.tsx` | RPG character sheet — 4 hero sections |
 
-Header nav has two items: **Home** and **Portfolio**.
+Header nav has two items: **Portfolio** (`/`) and **About me** (`/about`).
 
 ## Background — SynthwaveBackground
 
@@ -90,15 +90,17 @@ To keep this visible, `main`, the page wrappers, and the cards are transparent/s
 
 ## Pages
 
-### Home (`/`)
+### Home / Portfolio (`/`)
 
-Four stacked hero sections (`HeroAvatar`, `HeroSkills`, `HeroInventory`, `HeroQuests`) separated by `SectionDivider`, sitting over the global synthwave background. OpenGraph metadata (`fb:app_id`, etc.).
+`ProjectShowcase` — the portfolio project grid, sitting over the global synthwave background. Each card leads with a **framed 16:10 cover image**: if the project has an `image` (path under `/public`, e.g. `/images/projects/foo.png`) the screenshot is shown via a plain `<img>` (object-cover, hover zoom); otherwise a **themed `CoverPlaceholder`** renders — the project's initials over a category-colored perspective grid. The cover has a scanline overlay, a CRT "boot-up" reveal on scroll-in (`useInView` per card: dim/desaturated → bright), category/status/year badges over the image, and a `VIEW PROJECT ▶︎` ribbon that slides up on hover.
+
+Below the cover: title, description, inline feature chips, and a footer progress bar (`100%` / `WIP`). `Project` type: `title`, `category`, `year`, `description`, `features[]`, optional `link`, `shipped`, optional `image`. The grid has a live search box, auto-colored category filter chips (palette assigned by first appearance), pagination (`PAGE_SIZE = 6`), an empty/"NO RESULTS" state, and a results counter. The project data in `ProjectShowcase.tsx` is still **demo data** — replace with real projects; drop screenshots in `/public/images/projects/`.
+
+### About (`/about`)
+
+Four stacked hero sections (`HeroAvatar`, `HeroSkills`, `HeroInventory`, `HeroQuests`) separated by `SectionDivider`, sitting over the global synthwave background. The page-level OpenGraph metadata (`fb:app_id`, etc.) lives here.
 
 **Social/OG image is generated dynamically** by `src/app/opengraph-image.tsx` via `next/og` (a 1200×630 synthwave card — `manal.dev`, MANALAA in Press Start 2P, title, LVL badge, striped sun). `twitter-image.tsx` reuses it. The pixel font is loaded from the colocated `PressStart2P.ttf` via `readFileSync(new URL(...))` (Node's `fetch` can't read `file://`). `metadataBase` is set in `layout.tsx` so the image URL resolves absolutely. Note: satori (next/og) has limited CSS — no `perspective`/3D, `z-index` unsupported (layer via DOM order). The old static `public/images/social_thumbnail.jpg` is now unused.
-
-### Portfolio (`/portfolio`)
-
-`ProjectGrid` — project cards with a category filter, over the synthwave background.
 
 ## Components
 

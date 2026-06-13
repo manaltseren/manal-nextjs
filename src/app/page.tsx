@@ -1,4 +1,4 @@
-import ProjectGrid from '@/components/portfolio/ProjectGrid';
+import ProjectShowcase from '@/components/portfolio/ProjectShowcase';
 
 export const metadata = {
   title: 'Portfolio',
@@ -10,7 +10,7 @@ export default function PortfolioPage() {
     <div className="relative">
       {/* Content — sits over the global synthwave background */}
       <div className="relative text-white pt-32.5 min-h-screen">
-        <ProjectGrid />
+        <ProjectShowcase />
       </div>
     </div>
   );
