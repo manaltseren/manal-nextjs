@@ -92,7 +92,9 @@ To keep this visible, `main`, the page wrappers, and the cards are transparent/s
 
 ### Home (`/`)
 
-Four stacked hero sections (`HeroAvatar`, `HeroSkills`, `HeroInventory`, `HeroQuests`) separated by `SectionDivider`, sitting over the global synthwave background. Full OpenGraph metadata (og:image at `https://manal.dev/images/social_thumbnail.jpg`, `fb:app_id`).
+Four stacked hero sections (`HeroAvatar`, `HeroSkills`, `HeroInventory`, `HeroQuests`) separated by `SectionDivider`, sitting over the global synthwave background. OpenGraph metadata (`fb:app_id`, etc.).
+
+**Social/OG image is generated dynamically** by `src/app/opengraph-image.tsx` via `next/og` (a 1200×630 synthwave card — `manal.dev`, MANALAA in Press Start 2P, title, LVL badge, striped sun). `twitter-image.tsx` reuses it. The pixel font is loaded from the colocated `PressStart2P.ttf` via `readFileSync(new URL(...))` (Node's `fetch` can't read `file://`). `metadataBase` is set in `layout.tsx` so the image URL resolves absolutely. Note: satori (next/og) has limited CSS — no `perspective`/3D, `z-index` unsupported (layer via DOM order). The old static `public/images/social_thumbnail.jpg` is now unused.
 
 ### Portfolio (`/portfolio`)
 

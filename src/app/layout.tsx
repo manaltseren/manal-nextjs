@@ -21,6 +21,7 @@ const pressStart = Press_Start_2P({
 });
 
 export const metadata = {
+  metadataBase: new URL('https://manal.dev'),
   title: {
     template: '%s — Manalaa',
     default: 'Manalaa — Full-Stack Web Developer',
