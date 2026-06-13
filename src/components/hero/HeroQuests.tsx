@@ -117,7 +117,7 @@ function QuestCard({ quest, idx, inView, delay }: { quest: Quest; idx: number; i
                   animate={{ opacity: [1, 0.5, 1] }}
                   transition={{ duration: 1.2, repeat: Infinity }}
                 >
-                  ⚔ IN PROGRESS
+                  ⚔︎ IN PROGRESS
                 </motion.span>
               ) : (
                 <span className="font-press-start text-[9px] px-2 py-0.5"
@@ -202,7 +202,7 @@ function QuestCard({ quest, idx, inView, delay }: { quest: Quest; idx: number; i
                     animate={{ scale: 1, y: 0 }}
                     transition={{ type: "spring", stiffness: 220, damping: 16 }}
                   >
-                    ⚔ IN PROGRESS
+                    ⚔︎ IN PROGRESS
                   </motion.div>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {quest.reward.map((r, i) => (
@@ -232,7 +232,7 @@ function QuestCard({ quest, idx, inView, delay }: { quest: Quest; idx: number; i
               {isActive ? "ACTIVE QUEST" : `QUEST #${String(quests.length - idx).padStart(2, "0")}`}
             </span>
             <span className="font-press-start text-[8px]" style={{ color }}>
-              {isActive ? "▶" : "✓"}
+              {isActive ? "▶︎" : "✓"}
             </span>
           </div>
 
@@ -301,7 +301,7 @@ export default function HeroQuests() {
             }}
           >
             <span>
-              {expanded ? "▲ HIDE QUESTS" : `▼ SHOW ${hidden} MORE QUESTS`}
+              {expanded ? "▲︎ HIDE QUESTS" : `▼︎ SHOW ${hidden} MORE QUESTS`}
             </span>
             <span className="font-press-start text-[8px]" style={{ color: "rgba(255,255,255,0.2)" }}>
               {expanded ? `${quests.length} / ${quests.length}` : `${INITIAL_SHOW} / ${quests.length}`}

@@ -220,7 +220,7 @@ export default function HeroAvatar() {
                 backgroundColor: "rgba(78,219,236,0.08)",
               }}
             >
-              ⚔ FULLSTACK DEV
+              ⚔︎ FULLSTACK DEV
             </span>
 
             {/* Blinking online dot */}
@@ -318,7 +318,7 @@ export default function HeroAvatar() {
                 animate={{ opacity: [1, 0, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
               >
-                ▶
+                ▶︎
               </motion.span>
               CONTACT ME
             </motion.a>

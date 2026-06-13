@@ -51,7 +51,7 @@ const Header = () => {
                 }`}
               >
                 {currentPath === item.href && (
-                  <span className="text-cyan-400 mr-1">▶</span>
+                  <span className="text-cyan-400 mr-1">▶︎</span>
                 )}
                 {item.label}
               </Link>
@@ -142,7 +142,7 @@ const Header = () => {
                     animate={{ opacity: [1, 0.3, 1] }}
                     transition={{ duration: 1.2, repeat: Infinity }}
                   >
-                    ▶
+                    ▶︎
                   </motion.span>
                   <span className="font-press-start text-[10px] text-white">MENU</span>
                 </div>
@@ -200,7 +200,7 @@ const Header = () => {
                             className="font-press-start text-[11px]"
                             style={{ color: active ? "#fff" : "rgba(255,255,255,0.6)" }}
                           >
-                            {active && <span className="text-cyan-400 mr-1.5">▶</span>}
+                            {active && <span className="text-cyan-400 mr-1.5">▶︎</span>}
                             {item.label}
                           </span>
                           <span

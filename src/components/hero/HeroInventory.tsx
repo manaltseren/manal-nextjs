@@ -27,7 +27,7 @@ const tools: Tool[] = [
 const rarityConfig: Record<Rarity, { color: string; colorDim: string; colorFaint: string; label: string; symbol: string }> = {
   Legendary: { color: "#facc15", colorDim: "rgba(250,204,21,0.45)", colorFaint: "rgba(250,204,21,0.08)", label: "LEGENDARY", symbol: "★" },
   Epic:      { color: "#c084fc", colorDim: "rgba(192,132,252,0.45)", colorFaint: "rgba(192,132,252,0.08)", label: "EPIC",      symbol: "◆" },
-  Rare:      { color: "#60a5fa", colorDim: "rgba(96,165,250,0.45)",  colorFaint: "rgba(96,165,250,0.08)",  label: "RARE",      symbol: "▲" },
+  Rare:      { color: "#60a5fa", colorDim: "rgba(96,165,250,0.45)",  colorFaint: "rgba(96,165,250,0.08)",  label: "RARE",      symbol: "▲︎" },
   Uncommon:  { color: "#4ade80", colorDim: "rgba(74,222,128,0.4)",   colorFaint: "rgba(74,222,128,0.07)",  label: "UNCOMMON",  symbol: "●" },
   Common:    { color: "#94a3b8", colorDim: "rgba(148,163,184,0.35)", colorFaint: "rgba(148,163,184,0.07)", label: "COMMON",    symbol: "○" },
 };

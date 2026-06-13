@@ -391,7 +391,7 @@ function SkillModal({
               ESC TO CLOSE
             </span>
             <span className="font-press-start text-[9px]" style={{ color: cfg.color }}>
-              ◀ ▶
+              ◀︎ ▶︎
             </span>
           </div>
         </PixelFrame>
@@ -567,7 +567,7 @@ function SkillCard({
               animate={{ opacity: hovered ? [0.5, 1, 0.5] : 0.35 }}
               transition={{ duration: 0.8, repeat: Infinity }}
             >
-              ▶
+              ▶︎
             </motion.span>
           </div>
         </div>

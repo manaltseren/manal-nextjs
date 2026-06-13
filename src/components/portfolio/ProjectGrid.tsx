@@ -176,7 +176,7 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
                   animate={{ opacity: [1, 0.5, 1] }}
                   transition={{ duration: 1.2, repeat: Infinity }}
                 >
-                  ⚒ IN DEV
+                  ⚒︎ IN DEV
                 </motion.span>
               ) : (
                 <span className="font-press-start text-[9px] px-2 py-0.5"
@@ -230,7 +230,7 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
                 }}
                 whileTap={{ scale: 0.97 }}
               >
-                VIEW PROJECT ▶
+                VIEW PROJECT ▶︎
               </motion.a>
             )}
           </div>
@@ -436,7 +436,7 @@ export default function ProjectGrid() {
       {filtered.length > 0 && (
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
           <PixelButton onClick={() => setPage(currentPage - 1)} disabled={currentPage === 1}>
-            ◀ PREV
+            ◀︎ PREV
           </PixelButton>
           {Array.from({ length: totalPages }).map((_, i) => (
             <PixelButton key={i} onClick={() => setPage(i + 1)} active={currentPage === i + 1}>
@@ -444,7 +444,7 @@ export default function ProjectGrid() {
             </PixelButton>
           ))}
           <PixelButton onClick={() => setPage(currentPage + 1)} disabled={currentPage === totalPages}>
-            NEXT ▶
+            NEXT ▶︎
           </PixelButton>
         </div>
       )}
