@@ -299,6 +299,7 @@ export default function HeroAvatar() {
           >
             <motion.a
               href="/vcard.vcf"
+              download="Manalaa.vcf"
               className="font-press-start text-[9px] px-6 py-3.5 inline-flex items-center gap-2 select-none"
               style={{
                 backgroundColor: btnHover ? "#c084fc" : "#12102e",
