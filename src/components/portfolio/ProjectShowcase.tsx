@@ -1,8 +1,22 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import type { Project } from "@/types";
 import TypingTitle from "@/components/TypingTitle";
+
+// True on devices that support hover (desktop). On touch/coarse-pointer devices
+// there's no hover, so hover-gated UI (the VIEW PROJECT ribbon) must stay visible.
+function useCanHover() {
+  const [canHover, setCanHover] = useState(true); // assume hover for SSR (desktop-first)
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const update = () => setCanHover(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return canHover;
+}
 
 // ── DEMO DATA — replace with real projects ──────────────────────────────
 // Add `image: "/images/projects/your-shot.png"` to show a real screenshot.
@@ -59,6 +73,11 @@ const palette = ["#4edbec", "#c084fc", "#60a5fa", "#4ade80", "#facc15", "#94a3b8
 
 const dim   = (hex: string) => `${hex}73`; // ~45% alpha
 const faint = (hex: string) => `${hex}14`; // ~8% alpha
+
+// Normalize a project link so bare domains (e.g. "mue.mn") become absolute URLs
+// that open correctly in a new tab; absolute URLs and internal paths pass through.
+const resolveHref = (link: string) =>
+  /^(https?:\/\/|\/|mailto:|tel:)/.test(link) ? link : `https://${link}`;
 
 const categories = [...new Set(projects.map((p) => p.category))];
 const categoryColor: Record<string, string> = Object.fromEntries(
@@ -264,9 +283,12 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const inView = useInView(cardRef, { once: true, margin: "-60px" });
   const [hovered, setHovered] = useState(false);
+  const canHover = useCanHover();
   const color = categoryColor[project.category] ?? palette[palette.length - 1];
   const inDev = !project.shipped;
   const delay = (idx % PAGE_SIZE) * 0.06;
+  // On touch devices (no hover) the ribbon must stay visible so the link is reachable.
+  const showRibbon = hovered || !canHover;
 
   return (
     <motion.div
@@ -306,16 +328,16 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
             {/* Scanlines only over the themed placeholder — not over real screenshots */}
             {!project.image && <Scanlines z={20} opacity={hovered ? 0.05 : 0.12} />}
             <CoverBadges project={project} />
-            {/* ribbon driven by card hover */}
-            {project.link && (
+            {/* ribbon — slides up on hover; stays visible on touch devices */}
+            {project.link && project.link !== "#" && (
               <motion.a
-                href={project.link}
-                target={project.link.startsWith("http") ? "_blank" : undefined}
+                href={resolveHref(project.link)}
+                target="_blank"
                 rel="noreferrer"
                 className="absolute inset-x-0 bottom-0 z-30 flex items-center justify-center font-press-start text-[9px] py-2.5 cursor-pointer"
                 style={{ color: "#0f0d1b", backgroundColor: color }}
                 initial={{ y: "100%" }}
-                animate={{ y: hovered ? "0%" : "100%" }}
+                animate={{ y: showRibbon ? "0%" : "100%" }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
               >
                 VIEW PROJECT ▶︎
@@ -426,10 +448,10 @@ function FeaturedCard({ project, idx }: { project: Project; idx: number }) {
                 </li>
               ))}
             </ul>
-            {project.link && (
+            {project.link && project.link !== "#" && (
               <motion.a
-                href={project.link}
-                target={project.link.startsWith("http") ? "_blank" : undefined}
+                href={resolveHref(project.link)}
+                target="_blank"
                 rel="noreferrer"
                 className="relative font-press-start text-[10px] px-4 py-3 self-start cursor-pointer mt-auto"
                 style={{
