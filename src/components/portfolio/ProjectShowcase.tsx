@@ -18,7 +18,7 @@ function useCanHover() {
   return canHover;
 }
 
-// ── DEMO DATA — replace with real projects ──────────────────────────────
+// ── projects ──────────────────────────────
 // Add `image: "/images/projects/your-shot.png"` to show a real screenshot.
 // `featured: true` pins a project as the full-width hero banner.
 const projects: Project[] = [
