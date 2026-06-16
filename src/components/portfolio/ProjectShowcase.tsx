@@ -556,7 +556,7 @@ export default function ProjectShowcase() {
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 0.4, duration: 0.4 }}
       >
-        A quest log of things I&apos;ve built. Search or filter to explore.
+        A log of things I&apos;ve built. Search or filter to explore.
       </motion.p>
 
       {/* Search bar */}
