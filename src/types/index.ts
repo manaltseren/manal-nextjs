@@ -36,6 +36,8 @@ export interface Project {
   shipped: boolean;
   /** Screenshot/cover. Path under /public (e.g. /images/projects/foo.png). Falls back to a themed placeholder when omitted. */
   image?: string;
+  /** How the screenshot fills the 16:10 cover slot. "cover" (default) crops to fill; "contain" shows the whole image (use for portrait/tall shots) over a blurred fill. */
+  imageFit?: 'cover' | 'contain';
   /** Pin one project as the full-width hero banner above the grid. */
   featured?: boolean;
 }

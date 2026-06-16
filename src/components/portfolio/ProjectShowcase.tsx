@@ -9,86 +9,47 @@ import TypingTitle from "@/components/TypingTitle";
 // `featured: true` pins a project as the full-width hero banner.
 const projects: Project[] = [
   {
-    title: "E-Commerce Platform",
-    category: "E-COMMERCE",
-    year: "2024",
-    description: "Demo project. A complete online store with cart, checkout, subscriptions and an admin dashboard. The flagship build of the bunch.",
-    features: ["Online payments", "Subscription service", "Admin dashboard"],
+    title: "Game Achievement tracking app",
+    category: "WEB APP",
+    year: "2026",
+    description: "For completionist gamers, securing a platinum trophy or hitting 100% execution requires a lot of meticulous planning to avoid missable achievements. This platform solves that headache. By letting users sync their personal gaming accounts, the application scans their real-time progress and serves up curated guides and critical checklists exactly when they need them. This is the foundation for a larger, feature-rich ecosystem focused on deep video game analytics and community tools.",
+    features: ["Sync with PSN/Steam", "Progress tracking", "AI guide", "E-commerce"],
     link: "#",
-    shipped: false,    featured: true,
+    image: "",
+    shipped: false, featured: true, },
+  {
+    title: "Wave X Motion - LMS",
+    category: "LMS",
+    year: "2026",
+    description: "This project is an online educational platform built for creators looking to master professional video production from scratch. Instead of scattered tutorials, the system organizes the entire filmmaking pipeline into comprehensive learning paths—taking students from pre-production (lighting and set prep) to shooting (cinematography) and post-production (editing and color grading).",
+    features: ["Learning management system", "Online payments"],
+    link: "https://wavexmotion.mn",
+    shipped: true,  },
+  {
+    title: "Beauty Secrets - E-Commerce Platform",
+    category: "E-COMMERCE",
+    year: "2023",
+    description: "This is a full-scale e-commerce platform built to handle the specific, nuanced needs of the beauty and skincare retail industry. Instead of relying on rigid, out-of-the-box solutions, I custom-developed several core business features from scratch. This includes an automated monthly recurring subscription model for skincare packages, and a dynamic loyalty ecosystem that automatically tiers users and applies member-specific privileges based on quarterly purchase tracking.",
+    features: ["Subscription service",  "Online payments", "Loyalty/Membership system","Digital wallet", "Affiliate", "Giftcard", "Admin dashboard"],
+    link: "https://beautysecrets.mn",
+    shipped: true,
   },
   {
-    title: "Payment Gateway Plugin",
+    title: "Payment Gateways for Woocommerce",
     category: "PLUGIN",
     year: "2023",
-    description: "Demo project. Drop-in payment solution for WordPress + WooCommerce stores supporting multiple local payment providers.",
-    features: ["QPay", "SocialPay", "Bank cards"],
+    description: "I built a custom WooCommerce plugin to bridge the gap between global e-commerce platforms and the Mongolian banking ecosystem. It provides local online merchants with a reliable, ready-to-use checkout experience by integrating the country’s major payment networks, including Khan Bank, Golomt Bank (along with SocialPay), TDB, QPay, and Storepay.",
+    features: ["QPay", "SocialPay", "Storepay", "Bank cards"],
     link: "#",
     shipped: true,  },
   {
-    title: "Sports Federation Portal",
-    category: "WEB APP",
-    year: "2022",
-    description: "Demo project. Tournament registration, live results, athlete profiles and ranking calculations.",
-    features: ["Athlete profiles", "Tournament registry", "Rankings"],
-    link: "#",
-    shipped: true,  },
-  {
-    title: "Online Music Store",
+    title: "MUE E-commerce",
     category: "E-COMMERCE",
-    year: "2020",
-    description: "Demo project. Digital + physical music sales with artist catalogs, streaming previews and sales reporting.",
-    features: ["Digital downloads", "Online radio", "Sales reports"],
-    link: "#",
-    shipped: true,  },
-  {
-    title: "Hotel Booking System",
-    category: "WEB APP",
-    year: "2018",
-    description: "Demo project. Room availability, reservations and payment flow for a chain of hotels.",
-    features: ["Room calendar", "Reservations", "Payments"],
-    link: "#",
-    shipped: true,  },
-  {
-    title: "Delivery Tracking App",
-    category: "MOBILE",
-    year: "2021",
-    description: "Demo project. Real-time courier tracking with driver assignment and customer notifications.",
-    features: ["Live map", "Driver assignment", "Push notifications"],
-    link: "#",
-    shipped: true,  },
-  {
-    title: "Learning Management System",
-    category: "WEB APP",
-    year: "2021",
-    description: "Demo project. Online courses with video lessons, quizzes, certificates and progress tracking.",
-    features: ["Video lessons", "Quizzes", "Certificates"],
-    link: "#",
-    shipped: true,  },
-  {
-    title: "Restaurant POS Dashboard",
-    category: "DASHBOARD",
-    year: "2019",
-    description: "Demo project. Order management, table reservations and daily sales analytics for restaurants.",
-    features: ["Order management", "Reservations", "Sales analytics"],
-    link: "#",
-    shipped: true,  },
-  {
-    title: "News & Magazine Site",
-    category: "WEBSITE",
-    year: "2017",
-    description: "Demo project. High-traffic news portal with categories, tags, editor workflow and ad placements.",
-    features: ["Editor workflow", "Ad placements", "SEO"],
-    link: "#",
-    shipped: true,  },
-  {
-    title: "Company Landing Page",
-    category: "WEBSITE",
-    year: "2016",
-    description: "Demo project. Fast, simple marketing site with a CMS so the client can edit content themselves.",
-    features: ["CMS editing", "SEO basics", "Contact form"],
-    link: "#",
-    shipped: true,  },
+    year: "2026",
+    description: "This is an e-commerce web application built for a retail clothing and apparel business. The project covers the essential pipeline of modern online retail: from an optimized, responsive user interface for browsing apparel collections to a secure checkout system.",
+    features: ["Storefront & Cataloging", "Online payments"],
+    link: "mue.mn",
+    shipped: true,  }
 ];
 // ────────────────────────────────────────────────────────────────────────
 
@@ -204,13 +165,34 @@ function Cover({ project, idx, hovered, inView, delay }: {
         transition={{ delay, duration: 0.6, times: [0, 0.12, 0.3, 0.5, 0.75, 1], ease: "easeOut" }}
       >
         {project.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={project.image}
-            alt={project.title}
-            className="absolute inset-0 h-full w-full object-cover object-top"
-            style={{ transform: hovered ? "scale(1.06)" : "scale(1)", transition: "transform 0.25s ease" }}
-          />
+          project.imageFit === "contain" ? (
+            <>
+              {/* Blurred fill so a portrait/tall shot doesn't leave dead space in the wide slot */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={project.image}
+                alt=""
+                aria-hidden
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{ filter: "blur(18px) brightness(0.45)", transform: "scale(1.15)" }}
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={project.image}
+                alt={project.title}
+                className="absolute inset-0 h-full w-full object-contain"
+                style={{ transform: hovered ? "scale(1.04)" : "scale(1)", transition: "transform 0.25s ease" }}
+              />
+            </>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={project.image}
+              alt={project.title}
+              className="absolute inset-0 h-full w-full object-cover object-top"
+              style={{ transform: hovered ? "scale(1.06)" : "scale(1)", transition: "transform 0.25s ease" }}
+            />
+          )
         ) : (
           <CoverPlaceholder project={project} color={catColor} idx={idx} />
         )}
@@ -294,17 +276,16 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
       transition={{ delay, duration: 0.3 }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="select-none relative h-full"
+      className="select-none relative"
     >
       <motion.div
-        className="h-full"
         initial={{ clipPath: revealHidden }}
         animate={inView ? { clipPath: revealShown } : {}}
         transition={{ delay: delay + 0.05, duration: 0.5, ease: "easeOut" }}
       >
-      <div style={{ padding: "3px", backgroundColor: "#07060e" }} className="h-full">
+      <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
         <div
-          className="h-full flex flex-col"
+          className="flex flex-col"
           style={{
             border: `2px solid ${hovered ? color : dim(color)}`,
             backgroundColor: hovered ? "#0f0d26" : "#12102e",
@@ -638,12 +619,17 @@ export default function ProjectShowcase() {
         <FeaturedCard project={featured} idx={projects.indexOf(featured)} />
       )}
 
-      {/* Grid */}
+      {/* Masonry grid — CSS columns so cards size to their own content
+          (variable description length) instead of stretching to match a row. */}
       {visible.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+        <div className="columns-1 md:columns-2" style={{ columnGap: "1rem" }}>
           {visible.map((project) => {
             const globalIdx = projects.indexOf(project);
-            return <ProjectCard key={`${currentPage}-${project.title}`} project={project} idx={globalIdx} />;
+            return (
+              <div key={`${currentPage}-${project.title}`} className="mb-4 break-inside-avoid">
+                <ProjectCard project={project} idx={globalIdx} />
+              </div>
+            );
           })}
         </div>
       ) : !showFeatured ? (
