@@ -303,7 +303,8 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
           {/* Cover */}
           <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 10", borderBottom: `2px solid ${dim(color)}` }}>
             <Cover project={project} idx={idx} hovered={hovered} inView={inView} delay={delay + 0.15} />
-            <Scanlines z={20} opacity={hovered ? 0.05 : 0.12} />
+            {/* Scanlines only over the themed placeholder — not over real screenshots */}
+            {!project.image && <Scanlines z={20} opacity={hovered ? 0.05 : 0.12} />}
             <CoverBadges project={project} />
             {/* ribbon driven by card hover */}
             {project.link && (
@@ -378,7 +379,7 @@ function FeaturedCard({ project, idx }: { project: Project; idx: number }) {
       <div className="mb-2 flex items-center gap-2">
         <motion.span className="font-press-start text-[9px]" style={{ color }}
           animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.6, repeat: Infinity }}>
-          ★ FEATURED QUEST
+          ★ FEATURED PROJECT
         </motion.span>
         <span className="flex-1 h-px" style={{ backgroundColor: dim(color) }} />
       </div>
@@ -404,7 +405,8 @@ function FeaturedCard({ project, idx }: { project: Project; idx: number }) {
           {/* Cover — left */}
           <div className="relative overflow-hidden md:w-1/2" style={{ aspectRatio: "16 / 10" }}>
             <Cover project={project} idx={idx} hovered={hovered} inView={inView} delay={0.15} />
-            <Scanlines z={20} opacity={hovered ? 0.05 : 0.12} />
+            {/* Scanlines only over the themed placeholder — not over real screenshots */}
+            {!project.image && <Scanlines z={20} opacity={hovered ? 0.05 : 0.12} />}
             <CoverBadges project={project} />
           </div>
 
