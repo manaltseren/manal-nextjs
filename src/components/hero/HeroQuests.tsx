@@ -11,7 +11,7 @@ const quests: Quest[] = [
     years: "Jan 2022 - Present",
     description: "Running the tech side of an eCommerce company. Rebuilt the platform into modular services, keep the infrastructure boring and stable, and spend a lot of time helping the dev team level up.",
     reward: ["+8000 XP", "+5 Leadership", "Legendary drop pending..."],
-    completed: false,
+    completed: true,
   },
   {
     title: "Senior Web Developer",
