@@ -9,15 +9,15 @@ import Confetti from './Confetti';
  * ------------------------------------------------------------------ */
 export const INVITE = {
   eyebrow: 'Төрсөн өдрийн урилга',
-  name: 'Пүрэврэнцэн',
+  name: 'Л.Пүрэврэнцэн',
   ageLine: '70 насны ойн баяр',
   /** ISO огноо — тоолуур үүнээс тоолно */
-  dateISO: '2026-08-30T18:00:00+08:00',
+  dateISO: '2026-08-30T16:00:00+08:00',
   dateText: '2026 оны 8 дүгээр сарын 30',
   weekday: 'Ням гараг',
-  timeText: '18:00 цагт',
-  venue: 'Shangri-La зочид буудал',
-  venueDetail: 'Их танхим, Улаанбаатар',
+  timeText: '16:00 цагт',
+  venue: 'Grand Khaan Irish Pub',
+  venueDetail: 'Чингис вип өрөө',
   message:
     'Миний амьдралын онцгой энэ өдрийг хамт өнгөрүүлж, баяр баясгаланг минь хуваалцахыг урьж байна.',
   host: 'Хүндэтгэсэн: Л.Пүрэврэнцэн',
@@ -245,7 +245,8 @@ export default function Invitation() {
 
           {/* date & time */}
           <motion.div variants={fade} className="mt-7 space-y-1.5">
-            <p className="inv-serif text-2xl text-white sm:text-[28px]">
+            {/* Нэг мөрөнд багтаана: нарийн дэлгэц дээр үсгийн хэмжээ vw-ээр багасна */}
+            <p className="inv-serif whitespace-nowrap text-[clamp(1.05rem,5.4vw,1.75rem)] text-white">
               {INVITE.dateText}
             </p>
             <p className="text-sm uppercase tracking-[0.18em] text-[#e6c98a]">
