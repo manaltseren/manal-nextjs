@@ -8,14 +8,14 @@ import Confetti from './Confetti';
  *  ЭНД ЗАСНА УУ — бүх текст, огноо, утас энэ нэг объектод байна.
  * ------------------------------------------------------------------ */
 export const INVITE = {
-  eyebrow: 'Төрсөн өдрийн урилга',
   name: 'Л.Пүрэврэнцэн',
-  ageLine: '70 насны ойн баяр',
+  ageLine: '70 насны ойн баярын урилга',
   /** ISO огноо — тоолуур үүнээс тоолно */
   dateISO: '2026-08-30T16:00:00+08:00',
-  dateText: '2026 оны 8 дүгээр сарын 30',
-  weekday: 'Ням гараг',
-  timeText: '16:00 цагт',
+  dateText: '08.30',
+  year: '2026',
+  weekday: 'Ням',
+  timeText: '16:00',
   venue: 'Grand Khaan Irish Pub',
   venueDetail: 'Чингис ВИП өрөө',
   /** Google Maps холбоос — Maps дээрх "Share" линкээ энд тавьж болно */
@@ -26,7 +26,6 @@ export const INVITE = {
     'Миний амьдралын онцгой энэ өдрийг хамт өнгөрүүлж, баяр баясгаланг минь хуваалцахыг урьж байна.',
   host: 'Хүндэтгэсэн: Л.Пүрэврэнцэн',
   phone: '+97699334877',
-  phoneText: '+976 9933 4877',
 } as const;
 
 /* ---------------------------- balloons ---------------------------- */
@@ -215,16 +214,9 @@ export default function Invitation() {
             />
           ))}
 
-          <motion.p
-            variants={fade}
-            className="text-[10px] uppercase tracking-[0.42em] text-[#c9a24d] sm:text-[11px]"
-          >
-            {INVITE.eyebrow}
-          </motion.p>
-
           <motion.h1
             variants={fade}
-            className="inv-serif inv-gold mt-6 pb-[0.1em] text-[clamp(1.9rem,8.6vw,4rem)] leading-[1.18] font-semibold text-balance"
+            className="inv-serif inv-gold pb-[0.1em] text-[clamp(1.9rem,8.6vw,4rem)] leading-[1.18] font-semibold text-balance"
           >
             {INVITE.name}
           </motion.h1>
@@ -247,15 +239,35 @@ export default function Invitation() {
             <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[#c9a24d]/60" />
           </motion.div>
 
-          {/* date & time */}
-          <motion.div variants={fade} className="mt-7 space-y-1.5">
-            {/* Нэг мөрөнд багтаана: нарийн дэлгэц дээр үсгийн хэмжээ vw-ээр багасна */}
-            <p className="inv-serif whitespace-nowrap text-[clamp(1.05rem,5.4vw,1.75rem)] text-white">
-              {INVITE.dateText}
-            </p>
-            <p className="text-sm uppercase tracking-[0.18em] text-[#e6c98a]">
-              {INVITE.weekday} · {INVITE.timeText}
-            </p>
+          {/* message */}
+          <motion.p
+            variants={fade}
+            className="inv-serif mx-auto mt-7 max-w-[430px] text-[clamp(1rem,4.4vw,1.2rem)] leading-[1.9] tracking-[0.015em] text-white/75 italic"
+          >
+            {INVITE.message}
+          </motion.p>
+
+          {/* date & time — гараг | өдөр | цаг гэсэн богино гурван багана */}
+          <motion.div
+            variants={fade}
+            className="mx-auto mt-8 flex w-full max-w-[380px] items-center justify-center"
+          >
+            <div className="flex-1 text-[13px] tracking-[0.2em] text-[#e6c98a] uppercase">
+              {INVITE.weekday}
+            </div>
+            <div className="mx-4 h-10 w-px bg-[#c9a24d]/35 sm:mx-5" />
+            <div className="shrink-0">
+              <div className="inv-serif whitespace-nowrap text-[clamp(1.5rem,7vw,2.15rem)] leading-none tabular-nums text-white">
+                {INVITE.dateText}
+              </div>
+              <div className="mt-1.5 text-[10px] tracking-[0.28em] text-[#c9a24d]/70 tabular-nums">
+                {INVITE.year}
+              </div>
+            </div>
+            <div className="mx-4 h-10 w-px bg-[#c9a24d]/35 sm:mx-5" />
+            <div className="flex-1 text-[13px] tracking-[0.2em] text-[#e6c98a] tabular-nums">
+              {INVITE.timeText}
+            </div>
           </motion.div>
 
           {/* venue */}
@@ -298,14 +310,6 @@ export default function Invitation() {
             ))}
           </motion.div>
 
-          {/* message */}
-          <motion.p
-            variants={fade}
-            className="mx-auto mt-9 max-w-[420px] text-[15px] leading-relaxed text-white/65"
-          >
-            {INVITE.message}
-          </motion.p>
-
           {/* actions */}
           <motion.div
             variants={fade}
@@ -326,13 +330,6 @@ export default function Invitation() {
               🎉 Баяр хүргэе
             </button>
           </motion.div>
-
-          <motion.p
-            variants={fade}
-            className="mt-6 text-xs tracking-[0.14em] text-white/40"
-          >
-            {INVITE.phoneText}
-          </motion.p>
 
           <motion.p
             variants={fade}

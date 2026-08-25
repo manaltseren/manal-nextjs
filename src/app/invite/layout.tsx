@@ -3,6 +3,9 @@ import { Playfair_Display } from 'next/font/google';
 
 const playfair = Playfair_Display({
   weight: ['400', '500', '600', '700'],
+  // Урианы үг болон "Хүндэтгэсэн" мөр налуугаар гардаг тул жинхэнэ italic
+  // хэлбэрийг нь татна — эс бөгөөс браузер хиймлээр налуулж муухай харагдана.
+  style: ['normal', 'italic'],
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
   variable: '--font-playfair',
