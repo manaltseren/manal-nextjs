@@ -17,7 +17,11 @@ export const INVITE = {
   weekday: 'Ням гараг',
   timeText: '16:00 цагт',
   venue: 'Grand Khaan Irish Pub',
-  venueDetail: 'Чингис вип өрөө',
+  venueDetail: 'Чингис ВИП өрөө',
+  /** Google Maps холбоос — Maps дээрх "Share" линкээ энд тавьж болно */
+  mapUrl:
+    'https://maps.app.goo.gl/kq5wKRhPMfB8DUU87',
+  mapText: 'Газрын зураг дээр харах',
   message:
     'Миний амьдралын онцгой энэ өдрийг хамт өнгөрүүлж, баяр баясгаланг минь хуваалцахыг урьж байна.',
   host: 'Хүндэтгэсэн: Л.Пүрэврэнцэн',
@@ -220,7 +224,7 @@ export default function Invitation() {
 
           <motion.h1
             variants={fade}
-            className="inv-serif inv-gold mt-6 text-[44px] leading-[1.05] font-semibold sm:text-[64px]"
+            className="inv-serif inv-gold mt-6 pb-[0.1em] text-[clamp(1.9rem,8.6vw,4rem)] leading-[1.18] font-semibold text-balance"
           >
             {INVITE.name}
           </motion.h1>
@@ -258,6 +262,15 @@ export default function Invitation() {
           <motion.div variants={fade} className="mt-6">
             <p className="inv-serif text-lg text-white/90">{INVITE.venue}</p>
             <p className="mt-1 text-sm text-white/55">{INVITE.venueDetail}</p>
+            <a
+              href={INVITE.mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-1.5 border-b border-[#c9a24d]/40 pb-0.5 text-[13px] tracking-[0.06em] text-[#e6c98a] transition-colors duration-200 hover:border-[#c9a24d] hover:text-[#f3d383]"
+            >
+              <i className="las la-map-marker-alt text-base" aria-hidden="true" />
+              {INVITE.mapText}
+            </a>
           </motion.div>
 
           {/* countdown */}
