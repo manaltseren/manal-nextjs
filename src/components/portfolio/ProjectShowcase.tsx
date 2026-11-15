@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import type { Project } from "@/types";
 import TypingTitle from "@/components/TypingTitle";
+import { useRevealed } from "@/components/PixelReveal";
 
 // True on devices that support hover (desktop). On touch/coarse-pointer devices
 // there's no hover, so hover-gated UI (the VIEW PROJECT ribbon) must stay visible.
@@ -16,6 +17,18 @@ function useCanHover() {
     return () => mq.removeEventListener("change", update);
   }, []);
   return canHover;
+}
+
+// Card is in view AND its parent PixelReveal has uncovered it. Latches true
+// (derived-state pattern) so the entrance plays once, never behind the wipe,
+// and doesn't replay when the section fades out/in at the top of the page.
+function useCardInView(ref: React.RefObject<HTMLDivElement | null>) {
+  const revealed = useRevealed();
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const live = inView && revealed;
+  const [seen, setSeen] = useState(false);
+  if (live && !seen) setSeen(true);
+  return live || seen;
 }
 
 // ── projects ──────────────────────────────
@@ -144,7 +157,8 @@ function CoverPlaceholder({ project, color, idx }: { project: Project; color: st
           WebkitMaskImage: "linear-gradient(to top, #000 0%, transparent 85%)",
         }}
       />
-      <span className="font-press-start text-white/15 select-none" style={{ fontSize: 42 }}>
+      <div className="absolute inset-0 px-dither" />
+      <span className="relative font-press-start text-white/15 select-none" style={{ fontSize: 42 }}>
         {initials}
       </span>
       <span className="absolute bottom-2 right-3 font-press-start text-[8px]" style={{ color: `${color}66` }}>
@@ -253,25 +267,25 @@ function CoverBadges({ project }: { project: Project }) {
         className="absolute inset-x-0 top-0 z-20 pointer-events-none"
         style={{ height: "55%", background: "linear-gradient(to bottom, rgba(7,6,14,0.85), transparent)" }}
       />
-      <div className="absolute top-2.5 left-2.5 z-30 flex items-center gap-2">
-        <span className="font-press-start text-[8px] px-2 py-0.5"
-          style={{ color: catColor, border: `1px solid ${dim(catColor)}`, backgroundColor: "rgba(7,6,14,0.7)" }}>
+      <div className="absolute top-3 left-3 z-30 flex items-center gap-2">
+        <span className="px-chip font-press-start text-[8px] leading-none px-2 py-1"
+          style={{ color: catColor, ["--px-border" as string]: dim(catColor), ["--px-bg" as string]: "rgba(7,6,14,0.8)" }}>
           {project.category}
         </span>
         {inDev ? (
-          <motion.span className="font-press-start text-[8px] px-2 py-0.5"
-            style={{ color: catColor, border: `1px solid ${dim(catColor)}`, backgroundColor: "rgba(7,6,14,0.7)" }}
+          <motion.span className="px-chip font-press-start text-[8px] leading-none px-2 py-1"
+            style={{ color: catColor, ["--px-border" as string]: dim(catColor), ["--px-bg" as string]: "rgba(7,6,14,0.8)" }}
             animate={{ opacity: [1, 0.5, 1] }} transition={{ duration: 1.2, repeat: Infinity }}>
             ⚒︎ IN DEV
           </motion.span>
         ) : (
-          <span className="font-press-start text-[8px] px-2 py-0.5"
-            style={{ color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.12)", backgroundColor: "rgba(7,6,14,0.7)" }}>
+          <span className="px-chip font-press-start text-[8px] leading-none px-2 py-1"
+            style={{ color: "rgba(255,255,255,0.55)", ["--px-border" as string]: "rgba(255,255,255,0.14)", ["--px-bg" as string]: "rgba(7,6,14,0.8)" }}>
             ✓ SHIPPED
           </span>
         )}
       </div>
-      <span className="absolute top-2.5 right-2.5 z-30 font-press-start text-[8px]" style={{ color: "rgba(255,255,255,0.55)" }}>
+      <span className="absolute top-3.5 right-3 z-30 font-press-start text-[8px]" style={{ color: "rgba(255,255,255,0.55)" }}>
         {project.year}
       </span>
     </>
@@ -281,7 +295,7 @@ function CoverBadges({ project }: { project: Project }) {
 // ── Standard grid card ──────────────────────────────────────────────────
 function ProjectCard({ project, idx }: { project: Project; idx: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(cardRef, { once: true, margin: "-60px" });
+  const inView = useCardInView(cardRef);
   const [hovered, setHovered] = useState(false);
   const canHover = useCanHover();
   const color = categoryColor[project.category] ?? palette[palette.length - 1];
@@ -305,15 +319,12 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
         animate={inView ? { clipPath: revealShown } : {}}
         transition={{ delay: delay + 0.05, duration: 0.5, ease: "easeOut" }}
       >
-      <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
+      <div className="px-outer">
         <div
-          className="flex flex-col"
+          className="px-panel flex flex-col"
           style={{
-            border: `2px solid ${hovered ? color : dim(color)}`,
-            backgroundColor: hovered ? "#0f0d26" : "#12102e",
-            boxShadow: hovered ? `4px 4px 0 #07060e` : "none",
-            transition: "border-color 0.08s, background-color 0.08s, box-shadow 0.08s",
-            position: "relative",
+            ["--px-border" as string]: hovered ? color : dim(color),
+            ["--px-bg" as string]: hovered ? "#0f0d26" : "#12102e",
             overflow: "hidden",
           }}
         >
@@ -351,12 +362,13 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
             <h3 className="relative font-press-start text-[12px] text-white mb-3 leading-relaxed" style={{ zIndex: 1 }}>
               {project.title}
             </h3>
-            <p className="relative text-gray-400 text-sm font-mono leading-relaxed mb-4" style={{ zIndex: 1 }}>
+            <p className="relative text-gray-400 font-pixel text-[19px] leading-[1.15] mb-4" style={{ zIndex: 1 }}>
               {project.description}
             </p>
-            <ul className="relative flex flex-wrap gap-x-3 gap-y-1.5 mt-auto" style={{ zIndex: 1 }}>
+            <ul className="relative flex flex-wrap gap-1.5 mt-auto" style={{ zIndex: 1 }}>
               {project.features.map((f) => (
-                <li key={f} className="text-[13px] font-mono" style={{ color: "rgba(255,255,255,0.55)" }}>
+                <li key={f} className="px-chip font-pixel text-[17px] leading-none px-2 py-1 gap-1.5"
+                  style={{ color: "rgba(255,255,255,0.6)", ["--px-border" as string]: "rgba(255,255,255,0.1)" }}>
                   <span style={{ color }}>⬥</span> {f}
                 </li>
               ))}
@@ -365,7 +377,7 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
 
           {/* Footer */}
           <div style={{ backgroundColor: "#0d0b22", borderTop: `1px solid ${dim(color)}` }}
-            className="px-4 py-2 flex items-center justify-between relative">
+            className="px-4 py-1.5 flex items-center justify-between relative">
             <span className="font-press-start text-[7px]" style={{ color: "rgba(255,255,255,0.18)" }}>
               PROJECT #{String(idx + 1).padStart(2, "0")}
             </span>
@@ -384,7 +396,7 @@ function ProjectCard({ project, idx }: { project: Project; idx: number }) {
 // ── Full-width featured hero banner ─────────────────────────────────────
 function FeaturedCard({ project, idx }: { project: Project; idx: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(cardRef, { once: true, margin: "-60px" });
+  const inView = useCardInView(cardRef);
   const [hovered, setHovered] = useState(false);
   const color = categoryColor[project.category] ?? palette[palette.length - 1];
 
@@ -403,7 +415,7 @@ function FeaturedCard({ project, idx }: { project: Project; idx: number }) {
           animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.6, repeat: Infinity }}>
           ★ FEATURED PROJECT
         </motion.span>
-        <span className="flex-1 h-px" style={{ backgroundColor: dim(color) }} />
+        <span className="flex-1 h-0.5" style={{ backgroundColor: dim(color) }} />
       </div>
 
       <div className="relative">
@@ -412,15 +424,12 @@ function FeaturedCard({ project, idx }: { project: Project; idx: number }) {
         animate={inView ? { clipPath: revealShown } : {}}
         transition={{ delay: 0.05, duration: 0.55, ease: "easeOut" }}
       >
-      <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
+      <div className="px-outer">
         <div
-          className="flex flex-col md:flex-row"
+          className="px-panel flex flex-col md:flex-row"
           style={{
-            border: `2px solid ${hovered ? color : dim(color)}`,
-            backgroundColor: "#100e28",
-            boxShadow: hovered ? `5px 5px 0 #07060e` : "3px 3px 0 #07060e",
-            transition: "border-color 0.08s, box-shadow 0.1s",
-            position: "relative",
+            ["--px-border" as string]: hovered ? color : dim(color),
+            ["--px-bg" as string]: "#100e28",
             overflow: "hidden",
           }}
         >
@@ -438,33 +447,33 @@ function FeaturedCard({ project, idx }: { project: Project; idx: number }) {
             <h3 className="relative font-press-start text-[15px] md:text-[17px] text-white mb-4 leading-relaxed" style={{ zIndex: 1 }}>
               {project.title}
             </h3>
-            <p className="relative text-gray-300 text-sm md:text-[15px] font-mono leading-relaxed mb-5" style={{ zIndex: 1 }}>
+            <p className="relative text-gray-300 font-pixel text-[20px] md:text-[21px] leading-[1.15] mb-5" style={{ zIndex: 1 }}>
               {project.description}
             </p>
-            <ul className="relative flex flex-wrap gap-x-4 gap-y-2 mb-6" style={{ zIndex: 1 }}>
+            <ul className="relative flex flex-wrap gap-1.5 mb-6" style={{ zIndex: 1 }}>
               {project.features.map((f) => (
-                <li key={f} className="text-sm font-mono" style={{ color: "rgba(255,255,255,0.6)" }}>
+                <li key={f} className="px-chip font-pixel text-[18px] leading-none px-2 py-1 gap-1.5"
+                  style={{ color: "rgba(255,255,255,0.65)", ["--px-border" as string]: "rgba(255,255,255,0.1)" }}>
                   <span style={{ color }}>⬥</span> {f}
                 </li>
               ))}
             </ul>
             {project.link && project.link !== "#" && (
-              <motion.a
+              <a
                 href={resolveHref(project.link)}
                 target="_blank"
                 rel="noreferrer"
-                className="relative font-press-start text-[10px] px-4 py-3 self-start cursor-pointer mt-auto"
+                className="px-btn relative font-press-start text-[10px] px-5 py-3.5 self-start cursor-pointer mt-auto"
                 style={{
                   zIndex: 1,
                   color: hovered ? "#0f0d1b" : color,
-                  backgroundColor: hovered ? color : faint(color),
-                  border: `2px solid ${hovered ? color : dim(color)}`,
-                  transition: "color 0.08s, background-color 0.08s, border-color 0.08s",
+                  ["--px-bg" as string]: hovered ? color : faint(color),
+                  ["--px-border" as string]: color,
+                  ["--px-shadow" as string]: dim(color),
                 }}
-                whileTap={{ scale: 0.97 }}
               >
                 VIEW PROJECT ▶︎
-              </motion.a>
+              </a>
             )}
           </div>
         </div>
@@ -486,19 +495,18 @@ function PixelButton({ children, onClick, disabled, active }: {
   const lit = !disabled && (active || hovered);
 
   return (
-    <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
+    <div className="px-outer">
       <button
         onClick={onClick}
         disabled={disabled}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="font-press-start text-[9px] px-3 py-2.5"
+        className={`px-panel font-press-start text-[9px] px-3 py-2.5 ${disabled ? "" : "active:translate-x-1 active:translate-y-1"}`}
         style={{
-          backgroundColor: lit ? "#0d1220" : "#12102e",
-          border: `2px solid ${lit ? "rgba(96,165,250,0.5)" : "rgba(255,255,255,0.08)"}`,
+          ["--px-bg" as string]: active ? "#0d1220" : lit ? "#0d1220" : "#12102e",
+          ["--px-border" as string]: active ? "#60a5fa" : lit ? "rgba(96,165,250,0.7)" : "rgba(255,255,255,0.12)",
           color: disabled ? "rgba(255,255,255,0.15)" : lit ? "#60a5fa" : "rgba(255,255,255,0.45)",
           cursor: disabled ? "default" : "pointer",
-          transition: "border-color 0.06s, background-color 0.06s, color 0.06s",
         }}
       >
         {children}
@@ -509,7 +517,10 @@ function PixelButton({ children, onClick, disabled, active }: {
 
 export default function ProjectShowcase() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  // Also wait for the parent PixelReveal (if any) so entrance animations play
+  // when the section is actually uncovered, not hidden behind the wipe.
+  const revealed = useRevealed();
+  const isInView = useInView(ref, { once: true, margin: "-80px" }) && revealed;
 
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("ALL");
@@ -551,7 +562,7 @@ export default function ProjectShowcase() {
       </div>
 
       <motion.p
-        className="text-center text-gray-400 text-sm font-mono mb-10"
+        className="text-center text-gray-400 font-pixel text-[20px] leading-tight mb-10"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 0.4, duration: 0.4 }}
@@ -566,13 +577,12 @@ export default function ProjectShowcase() {
         transition={{ delay: 0.2, duration: 0.4 }}
         className="mb-4"
       >
-        <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
+        <div className="px-outer">
           <div
-            className="flex items-center gap-3 px-4"
+            className="px-panel flex items-center gap-3 px-4"
             style={{
-              backgroundColor: focused ? "#0b1a1d" : "#12102e",
-              border: `2px solid ${focused ? "#4edbec" : "rgba(255,255,255,0.08)"}`,
-              transition: "border-color 0.06s, background-color 0.06s",
+              ["--px-bg" as string]: focused ? "#0b1a1d" : "#12102e",
+              ["--px-border" as string]: focused ? "#4edbec" : "rgba(255,255,255,0.12)",
             }}
           >
             <span className="font-press-start text-[10px]" style={{ color: focused ? "#4edbec" : "rgba(255,255,255,0.3)" }}>
@@ -609,11 +619,11 @@ export default function ProjectShowcase() {
       >
         <button
           onClick={() => setCategoryFilter("ALL")}
-          className="font-press-start text-[9px] px-2 py-1 cursor-pointer"
+          className="px-chip font-press-start text-[9px] leading-none px-2 py-1.5 cursor-pointer hover:text-white"
           style={{
             color: category === "ALL" ? "#4edbec" : "rgba(255,255,255,0.4)",
-            border: `1px solid ${category === "ALL" ? "rgba(78,219,236,0.5)" : "rgba(255,255,255,0.12)"}`,
-            backgroundColor: category === "ALL" ? "rgba(78,219,236,0.08)" : "transparent",
+            ["--px-border" as string]: category === "ALL" ? "rgba(78,219,236,0.6)" : "rgba(255,255,255,0.14)",
+            ["--px-bg" as string]: category === "ALL" ? "rgba(78,219,236,0.1)" : "rgba(7,6,14,0.5)",
           }}
         >
           ALL
@@ -625,11 +635,11 @@ export default function ProjectShowcase() {
             <button
               key={c}
               onClick={() => setCategoryFilter(isOn ? "ALL" : c)}
-              className="font-press-start text-[9px] px-2 py-1 cursor-pointer"
+              className="px-chip font-press-start text-[9px] leading-none px-2 py-1.5 cursor-pointer hover:text-white"
               style={{
                 color: isOn ? color : "rgba(255,255,255,0.4)",
-                border: `1px solid ${isOn ? dim(color) : "rgba(255,255,255,0.12)"}`,
-                backgroundColor: isOn ? faint(color) : "transparent",
+                ["--px-border" as string]: isOn ? dim(color) : "rgba(255,255,255,0.14)",
+                ["--px-bg" as string]: isOn ? faint(color) : "rgba(7,6,14,0.5)",
               }}
             >
               {c}
@@ -658,21 +668,21 @@ export default function ProjectShowcase() {
         </div>
       ) : !showFeatured ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
+          <div className="px-outer">
             <div
-              className="flex flex-col items-center justify-center gap-4 py-16 px-6"
-              style={{ border: "2px solid rgba(255,255,255,0.08)", backgroundColor: "#0d0b22" }}
+              className="px-panel px-dither flex flex-col items-center justify-center gap-4 py-16 px-6"
+              style={{ ["--px-border" as string]: "rgba(255,255,255,0.12)", ["--px-bg" as string]: "#0d0b22" }}
             >
               <span className="font-press-start text-[13px]" style={{ color: "rgba(255,255,255,0.35)" }}>
                 ✕ NO RESULTS FOUND
               </span>
-              <span className="font-mono text-sm text-gray-500 text-center">
+              <span className="font-pixel text-[19px] leading-tight text-gray-500 text-center">
                 No projects match your search. Try a different keyword or category.
               </span>
               <button
                 onClick={() => { setQuery(""); setCategoryFilter("ALL"); }}
-                className="font-press-start text-[9px] px-3 py-2 cursor-pointer"
-                style={{ color: "#4edbec", border: "1px solid rgba(78,219,236,0.5)", backgroundColor: "rgba(78,219,236,0.08)" }}
+                className="px-chip font-press-start text-[9px] leading-none px-3 py-2 cursor-pointer"
+                style={{ color: "#4edbec", ["--px-border" as string]: "rgba(78,219,236,0.6)", ["--px-bg" as string]: "rgba(78,219,236,0.1)" }}
               >
                 ↺ RESET FILTERS
               </button>

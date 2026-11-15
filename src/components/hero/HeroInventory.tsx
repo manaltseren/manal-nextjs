@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import TypingTitle from "@/components/TypingTitle";
+import { useRevealed } from "@/components/PixelReveal";
 import type { Tool, Rarity } from "@/types";
 
 const tools: Tool[] = [
@@ -223,7 +224,10 @@ function EmptySlot() {
 
 export default function HeroInventory() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  // Also wait for the parent PixelReveal (if any) so entrance animations play
+  // when the section is actually uncovered, not hidden behind the wipe.
+  const revealed = useRevealed();
+  const isInView = useInView(ref, { once: true, margin: "-80px" }) && revealed;
 
   const total = 12;
   const empties = Math.max(0, total - tools.length);

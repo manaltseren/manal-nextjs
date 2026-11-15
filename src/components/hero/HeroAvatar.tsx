@@ -88,7 +88,7 @@ export default function HeroAvatar() {
 
   return (
     <div className="max-w-4xl mx-auto px-5">
-      <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
+      <div className="flex flex-col md:flex-row gap-10 md:gap-12 items-center md:items-start">
 
         {/* ── Left: Avatar + quick stats ── */}
         <motion.div
@@ -154,18 +154,11 @@ export default function HeroAvatar() {
                 />
               </div>
 
-              {/* LV badge — outside the overflow-hidden frame so it can hang below */}
-              <div
-                className="px-chip absolute -bottom-4 left-1/2 -translate-x-1/2 font-press-start text-[9px] px-2 py-1"
-                style={{
-                  ["--px-bg" as string]: "#0f0d1b",
-                  ["--px-border" as string]: "#facc15",
-                  color: "#facc15",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                LV.{level}
-              </div>
+              {/* LV badge — outside the overflow-hidden frame so it can hang
+                  below. Uses the shared .px-lvl style. */}
+              <span className="px-lvl absolute -bottom-4 left-1/2 -translate-x-1/2 font-press-start text-[9px] px-2.5 py-1.5">
+                LVL {level}
+              </span>
 
               {/* Floating sparkles */}
               <Sparkle x={-8} y={20} delay={0} />
@@ -178,58 +171,58 @@ export default function HeroAvatar() {
         </motion.div>
 
         {/* ── Right: Info panel ── */}
-        <div className="flex flex-col gap-4 flex-1 text-center md:text-left">
+        <div className="relative isolate flex flex-col gap-4 flex-1 w-full text-center md:text-left px-4 pt-5 pb-6 md:p-0">
+          {/* Mobile-only backing window: on small screens the scene is static
+              and the sun sits right behind this text, so give it a solid pixel
+              panel to stay readable. Desktop keeps the text on the bare sky. */}
+          <div
+            aria-hidden
+            className="px-panel md:hidden absolute inset-0 -z-10"
+            style={{
+              ["--px-bg" as string]: "rgba(15,13,38,0.92)",
+              ["--px-border" as string]: "rgba(122,93,255,0.45)",
+            }}
+          />
 
-          {/* Name */}
-          <motion.h1
-            className="font-press-start text-white text-xl leading-relaxed"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {nameChars.map((char, idx) => (
-              <motion.span key={idx} variants={charVariants}>
-                {char === " " ? " " : char}
-              </motion.span>
-            ))}
-          </motion.h1>
-
-          {/* Class + online status */}
-          <motion.div
-            className="flex flex-wrap items-center gap-2 justify-center md:justify-start"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.75, duration: 0.35 }}
-          >
-            <span
-              className="px-chip font-press-start text-[9px] px-2 py-1"
-              style={{
-                color: "#4edbec",
-                ["--px-border" as string]: "rgba(78,219,236,0.6)",
-                ["--px-bg" as string]: "rgba(78,219,236,0.08)",
-              }}
+          {/* Name + online status */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-center md:justify-start">
+            <motion.h1
+              className="font-press-start text-white text-xl leading-relaxed"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
             >
-              ⚔︎ FULLSTACK DEV
-            </span>
+              {nameChars.map((char, idx) => (
+                <motion.span key={idx} variants={charVariants}>
+                  {char === " " ? " " : char}
+                </motion.span>
+              ))}
+            </motion.h1>
 
             {/* Blinking online dot */}
-            <span
-              className="px-chip font-press-start text-[9px] px-2 py-1 gap-1.5"
+            <motion.span
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.75, duration: 0.35 }}
+              className="px-chip font-press-start text-[9px] leading-none px-2 py-1.5 gap-2"
               style={{
                 color: "#4ade80",
                 ["--px-border" as string]: "rgba(74,222,128,0.5)",
                 ["--px-bg" as string]: "rgba(74,222,128,0.06)",
               }}
             >
+              {/* Dot is a flex item (not inline) so it centers on the text,
+                  not on the font's baseline; 6px = 2/3 of the 9px cap height */}
               <motion.span
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 1.2, repeat: Infinity }}
+                className="flex shrink-0"
+                animate={{ opacity: [1, 1, 0, 0] }}
+                transition={{ duration: 1.2, repeat: Infinity, times: [0, 0.5, 0.51, 1] }}
               >
-                <span className="inline-block w-1.5 h-1.5 bg-current" />
+                <span className="block w-1.5 h-1.5 bg-current" />
               </motion.span>
-              ONLINE
-            </span>
-          </motion.div>
+              <span className="block leading-none">ONLINE</span>
+            </motion.span>
+          </div>
 
           {/* Bio + current quest */}
           <motion.div
@@ -239,10 +232,10 @@ export default function HeroAvatar() {
             transition={{ delay: 0.9, duration: 0.35 }}
           >
             <p className="font-pixel text-[21px] leading-[1.15] text-white/75">
-              Full-stack developer and CTO. {level} years building web apps, mostly with Laravel and React.
+              Developer with 10+ years of experience in backend architecture and e-commerce platforms.
             </p>
             <p className="font-press-start text-[8px] leading-relaxed text-white/40">
-              ▶ CURRENT QUEST: <span className="text-[#4edbec]">CTO @ BEAUTY SECRETS</span>
+              ▶ CURRENT QUEST: <span className="text-[#4edbec]">SEEKING NEW ADVENTURE</span>
             </p>
           </motion.div>
 
@@ -309,12 +302,12 @@ export default function HeroAvatar() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.25, duration: 0.4 }}
-            className="flex flex-wrap items-center gap-3 justify-center md:justify-start mt-4"
+            className="flex flex-nowrap md:flex-wrap items-center gap-2.5 md:gap-3 justify-center md:justify-start mt-4"
           >
             <a
               href="/vcard.vcf"
               download="Manalaa.vcf"
-              className="px-btn font-press-start text-[9px] px-6 py-3.5 inline-flex items-center gap-2 select-none"
+              className="px-btn font-press-start text-[9px] px-4 md:px-6 py-3.5 inline-flex shrink-0 whitespace-nowrap items-center gap-2 select-none"
               style={{
                 ["--px-bg" as string]: btnHover ? "#c084fc" : "#12102e",
                 color: btnHover ? "#0f0d1b" : "#c084fc",
@@ -334,7 +327,7 @@ export default function HeroAvatar() {
             </a>
 
             {/* Social links — pixel-framed icon buttons */}
-            <div className="flex items-center gap-3 ml-1">
+            <div className="flex items-center gap-2 md:gap-3 md:ml-1">
               {socials.map((s) => (
                 <a
                   key={s.label}
@@ -343,10 +336,10 @@ export default function HeroAvatar() {
                   rel="noopener noreferrer"
                   aria-label={s.label}
                   onClick={s.label === "Facebook" ? openFacebook : undefined}
-                  className={`px-chip justify-center w-11 h-11 text-gray-400 transition-colors ${s.hover}`}
+                  className={`px-chip justify-center shrink-0 w-10 h-10 md:w-11 md:h-11 text-gray-400 transition-colors ${s.hover}`}
                   style={{ ["--px-bg" as string]: "#12102e", ["--px-border" as string]: "rgba(255,255,255,0.14)" }}
                 >
-                  <i className={`lab ${s.icon} text-2xl`} />
+                  <i className={`lab ${s.icon} text-xl md:text-2xl`} />
                 </a>
               ))}
             </div>

@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import type { Quest } from "@/types";
 import TypingTitle from "@/components/TypingTitle";
+import { useRevealed } from "@/components/PixelReveal";
 
 const quests: Quest[] = [
   {
@@ -245,7 +246,10 @@ const INITIAL_SHOW = 3;
 
 export default function HeroQuests() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  // Also wait for the parent PixelReveal (if any) so entrance animations play
+  // when the section is actually uncovered, not hidden behind the wipe.
+  const revealed = useRevealed();
+  const isInView = useInView(ref, { once: true, margin: "-80px" }) && revealed;
   const [expanded, setExpanded] = useState(false);
 
   const visible = expanded ? quests : quests.slice(0, INITIAL_SHOW);

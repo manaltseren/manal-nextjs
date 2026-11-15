@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import type { Skill, SkillType } from "@/types";
 import TypingTitle from "@/components/TypingTitle";
+import { useRevealed } from "@/components/PixelReveal";
 import PixelSprite from "@/components/pixel/PixelSprite";
 
 const skills: Skill[] = [
@@ -396,7 +397,10 @@ export default function HeroSkills() {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  // Also wait for the parent PixelReveal (if any) so entrance animations play
+  // when the section is actually uncovered, not hidden behind the wipe.
+  const revealed = useRevealed();
+  const isInView = useInView(ref, { once: true, margin: "-80px" }) && revealed;
 
   useEffect(() => {
     setMounted(true);
