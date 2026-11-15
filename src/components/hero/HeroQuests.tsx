@@ -82,13 +82,12 @@ function QuestCard({ quest, idx, inView, delay }: { quest: Quest; idx: number; i
       className="select-none"
     >
       {/* Outer dark pixel frame */}
-      <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
+      <div className="px-outer">
         <div
+          className="px-panel"
           style={{
-            border: `2px solid ${hovered ? color : colorDim}`,
-            backgroundColor: hovered ? hoverBg : "#12102e",
-            transition: "border-color 0.06s, background-color 0.06s",
-            position: "relative",
+            ["--px-border" as string]: hovered ? color : colorDim,
+            ["--px-bg" as string]: hovered ? hoverBg : "#12102e",
             overflow: "hidden",
           }}
         >
@@ -144,7 +143,7 @@ function QuestCard({ quest, idx, inView, delay }: { quest: Quest; idx: number; i
               <h3 className="font-press-start text-[13px] text-white mb-3 leading-relaxed">
                 {quest.title}
               </h3>
-              <p className="text-gray-400 text-sm font-mono leading-relaxed">
+              <p className="text-gray-400 font-pixel text-[19px] leading-[1.15]">
                 {quest.description}
               </p>
             </motion.div>
@@ -279,25 +278,24 @@ export default function HeroQuests() {
         transition={{ delay: INITIAL_SHOW * 0.13 + 0.2, duration: 0.4 }}
         className="mt-4"
       >
-        <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
+        <div className="px-outer">
           <button
             onClick={() => setExpanded(v => !v)}
-            className="w-full flex items-center justify-between px-4 py-3 cursor-pointer font-press-start text-[9px] group"
+            className="px-panel w-full flex items-center justify-between px-4 py-3 cursor-pointer font-press-start text-[9px] group active:translate-x-1 active:translate-y-1"
             style={{
-              backgroundColor: "#12102e",
-              border: "2px solid rgba(255,255,255,0.08)",
-              transition: "border-color 0.06s, background-color 0.06s",
+              ["--px-bg" as string]: "#12102e",
+              ["--px-border" as string]: "rgba(255,255,255,0.12)",
               color: "rgba(255,255,255,0.45)",
             }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(96,165,250,0.5)";
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#0d1220";
-              (e.currentTarget as HTMLButtonElement).style.color = "#60a5fa";
+              e.currentTarget.style.setProperty("--px-border", "rgba(96,165,250,0.7)");
+              e.currentTarget.style.setProperty("--px-bg", "#0d1220");
+              e.currentTarget.style.color = "#60a5fa";
             }}
             onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#12102e";
-              (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.45)";
+              e.currentTarget.style.setProperty("--px-border", "rgba(255,255,255,0.12)");
+              e.currentTarget.style.setProperty("--px-bg", "#12102e");
+              e.currentTarget.style.color = "rgba(255,255,255,0.45)";
             }}
           >
             <span>

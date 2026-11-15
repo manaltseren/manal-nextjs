@@ -5,9 +5,16 @@ export interface Skill {
   name: string;
   level: number;
   type: SkillType;
+  /** One-line flavor shown on the card */
+  tagline: string;
+  /** Full description shown in the detail modal */
   effect: string;
   bonus: string[];
-  icon: string;
+  /** Real tech this ability is built on */
+  stack: string[];
+  cooldown: string;
+  /** Key into the PixelSprite `sprites` map */
+  sprite: 'forge' | 'blueprint' | 'banner' | 'skull';
 }
 
 export interface Tool {

@@ -1,5 +1,5 @@
 import { Roboto } from 'next/font/google';
-import { Press_Start_2P } from 'next/font/google';
+import { Press_Start_2P, VT323 } from 'next/font/google';
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import './globals.css';
 import '../styles/main.scss';
@@ -20,6 +20,15 @@ const pressStart = Press_Start_2P({
   variable: '--font-press-start',
 });
 
+// Readable pixel font for body copy on the RPG pages (Press Start 2P is too
+// dense for paragraphs).
+const vt323 = VT323({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-pixel',
+});
+
 export const metadata = {
   metadataBase: new URL('https://manal.dev'),
   title: {
@@ -36,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="dark">
-      <body className={`${roboto.className} ${pressStart.variable}`}>
+      <body className={`${roboto.className} ${pressStart.variable} ${vt323.variable}`}>
         <SynthwaveBackground />
         <Header />
         <main>

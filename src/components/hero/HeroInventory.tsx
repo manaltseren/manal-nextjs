@@ -80,8 +80,8 @@ function ItemTooltip({ tool, x, y }: { tool: Tool; x: number; y: number }) {
       transition={{ duration: 0.12 }}
     >
       {/* Outer pixel frame */}
-      <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
-        <div style={{ border: `2px solid ${cfg.color}`, backgroundColor: "#0f0d26" }} className="relative overflow-hidden">
+      <div className="px-outer">
+        <div style={{ ["--px-border" as string]: cfg.color, ["--px-bg" as string]: "#0f0d26" }} className="px-panel overflow-hidden">
           <Scanlines />
 
           {/* Sparkles for Epic/Legendary */}
@@ -116,19 +116,18 @@ function ItemTooltip({ tool, x, y }: { tool: Tool; x: number; y: number }) {
               width: 64, height: 64,
               backgroundColor: "#0a0920",
               border: `2px solid ${cfg.color}`,
-              boxShadow: `0 0 16px ${cfg.colorDim}, inset 0 0 10px rgba(0,0,0,0.7)`,
+              boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.45), inset 0 4px 0 rgba(255,255,255,0.05)",
               display: "flex", alignItems: "center", justifyContent: "center",
             }}>
               <img src={tool.icon} alt={tool.name}
-                style={{ width: 40, height: 40, objectFit: "contain",
-                  filter: `drop-shadow(0 0 6px ${cfg.color})` }} />
+                style={{ width: 40, height: 40, objectFit: "contain" }} />
             </div>
 
             {/* Dashed separator */}
             <div className="w-full" style={{ borderTop: "1px dashed rgba(255,255,255,0.1)" }} />
 
             {/* Description */}
-            <p className="text-gray-300 text-sm leading-relaxed font-mono text-center">{tool.description}</p>
+            <p className="text-gray-300 font-pixel text-[18px] leading-[1.1] text-center">{tool.description}</p>
           </div>
 
           {/* Footer */}
@@ -164,14 +163,13 @@ function InventorySlot({ tool, idx, inView }: { tool: Tool; idx: number; inView:
         onMouseMove={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
       >
         {/* Outer dark pixel frame */}
-        <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
+        <div className="px-outer">
           <motion.div
             style={{
-              border: `2px solid ${hovered ? cfg.color : cfg.colorDim}`,
-              backgroundColor: hovered ? "#12102e" : "#0a0920",
-              transition: "border-color 0.06s, background-color 0.06s",
+              ["--px-border" as string]: hovered ? cfg.color : cfg.colorDim,
+              ["--px-bg" as string]: hovered ? "#12102e" : "#0a0920",
             }}
-            className="flex flex-col items-center gap-2 p-3 relative overflow-hidden"
+            className="px-panel flex flex-col items-center gap-2 p-3 overflow-hidden"
           >
             <Scanlines />
 
@@ -189,9 +187,8 @@ function InventorySlot({ tool, idx, inView }: { tool: Tool; idx: number; inView:
               <img src={tool.icon} alt={tool.name}
                 style={{
                   width: 36, height: 36, objectFit: "contain",
-                  filter: hovered ? `drop-shadow(0 0 8px ${cfg.color})` : "none",
-                  transition: "filter 0.06s",
-                  transform: hovered ? "scale(1.12)" : "scale(1)",
+                  // Hop up 4px on hover — a hard sprite move, no glow
+                  transform: hovered ? "translateY(-4px)" : "none",
                 }}
               />
             </div>
@@ -215,9 +212,9 @@ function InventorySlot({ tool, idx, inView }: { tool: Tool; idx: number; inView:
 // Empty slot
 function EmptySlot() {
   return (
-    <div style={{ padding: "3px", backgroundColor: "#07060e" }}>
-      <div style={{ border: "2px solid rgba(255,255,255,0.04)", backgroundColor: "#080716", minHeight: 96 }}
-        className="flex items-center justify-center p-3">
+    <div className="px-outer h-full">
+      <div style={{ ["--px-border" as string]: "rgba(255,255,255,0.05)", ["--px-bg" as string]: "#080716", minHeight: 96 }}
+        className="px-panel px-dither h-full flex items-center justify-center p-3">
         <span className="font-press-start text-[8px]" style={{ color: "rgba(255,255,255,0.08)" }}>—</span>
       </div>
     </div>

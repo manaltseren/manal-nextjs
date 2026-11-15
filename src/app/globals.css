@@ -5,6 +5,7 @@
 
 @theme {
   --font-press-start: var(--font-press-start);
+  --font-pixel: var(--font-pixel);
 }
 
 @utility bg-130-auto {
@@ -120,25 +121,53 @@ body {
      group rises on scroll there's no bright band left exposed behind it — the
      purple horizon glow lives in .synthwave-bg__glow, which scrolls WITH the
      grid instead. */
+  /* NIGHT sky — hard color bands (pixel-art style, no smooth gradient). */
   background: linear-gradient(
     to bottom,
-    #0b0a14 0%,
-    #130c28 36%,
-    #1a1038 52%,
-    #0b0a14 66%
+    #06050d 0% 18%,
+    #09081a 18% 32%,
+    #0d0b22 32% 44%,
+    #120d2c 44% 54%,
+    #170f34 54% 62%,
+    #0b0a14 62%
   );
 }
 
-/* Purple horizon glow — sits just above the horizon and rises with the grid
-   group on scroll (so it stays attached to the horizon instead of being a
-   fixed band that gets exposed). */
+/* DUSK sky — lighter banded sky shown while the sun is up. Its opacity is
+   scroll-driven (fades out as the sun sets, revealing the night sky). */
+.synthwave-bg__dusk {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    #170f38 0% 14%,
+    #21154a 14% 26%,
+    #2d1a5a 26% 37%,
+    #3f1f69 37% 46%,
+    #552676 46% 53%,
+    #6e2f80 53% 59%,
+    #8a3984 59% 64%,
+    #a2427f 64% 67%,
+    transparent 67%
+  );
+}
+
+/* Horizon glow — stepped bands just above the horizon. Rises with the grid
+   group on scroll so it stays attached to the horizon. */
 .synthwave-bg__glow {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 33%;
-  height: 130px;
-  background: linear-gradient(to top, rgba(58, 29, 99, 0.55) 0%, transparent 100%);
+  height: 120px;
+  background: linear-gradient(
+    to top,
+    rgba(122, 58, 160, 0.55) 0 16px,
+    rgba(98, 45, 140, 0.4) 16px 36px,
+    rgba(74, 35, 120, 0.28) 36px 64px,
+    rgba(58, 29, 99, 0.16) 64px 96px,
+    transparent 96px
+  );
   pointer-events: none;
 }
 
@@ -153,18 +182,29 @@ body {
 }
 .synthwave-bg__star {
   position: absolute;
-  background: #cfe9ff;
+  background: #e6f4ff;
   animation-name: synthwave-twinkle;
-  animation-timing-function: ease-in-out;
+  /* stepped twinkle — brightness jumps in frames like a sprite */
+  animation-timing-function: steps(3, jump-none);
   animation-iteration-count: infinite;
+}
+/* 4-point cross star: center pixel + 4 arm pixels */
+.synthwave-bg__star--cross {
+  width: 2px !important;
+  height: 2px !important;
+  box-shadow:
+    2px 0 0 #9fd8ff,
+    -2px 0 0 #9fd8ff,
+    0 2px 0 #9fd8ff,
+    0 -2px 0 #9fd8ff;
 }
 @keyframes synthwave-twinkle {
   0%,
   100% {
-    opacity: 0.15;
+    opacity: 0.3;
   }
   50% {
-    opacity: 0.95;
+    opacity: 1;
   }
 }
 
@@ -197,29 +237,31 @@ body {
      SynthwaveBackground.tsx — don't set transform/filter here. */
 }
 
-/* retro sun setting on the horizon, sliced by scanline gaps in its lower half. */
+/* Pixel sun (SVG drawn in SynthwaveBackground.tsx). The viewBox has 8 units of
+   room around the 32-unit sun for the dithered halo, so the SVG is 150% of the
+   wrapper and offset by -25% to keep the sun body exactly on the wrapper. */
 .synthwave-bg__sun {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: linear-gradient(
-    to bottom,
-    #fdf6b2 0%,
-    #ffe07a 20%,
-    #ff9ec0 46%,
-    #ff5fa6 70%,
-    #ff2d8f 100%
-  );
-  /* solid top, horizontal scanline gaps across the lower half (the gaps are
-     transparent so the sky shows through) */
-  -webkit-mask:
-    linear-gradient(#000, #000) top / 100% 48% no-repeat,
-    repeating-linear-gradient(to bottom, #000 0 5px, transparent 5px 13px) bottom / 100% 52% no-repeat;
-  -webkit-mask-composite: source-over;
-  mask:
-    linear-gradient(#000, #000) top / 100% 48% no-repeat,
-    repeating-linear-gradient(to bottom, #000 0 5px, transparent 5px 13px) bottom / 100% 52% no-repeat;
-  mask-composite: add;
+  left: -25%;
+  top: -25%;
+  width: 150%;
+  height: 150%;
+  overflow: visible;
+}
+
+/* Pixel mountain silhouettes sitting on the horizon. Height is 7.5vw because
+   the SVG grid is 320×24 (24/320 = 7.5%), which keeps the pixels square. */
+.synthwave-bg__mountains {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(67% - 7.5vw + 1px);
+  height: 7.5vw;
+}
+.synthwave-bg__mountains svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* Translate-only wrapper. Framer Motion drives its `y` (the scroll-driven grid
@@ -231,6 +273,8 @@ body {
   top: 67%;
   width: 200%;
   height: 65%;
+  /* solid floor so the (lighter) dusk sky never shows below the horizon */
+  background: #0b0a14;
 }
 
 /* the receding floor */
@@ -243,8 +287,8 @@ body {
   transform-origin: top center;
   /* Soft (anti-aliased) line edges further reduce the flicker vs. hard 1px lines. */
   background-image:
-    linear-gradient(to right, rgba(122, 93, 255, 0.6) 0, rgba(122, 93, 255, 0.6) 1px, transparent 2.5px),
-    linear-gradient(to bottom, rgba(78, 219, 236, 0.5) 0, rgba(78, 219, 236, 0.5) 1px, transparent 2.5px);
+    linear-gradient(to right, rgba(140, 112, 255, 0.8) 0, rgba(140, 112, 255, 0.8) 1px, transparent 2.5px),
+    linear-gradient(to bottom, rgba(78, 219, 236, 0.7) 0, rgba(78, 219, 236, 0.7) 1px, transparent 2.5px);
   /* Bigger cells = fewer lines = they don't bunch up at the horizon. */
   background-size: 70px 70px, 70px 70px;
   animation: synthwave-scroll 2.6s linear infinite;
@@ -264,15 +308,14 @@ body {
   }
 }
 
-/* crisp horizon line */
+/* crisp horizon line — a bright 2px line over a dimmer 2px pixel row */
 .synthwave-bg__horizon {
   position: absolute;
   left: 0;
   right: 0;
   top: 67%;
-  height: 2px;
-  background: #4edbec;
-  opacity: 0.85;
+  height: 4px;
+  background: linear-gradient(to bottom, #4edbec 0 2px, rgba(78, 219, 236, 0.35) 2px 4px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -282,5 +325,93 @@ body {
   .synthwave-bg__star {
     animation: none;
     opacity: 0.7;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Pixel UI kit — notched (stepped) corners, hard bevels, stepped drop shadow.
+   Built from stacked box-shadows so there's no border-radius / blur anywhere.
+   Theme per element with CSS vars: --px-border, --px-bg (and --px for size).
+--------------------------------------------------------------------------- */
+@layer components {
+  /* Wrapper that reserves room for the panel's outer border + drop shadow,
+     so panels never overlap their neighbours in a grid. */
+  .px-outer {
+    padding: 4px 8px 8px 4px;
+  }
+
+  .px-panel {
+    --px: 4px;
+    --px-border: rgba(255, 255, 255, 0.14);
+    --px-bg: #12102e;
+    --px-shadow: #05040b;
+    position: relative;
+    background-color: var(--px-bg);
+    box-shadow:
+      /* inner bevel: light top-left, dark bottom-right */
+      inset 0 3px 0 0 rgba(255, 255, 255, 0.06),
+      inset 3px 0 0 0 rgba(255, 255, 255, 0.03),
+      inset 0 -3px 0 0 rgba(0, 0, 0, 0.35),
+      inset -3px 0 0 0 rgba(0, 0, 0, 0.25),
+      /* notched border (corners stay empty) */
+      0 calc(var(--px) * -1) 0 0 var(--px-border),
+      0 var(--px) 0 0 var(--px-border),
+      calc(var(--px) * -1) 0 0 0 var(--px-border),
+      var(--px) 0 0 0 var(--px-border),
+      /* stepped hard drop shadow */
+      var(--px) calc(var(--px) * 2) 0 0 var(--px-shadow),
+      calc(var(--px) * 2) var(--px) 0 0 var(--px-shadow);
+  }
+
+  /* Small notched chip for badges / tags (no drop shadow) */
+  .px-chip {
+    --px-border: rgba(255, 255, 255, 0.2);
+    --px-bg: rgba(255, 255, 255, 0.04);
+    display: inline-flex;
+    align-items: center;
+    margin: 2px;
+    background-color: var(--px-bg);
+    box-shadow:
+      0 -2px 0 0 var(--px-border),
+      0 2px 0 0 var(--px-border),
+      -2px 0 0 0 var(--px-border),
+      2px 0 0 0 var(--px-border);
+  }
+
+  /* Pressable pixel button: raised by a stepped shadow, sinks on :active */
+  .px-btn {
+    --px-border: #c084fc;
+    --px-bg: #12102e;
+    --px-shadow: rgba(192, 132, 252, 0.35);
+    position: relative;
+    margin: 4px;
+    background-color: var(--px-bg);
+    box-shadow:
+      inset 0 3px 0 0 rgba(255, 255, 255, 0.12),
+      inset 0 -3px 0 0 rgba(0, 0, 0, 0.35),
+      0 -4px 0 0 var(--px-border),
+      0 4px 0 0 var(--px-border),
+      -4px 0 0 0 var(--px-border),
+      4px 0 0 0 var(--px-border),
+      4px 8px 0 0 var(--px-shadow),
+      8px 4px 0 0 var(--px-shadow);
+  }
+  .px-btn:active {
+    transform: translate(4px, 4px);
+    box-shadow:
+      inset 0 3px 0 0 rgba(0, 0, 0, 0.3),
+      0 -4px 0 0 var(--px-border),
+      0 4px 0 0 var(--px-border),
+      -4px 0 0 0 var(--px-border),
+      4px 0 0 0 var(--px-border);
+  }
+
+  /* Checker dither — classic 2px pixel texture */
+  .px-dither {
+    background-image:
+      linear-gradient(45deg, rgba(255, 255, 255, 0.035) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.035) 75%),
+      linear-gradient(45deg, rgba(255, 255, 255, 0.035) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.035) 75%);
+    background-size: 4px 4px;
+    background-position: 0 0, 2px 2px;
   }
 }

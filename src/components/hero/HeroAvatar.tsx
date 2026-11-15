@@ -107,22 +107,15 @@ export default function HeroAvatar() {
               animate={{ scale: 1 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
             >
-              {/* Pulsing glow ring */}
-              <motion.div
-                className="absolute -inset-2"
-                style={{ border: "1px solid #7a5dff" }}
-                animate={{ opacity: [0.2, 0.6, 0.2], scale: [1, 1.03, 1] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              />
-
+              {/* Character-select frame: notched pixel border + stepped shadow */}
               <div
+                className="px-panel px-dither"
                 style={{
                   width: 180,
                   height: 180,
-                  position: "relative",
-                  // Character-select backdrop behind the transparent avatar
-                  background: "radial-gradient(circle at 50% 38%, rgba(38,27,82,0.55) 0%, rgba(22,18,58,0.4) 55%, rgba(10,9,32,0.3) 100%)",
                   overflow: "hidden",
+                  ["--px-border" as string]: "#7a5dff",
+                  ["--px-bg" as string]: "#16123a",
                 }}
               >
                 {/* Faint pixel grid */}
@@ -138,11 +131,11 @@ export default function HeroAvatar() {
                 <div
                   className="absolute pointer-events-none"
                   style={{
-                    left: "20%",
-                    right: "20%",
+                    left: "22%",
+                    right: "22%",
                     bottom: 6,
-                    height: 12,
-                    background: "radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, transparent 70%)",
+                    height: 8,
+                    backgroundColor: "rgba(0,0,0,0.45)",
                   }}
                 />
                 <img
@@ -159,19 +152,14 @@ export default function HeroAvatar() {
                     transformOrigin: "center bottom",
                   }}
                 />
-                {/* Corner brackets */}
-                <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-purple-400" />
-                <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-purple-400" />
-                <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-purple-400" />
-                <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-purple-400" />
               </div>
 
               {/* LV badge — outside the overflow-hidden frame so it can hang below */}
               <div
-                className="absolute -bottom-3 left-1/2 -translate-x-1/2 font-press-start text-[9px] px-2 py-0.5"
+                className="px-chip absolute -bottom-4 left-1/2 -translate-x-1/2 font-press-start text-[9px] px-2 py-1"
                 style={{
-                  backgroundColor: "#0f0d1b",
-                  border: "1px solid rgba(250,204,21,0.5)",
+                  ["--px-bg" as string]: "#0f0d1b",
+                  ["--px-border" as string]: "#facc15",
                   color: "#facc15",
                   whiteSpace: "nowrap",
                 }}
@@ -214,11 +202,11 @@ export default function HeroAvatar() {
             transition={{ delay: 0.75, duration: 0.35 }}
           >
             <span
-              className="font-press-start text-[9px] px-2 py-1"
+              className="px-chip font-press-start text-[9px] px-2 py-1"
               style={{
                 color: "#4edbec",
-                border: "1px solid rgba(78,219,236,0.4)",
-                backgroundColor: "rgba(78,219,236,0.08)",
+                ["--px-border" as string]: "rgba(78,219,236,0.6)",
+                ["--px-bg" as string]: "rgba(78,219,236,0.08)",
               }}
             >
               ⚔︎ FULLSTACK DEV
@@ -226,33 +214,55 @@ export default function HeroAvatar() {
 
             {/* Blinking online dot */}
             <span
-              className="font-press-start text-[9px] px-2 py-1 flex items-center gap-1.5"
+              className="px-chip font-press-start text-[9px] px-2 py-1 gap-1.5"
               style={{
                 color: "#4ade80",
-                border: "1px solid rgba(74,222,128,0.3)",
-                backgroundColor: "rgba(74,222,128,0.06)",
+                ["--px-border" as string]: "rgba(74,222,128,0.5)",
+                ["--px-bg" as string]: "rgba(74,222,128,0.06)",
               }}
             >
               <motion.span
                 animate={{ opacity: [1, 0, 1] }}
                 transition={{ duration: 1.2, repeat: Infinity }}
               >
-                ●
+                <span className="inline-block w-1.5 h-1.5 bg-current" />
               </motion.span>
               ONLINE
             </span>
           </motion.div>
 
-          {/* Dashed divider */}
-          <div style={{ borderTop: "1px dashed rgba(255,255,255,0.08)" }} />
+          {/* Bio + current quest */}
+          <motion.div
+            className="flex flex-col gap-2.5 items-center md:items-start"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.35 }}
+          >
+            <p className="font-pixel text-[21px] leading-[1.15] text-white/75">
+              Full-stack developer and CTO. {level} years building web apps, mostly with Laravel and React.
+            </p>
+            <p className="font-press-start text-[8px] leading-relaxed text-white/40">
+              ▶ CURRENT QUEST: <span className="text-[#4edbec]">CTO @ BEAUTY SECRETS</span>
+            </p>
+          </motion.div>
+
+          {/* Pixel dotted divider */}
+          <div
+            style={{
+              height: 2,
+              backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.12) 50%, transparent 50%)",
+              backgroundSize: "8px 2px",
+            }}
+          />
 
           {/* XP bar */}
           <motion.div
+            className="w-full"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.0, duration: 0.4 }}
           >
-            <div className="flex justify-between items-center mb-1.5">
+            <div className="flex justify-between items-center mb-2">
               <span className="font-press-start text-[8px]" style={{ color: "rgba(255,255,255,0.3)" }}>
                 EXPERIENCE
               </span>
@@ -260,33 +270,37 @@ export default function HeroAvatar() {
                 {xpCount.toLocaleString()} / 10,000
               </span>
             </div>
-            <div
-              style={{
-                backgroundColor: "#0a0920",
-                border: "1px solid rgba(255,255,255,0.07)",
-                height: 16,
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              <motion.div
+            <div>
+              {/* Slim bar: 2px notched pixel border (px-chip), no drop shadow */}
+              <div
+                className="px-chip relative"
                 style={{
-                  height: "100%",
-                  backgroundColor: "#facc15",
-                  boxShadow:
-                    "inset 0 4px 0 rgba(255,255,255,0.22), inset 0 -2px 0 rgba(0,0,0,0.4), 0 0 8px rgba(250,204,21,0.4)",
+                  display: "block",
+                  height: 10,
+                  overflow: "hidden",
+                  ["--px-bg" as string]: "#0a0920",
+                  ["--px-border" as string]: "rgba(255,255,255,0.18)",
                 }}
-                initial={{ width: "0%" }}
-                animate={{ width: `${xpPercent}%` }}
-                transition={{ duration: 1.6, ease: "easeOut", delay: 0.5 }}
-              />
-              {[25, 50, 75].map((pct) => (
-                <div
-                  key={pct}
-                  className="absolute top-0 bottom-0 w-px"
-                  style={{ left: `${pct}%`, backgroundColor: "rgba(0,0,0,0.4)", zIndex: 1 }}
+              >
+                <motion.div
+                  style={{
+                    height: "100%",
+                    backgroundColor: "#facc15",
+                    boxShadow: "inset 0 2px 0 rgba(255,255,255,0.4), inset 0 -2px 0 rgba(0,0,0,0.3)",
+                  }}
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${xpPercent}%` }}
+                  transition={{ duration: 1.6, ease: (t: number) => Math.floor(t * 20) / 20, delay: 0.5 }}
                 />
-              ))}
+                {/* Segment gaps — the bar fills block by block */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: "linear-gradient(90deg, transparent calc(100% - 2px), #0a0920 calc(100% - 2px))",
+                    backgroundSize: "5% 100%",
+                  }}
+                />
+              </div>
             </div>
           </motion.div>
 
@@ -297,23 +311,17 @@ export default function HeroAvatar() {
             transition={{ delay: 1.25, duration: 0.4 }}
             className="flex flex-wrap items-center gap-3 justify-center md:justify-start mt-4"
           >
-            <motion.a
+            <a
               href="/vcard.vcf"
               download="Manalaa.vcf"
-              className="font-press-start text-[9px] px-6 py-3.5 inline-flex items-center gap-2 select-none"
+              className="px-btn font-press-start text-[9px] px-6 py-3.5 inline-flex items-center gap-2 select-none"
               style={{
-                backgroundColor: btnHover ? "#c084fc" : "#12102e",
+                ["--px-bg" as string]: btnHover ? "#c084fc" : "#12102e",
                 color: btnHover ? "#0f0d1b" : "#c084fc",
-                border: "2px solid #c084fc",
-                // Hard pixel shadow — raised, pressable
-                boxShadow: "4px 4px 0 rgba(192,132,252,0.4)",
                 letterSpacing: "0.08em",
-                transition: "background-color 0.06s, color 0.06s",
               }}
               onMouseEnter={() => setBtnHover(true)}
               onMouseLeave={() => setBtnHover(false)}
-              whileTap={{ x: 4, y: 4, boxShadow: "0px 0px 0 rgba(192,132,252,0.4)" }}
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
               {/* Blinking cursor prefix */}
               <motion.span
@@ -323,10 +331,10 @@ export default function HeroAvatar() {
                 ▶︎
               </motion.span>
               CONTACT ME
-            </motion.a>
+            </a>
 
             {/* Social links — pixel-framed icon buttons */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 ml-1">
               {socials.map((s) => (
                 <a
                   key={s.label}
@@ -335,7 +343,8 @@ export default function HeroAvatar() {
                   rel="noopener noreferrer"
                   aria-label={s.label}
                   onClick={s.label === "Facebook" ? openFacebook : undefined}
-                  className={`inline-flex items-center justify-center w-11 h-11 border-2 border-white/10 bg-[#12102e] text-gray-400 transition-colors ${s.hover}`}
+                  className={`px-chip justify-center w-11 h-11 text-gray-400 transition-colors ${s.hover}`}
+                  style={{ ["--px-bg" as string]: "#12102e", ["--px-border" as string]: "rgba(255,255,255,0.14)" }}
                 >
                   <i className={`lab ${s.icon} text-2xl`} />
                 </a>
