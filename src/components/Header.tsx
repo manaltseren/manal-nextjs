@@ -2,18 +2,11 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import SocialIcon from "@/components/pixel/SocialIcon";
 import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 
 const navItems = [
-  { href: "/", label: "ABOUT ME", key: "1", desc: "Character overview", sprite: "hero" as const },
-  { href: "/portfolio", label: "PORTFOLIO", key: "2", desc: "Completed quests", sprite: "chest" as const },
-];
-
-const socials = [
-  { href: "https://www.linkedin.com/in/manaltseren-b-5883b214b/", icon: "linkedin" as const, label: "LinkedIn" },
-  { href: "https://www.instagram.com/manal.dev/", icon: "instagram" as const, label: "Instagram" },
-  { href: "https://www.facebook.com/noirmn", icon: "facebook" as const, label: "Facebook" },
+  { href: "/", label: "ABOUT ME", key: "1", desc: "Character overview" },
+  { href: "/portfolio", label: "PORTFOLIO", key: "2", desc: "Completed quests" },
 ];
 
 // CSS custom properties aren't in React.CSSProperties.
@@ -47,54 +40,15 @@ function LogoCode() {
   );
 }
 
-// Tiny grid sprites for the menu (one char = one pixel, "." = empty)
-const gridSprites = {
-  chest: {
-    palette: { o: "#0b0a14", b: "#b45309", d: "#78350f", y: "#facc15" },
-    rows: [".oooooo.", "obbbbbbo", "obbbbbbo", "oooyyooo", "odddyddo", "oddddddo", "oddddddo", "oooooooo"],
-  },
-  hero: {
-    palette: { o: "#0b0a14", h: "#7a5dff", s: "#f5c9a0", e: "#0b0a14" },
-    rows: [".oooooo.", "ohhhhhho", "ohssssho", "osesseso", "osssssso", "osseesso", ".osssso.", "..oooo.."],
-  },
-} as const;
-
-function GridSprite({ name, size }: { name: keyof typeof gridSprites; size: number }) {
-  const { palette, rows } = gridSprites[name];
-  const w = rows[0].length;
-  const h = rows.length;
-  const rects: React.ReactNode[] = [];
-  rows.forEach((row, y) => {
-    // merge horizontal runs of the same colour into one rect
-    let x = 0;
-    while (x < row.length) {
-      const c = row[x];
-      let run = 1;
-      while (x + run < row.length && row[x + run] === c) run++;
-      if (c !== ".") {
-        rects.push(
-          <rect key={`${x}-${y}`} x={x} y={y} width={run} height={1} fill={palette[c as keyof typeof palette]} />
-        );
-      }
-      x += run;
-    }
-  });
-  return (
-    <svg width={(size * w) / h} height={size} viewBox={`0 0 ${w} ${h}`} shapeRendering="crispEdges" aria-hidden="true">
-      {rects}
-    </svg>
-  );
-}
-
 // Pixel burger icon (the drawer has its own CloseIcon).
 function BurgerIcon({ wiggle, idle = false }: { wiggle: boolean; idle?: boolean }) {
-  // Three coloured bars (cyan / purple / yellow), each with a dark drop pixel.
-  // Idle: every few seconds a stepped wave runs through them (works on touch,
-  // where there's no hover). Hover / press: equalizer-style width wiggle.
+  // Three bars in the button's text colour (currentColor), each with a dark
+  // drop pixel. Idle: every few seconds a stepped wave runs through them
+  // (works on touch, where there's no hover). Hover / press: equalizer wiggle.
   const bars = [
-    { y: 0, c: "#4edbec", w: [7, 4, 6, 7] },
-    { y: 3, c: "#c4b5ff", w: [5, 7, 3, 5] },
-    { y: 6, c: "#facc15", w: [6, 3, 7, 6] },
+    { y: 0, c: "currentColor", w: [7, 4, 6, 7] },
+    { y: 3, c: "currentColor", w: [5, 7, 3, 5] },
+    { y: 6, c: "currentColor", w: [6, 3, 7, 6] },
   ];
   return (
     <svg width="18" height="16" viewBox="0 0 9 8" shapeRendering="crispEdges" aria-hidden="true" overflow="visible">
@@ -113,7 +67,7 @@ function BurgerIcon({ wiggle, idle = false }: { wiggle: boolean; idle?: boolean 
             x={0}
             y={b.y + 1}
             height={1}
-            fill="#05040b"
+            fill="rgba(0,0,0,0.45)"
             initial={false}
             animate={{ width: wiggle ? b.w : b.w[0] }}
             transition={wiggle ? { duration: 0.6, repeat: Infinity, ease: stepped(4) } : { duration: 0 }}
@@ -133,10 +87,9 @@ function BurgerIcon({ wiggle, idle = false }: { wiggle: boolean; idle?: boolean 
   );
 }
 
-// Purple pixel X for the drawer's close button: highlight + body + dark drop
-// pixels. Just pops in when the drawer opens — kept calm on purpose.
+// X for the drawer's close button — smooth straight strokes (not pixel
+// steps), in currentColor. Just pops in when the drawer opens.
 function CloseIcon() {
-  const X = [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6], [6, 0], [5, 1], [4, 2], [2, 4], [1, 5], [0, 6]];
   return (
     <motion.span
       className="flex"
@@ -144,11 +97,8 @@ function CloseIcon() {
       animate={{ scale: 1 }}
       transition={{ duration: 0.2, ease: stepped(3) }}
     >
-      <svg width="16" height="16" viewBox="0 0 8 8" shapeRendering="crispEdges" aria-hidden="true">
-        {X.map(([x, y]) => <rect key={`s${x}-${y}`} x={x + 1} y={y + 1} width={1} height={1} fill="#05040b" />)}
-        {X.map(([x, y]) => <rect key={`b${x}-${y}`} x={x} y={y} width={1} height={1} fill="#c4b5ff" />)}
-        <rect x={0} y={0} width={1} height={1} fill="#ffffff" />
-        <rect x={6} y={0} width={1} height={1} fill="#ffffff" />
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+        <path d="M2 2 L12 12 M12 2 L2 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" fill="none" />
       </svg>
     </motion.span>
   );
@@ -266,18 +216,14 @@ const Header = () => {
               })}
             </nav>
 
-            {/* Burger (mobile) — an arcade "MENU" button: coloured bars that
-                do a small 1px wave now and then, equalizer wiggle on
-                hover/press, sinks 2px on tap. (Toned down — no spark, no squash.) */}
+            {/* Burger (mobile) — same raised violet `.px-btn` as the hero's
+                CONTACT ME / Instagram buttons: stepped shadow, sinks 4px on
+                press (CSS :active), fills violet on hover. Bars use
+                currentColor; small 1px wave now and then, equalizer wiggle on
+                hover/press. */}
             <motion.button
-              className="md:hidden relative px-chip gap-2.5 h-10 pl-3 pr-3.5 cursor-pointer text-white/85 hover:text-white [--px-border:rgba(255,255,255,0.18)] hover:[--px-border:#4edbec]"
-              style={pxVars({
-                "--px-bg": "#12102e",
-                boxShadow:
-                  "inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.35), 0 -2px 0 0 var(--px-border), 0 2px 0 0 var(--px-border), -2px 0 0 0 var(--px-border), 2px 0 0 0 var(--px-border), 4px 4px 0 0 #05040b",
-              } as Record<string, string>)}
-              whileTap={reduce ? undefined : { y: 2 }}
-              transition={{ duration: 0.12, ease: stepped(2) }}
+              className="md:hidden px-btn inline-flex items-center gap-2.5 h-10 pl-3 pr-3.5 cursor-pointer select-none text-[#c084fc] [--px-border:#c084fc] [--px-shadow:rgba(192,132,252,0.3)] hover:[--px-bg:#c084fc] hover:text-[#0f0d1b]"
+              style={{ letterSpacing: "0.08em" }}
               onHoverStart={() => setBurgerHover(true)}
               onHoverEnd={() => setBurgerHover(false)}
               onTapStart={() => setBurgerHover(true)}
@@ -344,23 +290,18 @@ const Header = () => {
                   </motion.span>
                   <span className="font-press-start text-[11px] leading-none text-white">PAUSED</span>
                 </div>
-                  {/* Close — matching arcade button: purple pixel X that pops in,
-                      sinks on tap */}
-                  <motion.button
-                    className="relative px-chip gap-2 h-10 pl-3 pr-3 cursor-pointer text-white [--px-border:#7a5dff] hover:[--px-border:#4edbec]"
-                    style={pxVars({
-                      "--px-bg": "#12102e",
-                      boxShadow:
-                        "inset 0 2px 0 rgba(255,255,255,0.1), inset 0 -2px 0 rgba(0,0,0,0.35), 0 -2px 0 0 var(--px-border), 0 2px 0 0 var(--px-border), -2px 0 0 0 var(--px-border), 2px 0 0 0 var(--px-border), 4px 4px 0 0 #05040b",
-                    })}
-                    whileTap={reduce ? undefined : { y: 2 }}
-                    transition={{ duration: 0.12, ease: stepped(2) }}
+                  {/* Close — same raised violet `.px-btn` as the MENU button:
+                      pixel X (currentColor) that pops in, sinks on press,
+                      fills violet on hover */}
+                  <button
+                    className="px-btn inline-flex items-center gap-2 h-10 pl-3 pr-3 cursor-pointer select-none text-[#c084fc] [--px-border:#c084fc] [--px-shadow:rgba(192,132,252,0.3)] hover:[--px-bg:#c084fc] hover:text-[#0f0d1b]"
+                    style={{ letterSpacing: "0.08em" }}
                     onClick={() => setOpen(false)}
                     aria-label="Close menu"
                   >
                     <CloseIcon />
-                    <span className="font-press-start text-[8px] leading-none text-[#c4b5ff]">ESC</span>
-                  </motion.button>
+                    <span className="font-press-start text-[8px] leading-none">ESC</span>
+                  </button>
               </div>
 
               {/* Items — drop in one by one, cursor bounces on the selected one */}
@@ -392,12 +333,6 @@ const Header = () => {
                           "--px-bg": active ? "#7a5dff" : "#12102e",
                         })}
                       >
-                        <span
-                          className="px-chip justify-center w-9 h-9 shrink-0"
-                          style={pxVars({ "--px-bg": "#0a0920", "--px-border": active ? "#0a0920" : "rgba(255,255,255,0.2)" })}
-                        >
-                          <GridSprite name={item.sprite} size={20} />
-                        </span>
                         <span className="flex flex-col gap-1.5 min-w-0">
                           <span className={`font-press-start text-[10px] leading-none ${active ? "text-white" : "text-white/80"}`}>
                             {item.label}
@@ -417,28 +352,13 @@ const Header = () => {
                 })}
               </nav>
 
-              {/* Bottom: socials + resume */}
+              {/* Bottom: resume */}
               <motion.div
                 className="mt-auto px-5 pb-8 flex flex-col gap-5"
                 initial={reduce ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.35, ease: smooth }}
               >
-                <div className="flex items-center gap-3">
-                  {socials.map((s) => (
-                    <a
-                      key={s.label}
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={s.label}
-                      className="px-chip justify-center w-11 h-11 text-white/60 hover:text-[#4edbec] [--px-border:rgba(255,255,255,0.14)] hover:[--px-border:#4edbec]"
-                      style={pxVars({ "--px-bg": "#12102e" })}
-                    >
-                      <SocialIcon name={s.icon} />
-                    </a>
-                  ))}
-                </div>
                 <button
                   onClick={() => setOpen(false)}
                   className="px-btn font-press-start text-[10px] py-4 w-[calc(100%-12px)] cursor-pointer inline-flex items-center justify-center gap-2 text-[#0f0d1b]"

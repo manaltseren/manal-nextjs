@@ -113,7 +113,14 @@ body {
 --------------------------------------------------------------------------- */
 .synthwave-bg {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Fixed height (largest viewport) instead of `bottom: 0`: on mobile the
+     address bar showing/hiding mid-scroll would otherwise resize this layer and
+     shift the %-positioned horizon/sun out of sync with the scroll motion. */
+  height: 100vh;
+  height: 100lvh;
   z-index: -10;
   overflow: hidden;
   pointer-events: none;
@@ -236,7 +243,6 @@ body {
      scroll-fading glow (filter) are all applied by Framer Motion in
      SynthwaveBackground.tsx — don't set transform/filter here. */
 }
-
 /* Pixel sun (SVG drawn in SynthwaveBackground.tsx). The viewBox has 8 units of
    room around the 32-unit sun for the dithered halo, so the SVG is 150% of the
    wrapper and offset by -25% to keep the sun body exactly on the wrapper. */

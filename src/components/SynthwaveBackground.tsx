@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 
 /**
@@ -19,10 +18,9 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
  *   sun up   → dusk sky visible, grid/horizon bright, stars faint
  *   sun down → dusk sky fades to the dark night sky, grid dims, stars bright
  *
- * The scroll-driven motion is DESKTOP-ONLY. On mobile the address bar
- * shows/hides and resizes the viewport mid-scroll, which desyncs scroll-linked
- * transforms on a fixed layer. So on small screens the scene is static — the
- * "sun up" state.
+ * The scroll-driven motion runs on ALL screen sizes. The layer has a fixed
+ * 100lvh height (not `inset: 0`) so the mobile address bar showing/hiding
+ * mid-scroll can't resize it and desync the %-positioned horizon/sun.
  */
 
 // Deterministic pseudo-random in [0,1). Stable across SSR/CSR — values are
@@ -173,17 +171,6 @@ function PixelMountains() {
 }
 
 export default function SynthwaveBackground() {
-  // Enable the scroll-driven motion only on wider screens (see note above).
-  // Defaults to false so SSR + first client render agree (no hydration shift).
-  const [animate, setAnimate] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const update = () => setAnimate(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-
   const { scrollY } = useScroll();
   // Sun sinks 320px over the first 600px of scroll (sets behind the horizon).
   const sunY = useTransform(scrollY, [0, 600], [0, 320], { clamp: true });
@@ -201,13 +188,11 @@ export default function SynthwaveBackground() {
   // Halo stays strong while the sun sets (floor 0.7), like the old glow
   const haloOpacity = useTransform(scrollY, [0, 350], [1, 0.7], { clamp: true });
 
-  // Mobile: static "sun up" values instead of the scroll-linked ones.
-  const v = (mv: MotionValue<number>, rest: number) => (animate ? mv : rest);
 
   return (
     <div className="synthwave-bg" aria-hidden="true">
-      <motion.div className="synthwave-bg__dusk" style={{ opacity: v(duskOpacity, 1) }} />
-      <motion.div className="synthwave-bg__stars" style={{ opacity: v(starsOpacity, 0.18) }}>
+      <motion.div className="synthwave-bg__dusk" style={{ opacity: duskOpacity }} />
+      <motion.div className="synthwave-bg__stars" style={{ opacity: starsOpacity }}>
         {STARS.map((s, i) => (
           <span
             key={i}
@@ -223,21 +208,21 @@ export default function SynthwaveBackground() {
           />
         ))}
       </motion.div>
-      <motion.div className="synthwave-bg__glow" style={{ y: v(gridY, 0), opacity: v(glowOpacity, 1) }} />
+      <motion.div className="synthwave-bg__glow" style={{ y: gridY, opacity: glowOpacity }} />
       {/* The clip rises with the horizon (gridY) so its cut line stays glued to
           the horizon line; the sun inside also sinks (sunY) on top of that. */}
-      <motion.div className="synthwave-bg__sunclip" style={{ y: v(gridY, 0) }}>
-        <motion.div className="synthwave-bg__sun-wrap" style={{ x: "-50%", y: v(sunY, 0) }}>
-          <PixelSun haloOpacity={v(haloOpacity, 1)} />
+      <motion.div className="synthwave-bg__sunclip" style={{ y: gridY }}>
+        <motion.div className="synthwave-bg__sun-wrap" style={{ x: "-50%", y: sunY }}>
+          <PixelSun haloOpacity={haloOpacity} />
         </motion.div>
       </motion.div>
-      <motion.div className="synthwave-bg__mountains" style={{ y: v(gridY, 0) }}>
+      <motion.div className="synthwave-bg__mountains" style={{ y: gridY }}>
         <PixelMountains />
       </motion.div>
-      <motion.div className="synthwave-bg__grid-wrap" style={{ y: v(gridY, 0) }}>
-        <motion.div className="synthwave-bg__grid" style={{ opacity: v(gridOpacity, 1) }} />
+      <motion.div className="synthwave-bg__grid-wrap" style={{ y: gridY }}>
+        <motion.div className="synthwave-bg__grid" style={{ opacity: gridOpacity }} />
       </motion.div>
-      <motion.div className="synthwave-bg__horizon" style={{ y: v(gridY, 0), opacity: v(horizonOpacity, 1) }} />
+      <motion.div className="synthwave-bg__horizon" style={{ y: gridY, opacity: horizonOpacity }} />
     </div>
   );
 }

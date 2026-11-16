@@ -10,8 +10,8 @@
 //   └──────────────────────────────────────────────────────────┘
 //
 // Desktop: no frame/fill — everything sits on the scene, aligned to the
-// container edges; the quest + buttons row sits under the main row. Mobile: a
-// solid backing card (stacked, centred) so text stays readable over the sun.
+// container edges; the quest + buttons row sits under the main row. Mobile:
+// stacked and centred, also with no card.
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import SocialIcon from "@/components/pixel/SocialIcon";
@@ -79,17 +79,11 @@ export default function HeroAvatar() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        {/* No card on desktop — the elements sit straight on the synthwave
-            scene, aligned to the container edges. Mobile keeps a solid backing
-            panel (the static sun sits right behind the text there). */}
+        {/* No card — the elements sit straight on the synthwave scene,
+            aligned to the container edges (mobile too). */}
         <div className="relative isolate">
-          <div
-            aria-hidden
-            className="px-panel md:hidden absolute inset-0 -z-10"
-            style={pxVars({ "--px": "2px", "--px-border": "rgba(122,93,255,0.55)", "--px-bg": "rgba(15,13,38,0.9)" })}
-          />
           {/* ── Main: avatar | name, bio, XP ── */}
-          <div className="flex flex-col md:flex-row items-center md:items-stretch gap-6 md:gap-8 p-5 md:p-0">
+          <div className="flex flex-col md:flex-row items-center md:items-stretch gap-6 md:gap-8 py-5 md:p-0">
             {/* Avatar */}
             <motion.div
               className="relative shrink-0"
@@ -232,7 +226,7 @@ export default function HeroAvatar() {
 
           {/* ── Status bar: current quest | actions ── */}
           <motion.div
-            className="flex flex-col md:flex-row items-center gap-4 md:justify-between px-5 py-4 md:p-0 md:mt-8 bg-[#0a0920] md:bg-transparent"
+            className="flex flex-col md:flex-row items-center gap-4 md:justify-between py-4 md:p-0 md:mt-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.15, duration: 0.4 }}
