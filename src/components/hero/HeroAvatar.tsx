@@ -12,7 +12,7 @@
 // Desktop: no frame/fill — everything sits on the scene, aligned to the
 // container edges; the quest + buttons row sits under the main row. Mobile:
 // stacked and centred, also with no card.
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useState, useEffect } from "react";
 import SocialIcon from "@/components/pixel/SocialIcon";
 import { AVATAR_LOOK, avatarPortraits } from "@/components/hero/character/look";
@@ -40,6 +40,65 @@ function Sparkle({ x, y, delay }: { x: number; y: number; delay: number }) {
       animate={{ opacity: [0, 1, 0], y: [0, -12, -20], scale: [0.5, 1, 0.3] }}
       transition={{ duration: 2.2, repeat: Infinity, delay, ease: "easeOut" }}
     />
+  );
+}
+
+// ── Avatar "spawn" reveal ────────────────────────────────────────────────────
+// The portrait materialises like a player spawning in: a 12×12 grid of
+// static-noise pixel blocks covers it, and each block flashes cyan for one
+// frame, then vanishes. Order = a wave climbing bottom → top with a
+// deterministic jitter (Math.sin hash, so SSR and client agree). Hard cuts
+// only; skipped under reduced motion.
+const GRID = 12;
+const hash = (n: number) => {
+  const x = Math.sin(n * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+};
+const REVEAL_START = 0.35; // after the frame pops in
+const REVEAL_SPAN = 0.7; // wave duration
+const FLASH = 0.09; // per-block cyan frame + hold
+const spawnCells = Array.from({ length: GRID * GRID }, (_, i) => {
+  const row = Math.floor(i / GRID);
+  const n = hash(i + 1);
+  return {
+    i,
+    row,
+    col: i % GRID,
+    // mostly dark noise, a few violet specks
+    color: n > 0.88 ? "#7a5dff" : n > 0.6 ? "#2a1f6b" : "#16123a",
+    delay: REVEAL_START + (((GRID - 1 - row) / GRID) * 0.75 + hash(i * 7.3 + 3) * 0.25) * REVEAL_SPAN,
+  };
+});
+const SPAWN_END = (REVEAL_START + REVEAL_SPAN + FLASH) * 1000 + 100;
+
+function SpawnOverlay() {
+  const reduce = useReducedMotion();
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setDone(true), SPAWN_END);
+    return () => clearTimeout(t);
+  }, []);
+  if (reduce || done) return null;
+  const size = 100 / GRID;
+  return (
+    <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
+      {spawnCells.map((c) => (
+        <motion.div
+          key={c.i}
+          className="absolute"
+          style={{
+            left: `${c.col * size}%`,
+            top: `${c.row * size}%`,
+            // +0.5% overlap so no seams show between blocks
+            width: `${size + 0.5}%`,
+            height: `${size + 0.5}%`,
+            backgroundColor: c.color,
+          }}
+          animate={{ backgroundColor: [c.color, c.color, "#4edbec", "#4edbec"], opacity: [1, 1, 1, 0] }}
+          transition={{ delay: c.delay, duration: FLASH, times: [0, 0.01, 0.02, 1], ease: (t: number) => (t >= 1 ? 1 : 0) }}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -87,9 +146,10 @@ export default function HeroAvatar() {
             {/* Avatar */}
             <motion.div
               className="relative shrink-0"
-              initial={{ scale: 0.85 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
+              // Frame pops in over 4 stepped frames, then the portrait spawns
+              initial={{ scale: 0.6, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.3, ease: (t: number) => Math.ceil(t * 4) / 4 }}
             >
               <div
                 className="px-panel px-dither"
@@ -120,6 +180,7 @@ export default function HeroAvatar() {
                     transformOrigin: "center bottom",
                   }}
                 />
+                <SpawnOverlay />
               </div>
               <Sparkle x={-8} y={20} delay={0} />
               <Sparkle x={AVATAR + 2} y={10} delay={0.7} />
