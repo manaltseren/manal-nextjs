@@ -61,6 +61,8 @@ export default function HeroCharacter() {
   const [tip, setTip] = useState<Tip>(null);
   // Skill shown in the inline info under the skill slots
   const [activeSkill, setActiveSkill] = useState(0);
+  // Bumped on every Coffee click — the character plays the drink animation once
+  const [drinkKey, setDrinkKey] = useState(0);
 
   // While a tooltip is open: scroll / resize / tapping outside a slot closes it
   // (the slot rect it is anchored to would otherwise go stale).
@@ -117,6 +119,7 @@ export default function HeroCharacter() {
         ariaLabel={`${t.name}, ${cfg.label}${t.slot ? `, equipped: ${t.slot}` : ""}${t.count ? `, ${t.count} in stack` : ""}`}
         onOpen={open(t.name)}
         onClose={close(t.name)}
+        onActivate={t.sprite === "coffee" ? () => setDrinkKey((k) => k + 1) : undefined}
       >
         <ItemIcon tool={t} className="w-[52%] h-[52%]" />
         <span className="absolute bottom-1 right-1.5 font-press-start text-[7px] leading-none" style={{ color: cfg.color }}>
@@ -168,7 +171,7 @@ export default function HeroCharacter() {
                       style={pxVars({ "--px": "3px", "--px-border": "rgba(122,93,255,0.35)", "--px-bg": "#0a0919" })}
                     >
                       <StageBackdrop />
-                      <CharacterSprite reduce={reduce} className="h-[82%] w-auto mb-[13%] -translate-x-[8%] select-none" />
+                      <CharacterSprite reduce={reduce} drinkKey={drinkKey} className="h-[82%] w-auto mb-[13%] -translate-x-[8%] select-none" />
                     </div>
                   </div>
                   <div className="flex flex-col justify-between">{dollRight.map((s) => itemSlot(equippedBySlot.get(s), s))}</div>

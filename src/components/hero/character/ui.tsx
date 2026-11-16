@@ -182,6 +182,7 @@ export function Slot({
   onOpen,
   onClose,
   btnRef,
+  onActivate,
   children,
 }: {
   open: boolean;
@@ -197,6 +198,8 @@ export function Slot({
   onOpen: (rect: DOMRect) => void;
   onClose: () => void;
   btnRef?: (el: HTMLButtonElement | null) => void;
+  /** Called on every click / tap / Enter (e.g. "use" a consumable) */
+  onActivate?: () => void;
   children: React.ReactNode;
 }) {
   const pointer = useRef<string>("mouse");
@@ -231,6 +234,7 @@ export function Slot({
         if (open) onClose();
       }}
       onClick={(e) => {
+        onActivate?.();
         if (pointer.current === "mouse") return; // hover already handles mouse
         if (open) onClose();
         else onOpen(rectOf(e.currentTarget));
