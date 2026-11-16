@@ -236,6 +236,12 @@ export function Slot({
       onClick={(e) => {
         onActivate?.();
         if (pointer.current === "mouse") return; // hover already handles mouse
+        // Touch on a usable item = use it, no tooltip (it would cover the
+        // character playing the animation)
+        if (onActivate) {
+          if (open) onClose();
+          return;
+        }
         if (open) onClose();
         else onOpen(rectOf(e.currentTarget));
       }}
@@ -376,6 +382,9 @@ export function ItemTooltip({ tool, rect, reduce }: { tool: Tool; rect: DOMRect;
             </li>
           ))}
         </ul>
+        {tool.sprite === "coffee" && (
+          <p className="font-pixel text-[19px] leading-none text-[#4edbec]">Use: Take a sip (click)</p>
+        )}
         <p className="font-pixel text-[18px] leading-[1.15]" style={{ color: "rgba(250,204,21,0.75)" }}>
           &ldquo;{tool.description}&rdquo;
         </p>

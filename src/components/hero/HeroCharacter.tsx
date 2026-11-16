@@ -63,6 +63,8 @@ export default function HeroCharacter() {
   const [activeSkill, setActiveSkill] = useState(0);
   // Bumped on every Coffee click — the character plays the drink animation once
   const [drinkKey, setDrinkKey] = useState(0);
+  // Mobile only: ATTRIBUTES list starts collapsed (always open on desktop)
+  const [attrOpen, setAttrOpen] = useState(false);
 
   // While a tooltip is open: scroll / resize / tapping outside a slot closes it
   // (the slot rect it is anchored to would otherwise go stale).
@@ -106,6 +108,7 @@ export default function HeroCharacter() {
     const idx = slotIdx++;
     if (!t) return <EmptySlot key={`empty-${label ?? idx}`} label={label} />;
     const cfg = rarityConfig[t.rarity];
+    const usable = t.sprite === "coffee"; // clicking plays the drink animation
     return (
       <Slot
         key={t.name}
@@ -116,12 +119,24 @@ export default function HeroCharacter() {
         openColor={cfg.color}
         inView={isInView}
         reduce={reduce}
-        ariaLabel={`${t.name}, ${cfg.label}${t.slot ? `, equipped: ${t.slot}` : ""}${t.count ? `, ${t.count} in stack` : ""}`}
+        ariaLabel={`${t.name}, ${cfg.label}${t.slot ? `, equipped: ${t.slot}` : ""}${t.count ? `, ${t.count} in stack` : ""}${usable ? ", usable: click to take a sip" : ""}`}
         onOpen={open(t.name)}
         onClose={close(t.name)}
-        onActivate={t.sprite === "coffee" ? () => setDrinkKey((k) => k + 1) : undefined}
+        onActivate={usable ? () => setDrinkKey((k) => k + 1) : undefined}
       >
         <ItemIcon tool={t} className="w-[52%] h-[52%]" />
+        {/* Usable item: blinking "USE" tag so the slot reads as clickable
+            (hard on/off blink; steady under reduced motion) */}
+        {usable && (
+          <motion.span
+            aria-hidden="true"
+            className="absolute top-1.5 left-1.5 font-press-start text-[6px] md:text-[7px] leading-none text-[#4edbec]"
+            animate={reduce ? undefined : { opacity: [1, 1, 0, 0] }}
+            transition={{ duration: 1.2, repeat: Infinity, times: [0, 0.6, 0.61, 1], ease: "linear" }}
+          >
+            USE
+          </motion.span>
+        )}
         <span className="absolute bottom-1 right-1.5 font-press-start text-[7px] leading-none" style={{ color: cfg.color }}>
           {t.count ? <span className="text-white">{t.count}</span> : cfg.symbol}
         </span>
@@ -152,7 +167,7 @@ export default function HeroCharacter() {
                 row 1: paper doll | SKILLS
                 row 2: ATTRIBUTES | BAG
               Grid rows stretch both cells to the taller one. Mobile: one
-              column in DOM order — doll, attributes, skills, bag. */}
+              column — doll, attributes (collapsible), bag, skills (via order). */}
           <div className="grid md:grid-cols-[1.15fr_1fr] gap-8 md:gap-x-12 md:gap-y-10">
             {/* ── Row 1 left: paper doll, NO window (sits on the scene) ── */}
             <SubPanel className="md:col-start-1 md:row-start-1" bare>
@@ -188,9 +203,30 @@ export default function HeroCharacter() {
 
             {/* ── Row 2 left: attributes, NO window ── */}
             <SubPanel className="md:col-start-1 md:row-start-2" bare>
-              <PanelLabel right={`LV ${level}`}>ATTRIBUTES</PanelLabel>
+              {/* Mobile: collapsed by default — the title is a toggle.
+                  Desktop: always open, plain title. */}
+              <button
+                type="button"
+                className="md:hidden block w-full text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-[#4edbec]"
+                aria-expanded={attrOpen}
+                aria-controls="char-attributes"
+                onClick={() => setAttrOpen((o) => !o)}
+              >
+                <PanelLabel
+                  right={
+                    <>
+                      LV {level} <span className="text-[#4edbec] ml-2">{attrOpen ? "[-]" : "[+]"}</span>
+                    </>
+                  }
+                >
+                  ATTRIBUTES
+                </PanelLabel>
+              </button>
+              <div className="hidden md:block">
+                <PanelLabel right={`LV ${level}`}>ATTRIBUTES</PanelLabel>
+              </div>
               {/* Souls-style stat sheet: name + open-ended number, no bars */}
-              <div className="flex flex-col gap-2.5 px-1">
+              <div id="char-attributes" className={`${attrOpen ? "flex" : "hidden"} md:flex flex-col gap-2.5 px-1`}>
                 {attributes.map((a) => (
                   <div key={a.stat} className="flex items-center justify-between gap-3">
                     <span className="font-press-start text-[8px] leading-none text-white/55">{a.stat}</span>
@@ -201,7 +237,7 @@ export default function HeroCharacter() {
             </SubPanel>
 
             {/* ── Row 1 right: SKILLS (stretches to the doll's height) ── */}
-            <SubPanel className="h-full md:col-start-2 md:row-start-1">
+            <SubPanel className="h-full order-4 md:order-0 md:col-start-2 md:row-start-1">
               <PanelLabel>SKILLS</PanelLabel>
               {/* Hover / tap / focus / hotkey selects a skill; its info shows
                   right below (inline, no tooltip). */}
@@ -257,7 +293,7 @@ export default function HeroCharacter() {
             </SubPanel>
 
             {/* ── Row 2 right: BAG — NO window (sits on the scene); slots fill the column width ── */}
-            <SubPanel className="md:col-start-2 md:row-start-2" bare>
+            <SubPanel className="order-3 md:order-0 md:col-start-2 md:row-start-2" bare>
               <PanelLabel right={`${bag.length} / ${BAG_SIZE}`}>BAG</PanelLabel>
               {/* No window: title + slots straight on the scene, left-aligned
                   under the BAG title (like the attributes on the left) */}
