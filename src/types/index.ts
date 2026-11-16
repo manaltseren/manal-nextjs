@@ -27,7 +27,7 @@ export interface Tool {
   /** PNG icon under /public — or use `sprite` for a hand-drawn pixel sprite */
   icon?: string;
   /** Key into the character `itemSprites` map (consumables etc.) */
-  sprite?: 'coffee' | 'duck' | 'armor';
+  sprite?: 'coffee' | 'duck' | 'hoodie';
   /** Stack size shown in the slot corner (consumables) */
   count?: number;
   rarity: Rarity;

@@ -38,25 +38,32 @@ const itemSprites = {
     palette: { o: "#0b0a14", w: "#e5e7eb", s: "#9ca3af", c: "#78350f", t: "#94a3b8" },
     rows: ["..t..t....", "...t..t...", "oooooooo..", "occcccco..", "owwwwwwoo.", "owwwwwwo.o", "owwwwwwoo.", "oswwwwso..", ".osssso...", "..oooo...."],
   },
-  // Security item: purple chest armour (breastplate) with gold pauldrons +
-  // belt and a keyhole emblem (16×16)
-  armor: {
-    palette: { o: "#0b0a14", y: "#facc15", h: "#c4b5ff", b: "#7a5dff", B: "#5a3fd6", k: "#0b0a14" },
+  // Security item: the character's hoodie (22×19) — same dark purples as the
+  // sprite's tee. Rounded silhouette, hood collar with a dark opening, white
+  // drawstrings, sleeves with cuffs, dithered shading, and a single cyan dot
+  // for the </> logo. Lit from the top-left.
+  hoodie: {
+    palette: { o: "#110622", k: "#0b0612", d: "#241439", m: "#321d4c", b: "#46296a", h: "#6b4596", w: "#e5e7eb", s: "#9ca3af", c: "#4edbec" },
     rows: [
-      "..oooo....oooo..",
-      ".oyyyyo..oyyyyo.",
-      "oyhhbbo..obbBByo",
-      "oyhbbbboobbbbByo",
-      "oooyhbbbbbbByooo",
-      "..oyhbbkkbbByo..",
-      "..oyhbkkkkbByo..",
-      "..oyhbbkkbbByo..",
-      "..oyhbbkkbbByo..",
-      "..oyhbbbbbbByo..",
-      "..oyyyyyyyyyyo..",
-      "...ohbbbbbbBo...",
-      "...oBBbbbbBBo...",
-      "....oooooooo....",
+      ".......oooooooo.......",
+      "......ohhbbbbbbo......",
+      ".....obhkkkkkkmbo.....",
+      "...oohbmwmmmmwmbboo...",
+      "..ohhbbbwbbbbwbbbbmo..",
+      ".ohhbbbbwbbbbwbbbbmmo.",
+      "ohbbbbbbwbbbbwbbbbmmmo",
+      "ohbbmbbbwbbbbwbbbmdbmo",
+      "ohbbmbmbsbbbbsbbbmdbmo",
+      "ohbbmmbmbbbbbbbcbmdbmo",
+      "ohbbmbmbbbbbbbbbbmdbmo",
+      "ohbbmmbmbbbbbbbbbmdbmo",
+      "ohbbmbmbmbmbbbbbbmdbmo",
+      "ohhbmmbmbmbbbbbbbmdbmo",
+      "obbhmbmbmbbbbbbbbmhbmo",
+      "obbbmmbmbmbbbbbbbmdbmo",
+      "ommmmbmbmbbbbbbbbmdddo",
+      "odddoddddddddddddodddo",
+      ".ooo.oooooooooooo.ooo.",
     ],
   },
   duck: {
