@@ -185,9 +185,9 @@ export default function SynthwaveBackground() {
   const gridOpacity = useTransform(night, [0, 1], [1, 0.5]);
   const horizonOpacity = useTransform(night, [0, 1], [1, 0.45]);
   const glowOpacity = useTransform(night, [0, 1], [1, 0.25]);
-  // Halo stays strong while the sun sets (floor 0.7), like the old glow
-  const haloOpacity = useTransform(scrollY, [0, 350], [1, 0.7], { clamp: true });
-
+  // Sun light (halo) fades with the sun: full when up, gone once it has set,
+  // and back again when scrolling up.
+  const haloOpacity = useTransform(night, [0, 1], [1, 0]);
 
   return (
     <div className="synthwave-bg" aria-hidden="true">

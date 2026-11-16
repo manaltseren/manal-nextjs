@@ -232,7 +232,14 @@ export default function HeroAvatar() {
             transition={{ delay: 1.15, duration: 0.4 }}
           >
             <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3 text-center md:text-left">
-              <span className="font-press-start text-[8px] leading-none text-white/40">▶ CURRENT QUEST</span>
+              {/* Pixel ▶ as inline SVG — the "▶" glyph renders as an emoji on iOS */}
+              <span className="inline-flex items-center gap-1.5 font-press-start text-[8px] leading-none text-white/40">
+                <svg width="4" height="8" viewBox="0 0 2 4" shapeRendering="crispEdges" aria-hidden="true">
+                  <rect x={0} y={0} width={1} height={4} fill="currentColor" />
+                  <rect x={1} y={1} width={1} height={2} fill="currentColor" />
+                </svg>
+                CURRENT QUEST
+              </span>
               <span className="font-press-start text-[9px] leading-relaxed text-[#4edbec]">SEEKING NEW ADVENTURE</span>
             </div>
 
