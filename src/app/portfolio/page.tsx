@@ -17,7 +17,7 @@ export default function PortfolioPage() {
             projects heading peeks in at the bottom of the first screen. */}
         <section className="relative min-h-[calc(67svh+96px)]">
           <div className="min-h-[calc(67svh-130px)] md:min-h-[calc(67svh-170px)] pt-20 pb-6 flex items-center">
-            <div className="w-full max-w-4xl mx-auto px-5 text-center">
+            <div className="w-full max-w-5xl mx-auto px-5 text-center">
               <p className="font-press-start text-[9px] tracking-[0.3em] text-[#4edbec] mb-5">
                 MANAL.DEV
               </p>

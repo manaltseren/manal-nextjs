@@ -554,10 +554,10 @@ export default function ProjectShowcase() {
   };
 
   return (
-    <div ref={ref} className="max-w-4xl mx-auto px-5 pb-20">
+    <div ref={ref} className="max-w-5xl mx-auto px-5 pb-20">
       <div className="mb-4 text-center">
         <h2 className="font-press-start text-white text-lg tracking-wider">
-          <TypingTitle text="[ PROJECTS ]" inView={isInView} />
+          <TypingTitle text="PROJECTS" inView={isInView} />
         </h2>
       </div>
 

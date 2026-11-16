@@ -13,15 +13,34 @@ export interface Skill {
   /** Real tech this ability is built on */
   stack: string[];
   cooldown: string;
+  /** Spell-sheet stats shown in the info pane */
+  cost: string;
+  range: string;
+  /** "Scales with" bars, value 0–100 */
+  scaling: { stat: string; value: number }[];
   /** Key into the PixelSprite `sprites` map */
   sprite: 'forge' | 'blueprint' | 'banner' | 'skull';
 }
 
 export interface Tool {
   name: string;
-  icon: string;
+  /** PNG icon under /public — or use `sprite` for a hand-drawn pixel sprite */
+  icon?: string;
+  /** Key into the character `itemSprites` map (consumables etc.) */
+  sprite?: 'coffee' | 'duck' | 'armor';
+  /** Stack size shown in the slot corner (consumables) */
+  count?: number;
   rarity: Rarity;
+  /** Flavor text, shown in quotes on the item card */
   description: string;
+  /** Item type line, e.g. "Weapon · PHP framework" */
+  kind: string;
+  /** Item level 1–10 (how deep the proficiency goes) */
+  ilvl: number;
+  /** Stat lines, e.g. "+10 Backend" */
+  stats: string[];
+  /** Equipment slot label — set = equipped, unset = in the bag */
+  slot?: string;
 }
 
 export interface Quest {

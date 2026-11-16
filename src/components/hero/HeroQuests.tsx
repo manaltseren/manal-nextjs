@@ -256,10 +256,10 @@ export default function HeroQuests() {
   const hidden = quests.length - INITIAL_SHOW;
 
   return (
-    <div ref={ref} className="max-w-4xl mx-auto px-5 pb-20">
+    <div ref={ref} className="max-w-5xl mx-auto px-5 pb-20">
       <div className="mb-10 text-center">
         <h2 className="font-press-start text-white text-lg tracking-wider">
-          <TypingTitle text="[ QUESTS ]" inView={isInView} />
+          <TypingTitle text="QUESTS" inView={isInView} />
         </h2>
       </div>
 

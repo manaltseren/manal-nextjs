@@ -1,0 +1,275 @@
+"use client";
+// CHARACTER window — one game-style screen combining equipment, attributes,
+// bag and the skill action bar (replaces the separate Skills + Inventory
+// sections). Data lives in ./character/data.ts, building blocks in
+// ./character/ui.tsx.
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import TypingTitle from "@/components/TypingTitle";
+import { useRevealed } from "@/components/PixelReveal";
+import PixelSprite from "@/components/pixel/PixelSprite";
+import CharacterSprite from "./character/CharacterSprite";
+import StageBackdrop from "./character/StageBackdrop";
+import type { Tool } from "@/types";
+import { attributesFor, BAG_SIZE, characterLevel, dollLeft, dollRight, dollWeapons, skillKeys, skills, tools } from "./character/data";
+import {
+  EmptySlot,
+  ItemIcon,
+  ItemTooltip,
+  PanelLabel,
+  SkillInfo,
+  Slot,
+  pxVars,
+  stepped,
+  rarityConfig,
+  typeConfig,
+} from "./character/ui";
+
+type Tip = { id: string; rect: DOMRect } | null; // open item tooltip
+
+const equippedBySlot = new Map(tools.filter((t) => t.slot).map((t) => [t.slot as string, t]));
+const bag = tools.filter((t) => !t.slot);
+// Character level (years since 2013) and the stats derived from it
+const level = characterLevel();
+const attributes = attributesFor(level);
+
+// Inner sub-panel (darker inset) inside the window
+function SubPanel({ children, className = "", bare = false }: { children: React.ReactNode; className?: string; bare?: boolean }) {
+  // bare = no window: content sits straight on the scene (the Equipment side)
+  if (bare) return <div className={className}>{children}</div>;
+  return (
+    <div className={`px-outer ${className}`}>
+      {/* Each panel is its own bordered window (notched purple pixel border,
+          bevel, stepped drop shadow) sitting directly on the scene. */}
+      <div className="px-panel h-full p-3 md:p-4 flex flex-col" style={pxVars({ "--px-border": "#7a5dff", "--px-bg": "#0f0d26" })}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export default function HeroCharacter() {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = !!useReducedMotion();
+  // Also wait for the parent PixelReveal (if any) so entrance animations play
+  // when the section is actually uncovered, not hidden behind the wipe.
+  const revealed = useRevealed();
+  const isInView = useInView(ref, { once: true, margin: "-80px" }) && revealed;
+  // Q/W/E/R hotkeys only while the window is on screen
+  const onScreen = useInView(ref, { margin: "-25% 0px -25% 0px" });
+
+  const [tip, setTip] = useState<Tip>(null);
+  // Skill shown in the inline info under the skill slots
+  const [activeSkill, setActiveSkill] = useState(0);
+
+  // While a tooltip is open: scroll / resize / tapping outside a slot closes it
+  // (the slot rect it is anchored to would otherwise go stale).
+  useEffect(() => {
+    if (!tip) return;
+    const close = () => setTip(null);
+    const onDown = (e: PointerEvent) => {
+      if (!(e.target as Element | null)?.closest("[data-char-slot]")) close();
+    };
+    window.addEventListener("scroll", close, { passive: true });
+    window.addEventListener("resize", close);
+    document.addEventListener("pointerdown", onDown);
+    return () => {
+      window.removeEventListener("scroll", close);
+      window.removeEventListener("resize", close);
+      document.removeEventListener("pointerdown", onDown);
+    };
+  }, [tip]);
+
+  // Q/W/E/R select that skill (shown in the inline info)
+  useEffect(() => {
+    if (!onScreen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      const i = skillKeys.indexOf(e.key.toUpperCase() as (typeof skillKeys)[number]);
+      if (i >= 0) setActiveSkill(i);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onScreen]);
+
+  const open = (id: string) => (rect: DOMRect) => setTip({ id, rect });
+  const close = (id: string) => () => setTip((cur) => (cur?.id === id ? null : cur));
+  const isOpen = (id: string) => tip?.id === id;
+
+  let slotIdx = 0; // stagger order for the entrance
+
+  const itemSlot = (t: Tool | undefined, label?: string) => {
+    const idx = slotIdx++;
+    if (!t) return <EmptySlot key={`empty-${label ?? idx}`} label={label} />;
+    const cfg = rarityConfig[t.rarity];
+    return (
+      <Slot
+        key={t.name}
+        label={label}
+        idx={idx}
+        open={isOpen(t.name)}
+        borderColor={cfg.colorDim}
+        openColor={cfg.color}
+        inView={isInView}
+        reduce={reduce}
+        ariaLabel={`${t.name}, ${cfg.label}${t.slot ? `, equipped: ${t.slot}` : ""}${t.count ? `, ${t.count} in stack` : ""}`}
+        onOpen={open(t.name)}
+        onClose={close(t.name)}
+      >
+        <ItemIcon tool={t} className="w-[52%] h-[52%]" />
+        <span className="absolute bottom-1 right-1.5 font-press-start text-[7px] leading-none" style={{ color: cfg.color }}>
+          {t.count ? <span className="text-white">{t.count}</span> : cfg.symbol}
+        </span>
+      </Slot>
+    );
+  };
+
+  const tipItem = tip ? tools.find((t) => t.name === tip.id) : undefined;
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6 }}
+      className="max-w-5xl mx-auto px-5"
+    >
+      <div className="mb-10 text-center">
+        <h2 className="font-press-start text-white text-lg tracking-wider">
+          <TypingTitle text="CHARACTER" inView={isInView} />
+        </h2>
+      </div>
+
+      {/* ── Panels sit directly on the scene — no outer window/card ── */}
+      <div>
+        <div>
+          {/* 2×2 grid so paired windows share a row height:
+                row 1: paper doll | SKILLS
+                row 2: ATTRIBUTES | BAG
+              Grid rows stretch both cells to the taller one. Mobile: one
+              column in DOM order — doll, attributes, skills, bag. */}
+          <div className="grid md:grid-cols-[1.15fr_1fr] gap-8 md:gap-x-12 md:gap-y-10">
+            {/* ── Row 1 left: paper doll, NO window (sits on the scene) ── */}
+            <SubPanel className="md:col-start-1 md:row-start-1" bare>
+                {/* Narrow slot columns, wide avatar: slots are 1/4.6 of the
+                    width each, the avatar 2.6/4.6. The avatar is a 3:4 portrait
+                    and sets the row height; the side slots spread to fill it. */}
+                <div className="grid grid-cols-[1fr_2.6fr_1fr] gap-x-3">
+                  <div className="flex flex-col justify-between">{dollLeft.map((s) => itemSlot(equippedBySlot.get(s), s))}</div>
+                  {/* Full-body avatar: the user's pixel sprite standing on a
+                      pixel "character select" stage (StageBackdrop: banded sky,
+                      stars, stepped spotlight, dithered floor, pedestal). The
+                      frame is 2:3, same as the stage grid. */}
+                  <div className="px-outer">
+                    <div
+                      className="px-panel aspect-2/3 overflow-hidden flex items-end justify-center"
+                      style={pxVars({ "--px": "3px", "--px-border": "rgba(122,93,255,0.35)", "--px-bg": "#0a0919" })}
+                    >
+                      <StageBackdrop />
+                      <CharacterSprite reduce={reduce} className="h-[82%] w-auto mb-[13%] -translate-x-[8%] select-none" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-between">{dollRight.map((s) => itemSlot(equippedBySlot.get(s), s))}</div>
+                </div>
+                {/* Weapons centred under the avatar, same width as a side slot */}
+                <div className="flex justify-center gap-3 mt-3">
+                  {dollWeapons.map((s) => (
+                    <div key={s} className="w-[calc((100%-24px)/4.6)]">
+                      {itemSlot(equippedBySlot.get(s), s === "MAIN HAND" ? "MAIN" : "OFF")}
+                    </div>
+                  ))}
+                </div>
+            </SubPanel>
+
+            {/* ── Row 2 left: attributes, NO window ── */}
+            <SubPanel className="md:col-start-1 md:row-start-2" bare>
+              <PanelLabel right={`LV ${level}`}>ATTRIBUTES</PanelLabel>
+              {/* Souls-style stat sheet: name + open-ended number, no bars */}
+              <div className="flex flex-col gap-2.5 px-1">
+                {attributes.map((a) => (
+                  <div key={a.stat} className="flex items-center justify-between gap-3">
+                    <span className="font-press-start text-[8px] leading-none text-white/55">{a.stat}</span>
+                    <span className="font-pixel text-[24px] leading-none text-white tabular-nums">{a.value}</span>
+                  </div>
+                ))}
+              </div>
+            </SubPanel>
+
+            {/* ── Row 1 right: SKILLS (stretches to the doll's height) ── */}
+            <SubPanel className="h-full md:col-start-2 md:row-start-1">
+              <PanelLabel>SKILLS</PanelLabel>
+              {/* Hover / tap / focus / hotkey selects a skill; its info shows
+                  right below (inline, no tooltip). */}
+              <div className="grid grid-cols-4 gap-x-1">
+                {skills.map((s, i) => {
+                  const cfg = typeConfig[s.type];
+                  return (
+                    <Slot
+                      key={s.name}
+                      label={skillKeys[i]}
+                      idx={slotIdx++}
+                      open={activeSkill === i}
+                      borderColor={cfg.colorDim}
+                      openColor={cfg.color}
+                      inView={isInView}
+                      reduce={reduce}
+                      ariaLabel={`${s.name}, ${cfg.label} skill, rank ${s.level} of 5, hotkey ${skillKeys[i]}`}
+                      describedBy="skill-info"
+                      onOpen={() => setActiveSkill(i)}
+                      onClose={() => {}}
+                    >
+                      {/* Icon only (bigger); the rank shows beside the name below */}
+                      {/* Active skill: the icon hops in stepped frames (still
+                          under reduced motion) */}
+                      <motion.span
+                        className="flex"
+                        animate={activeSkill === i && !reduce ? { y: [0, -4, 0] } : { y: 0 }}
+                        transition={
+                          activeSkill === i && !reduce
+                            ? { duration: 0.6, repeat: Infinity, ease: stepped(3) }
+                            : { duration: 0 }
+                        }
+                      >
+                        <PixelSprite name={s.sprite} size={48} />
+                      </motion.span>
+                      {s.type === "Ultimate" && (
+                        <span className="absolute top-1.5 right-1.5 font-press-start text-[7px] leading-none" style={{ color: cfg.color }}>
+                          ★
+                        </span>
+                      )}
+                    </Slot>
+                  );
+                })}
+              </div>
+              {/* All descriptions share one grid cell → the box is always as
+                  tall as the longest one, so hovering between skills never
+                  changes the panel height. Only the active one is visible. */}
+              <div className="grid mt-5 px-1" aria-live="polite">
+                {skills.map((s, i) => (
+                  <SkillInfo key={s.name} skill={s} active={activeSkill === i} reduce={reduce} />
+                ))}
+              </div>
+            </SubPanel>
+
+            {/* ── Row 2 right: BAG — NO window (sits on the scene); slots fill the column width ── */}
+            <SubPanel className="md:col-start-2 md:row-start-2" bare>
+              <PanelLabel right={`${bag.length} / ${BAG_SIZE}`}>BAG</PanelLabel>
+              {/* No window: title + slots straight on the scene, left-aligned
+                  under the BAG title (like the attributes on the left) */}
+              <div className="grid grid-cols-5 gap-1.5 md:gap-2">
+                {bag.map((t) => itemSlot(t))}
+                {Array.from({ length: BAG_SIZE - bag.length }).map((_, i) => (
+                  <EmptySlot key={`bag-empty-${i}`} />
+                ))}
+              </div>
+            </SubPanel>
+          </div>
+        </div>
+      </div>
+
+      {tipItem && tip && <ItemTooltip tool={tipItem} rect={tip.rect} reduce={reduce} />}
+    </motion.div>
+  );
+}

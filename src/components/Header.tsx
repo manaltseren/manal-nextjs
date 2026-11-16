@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import SocialIcon from "@/components/pixel/SocialIcon";
 import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 
 const navItems = [
@@ -10,9 +11,9 @@ const navItems = [
 ];
 
 const socials = [
-  { href: "https://www.linkedin.com/in/manaltseren-b-5883b214b/", icon: "la-linkedin", label: "LinkedIn" },
-  { href: "https://www.instagram.com/manal.dev/", icon: "la-instagram", label: "Instagram" },
-  { href: "https://www.facebook.com/noirmn", icon: "la-facebook-square", label: "Facebook" },
+  { href: "https://www.linkedin.com/in/manaltseren-b-5883b214b/", icon: "linkedin" as const, label: "LinkedIn" },
+  { href: "https://www.instagram.com/manal.dev/", icon: "instagram" as const, label: "Instagram" },
+  { href: "https://www.facebook.com/noirmn", icon: "facebook" as const, label: "Facebook" },
 ];
 
 // CSS custom properties aren't in React.CSSProperties.
@@ -223,7 +224,7 @@ const Header = () => {
           animate={{ opacity: scrolled ? 1 : 0 }}
           transition={{ duration: 0.2, ease: stepped(4) }}
         />
-        <div className="flex justify-between items-center max-w-4xl mx-auto px-5 py-5">
+        <div className="flex justify-between items-center max-w-5xl mx-auto px-5 py-5">
           {/* Logo */}
           <Link
             href="/"
@@ -434,7 +435,7 @@ const Header = () => {
                       className="px-chip justify-center w-11 h-11 text-white/60 hover:text-[#4edbec] [--px-border:rgba(255,255,255,0.14)] hover:[--px-border:#4edbec]"
                       style={pxVars({ "--px-bg": "#12102e" })}
                     >
-                      <i className={`lab ${s.icon} text-2xl`} />
+                      <SocialIcon name={s.icon} />
                     </a>
                   ))}
                 </div>

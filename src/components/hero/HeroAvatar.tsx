@@ -1,14 +1,24 @@
 "use client";
+// Top-of-home profile: the "player card" STRUCTURE, without the card on desktop.
+//
+//   ┌──────────────────────────────────────────────────────────┐
+//   │ [avatar]  MANALAA Bold  ● ONLINE                [LVL 13] │
+//   │           bio …                                          │
+//   │           EXPERIENCE ███████████░░░░░░    8,750 / 10,000 │
+//   │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
+//   │ ▶ CURRENT QUEST  SEEKING NEW ADVENTURE   [▶ CONTACT ME][IG]│
+//   └──────────────────────────────────────────────────────────┘
+//
+// Desktop: no frame/fill — everything sits on the scene, aligned to the
+// container edges; the quest + buttons row sits under the main row. Mobile: a
+// solid backing card (stacked, centred) so text stays readable over the sun.
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import SocialIcon from "@/components/pixel/SocialIcon";
+import { AVATAR_LOOK, avatarPortraits } from "@/components/hero/character/look";
 
 const nameChars = Array.from("MANALAA Bold");
-
-const socials = [
-  { href: "https://www.linkedin.com/in/manaltseren-b-5883b214b/", icon: "la-linkedin",        label: "LinkedIn",  hover: "hover:text-[#4edbec] hover:border-[#4edbec]/60" },
-  { href: "https://www.instagram.com/manal.dev/",                 icon: "la-instagram",       label: "Instagram", hover: "hover:text-[#c084fc] hover:border-[#c084fc]/60" },
-  { href: "https://www.facebook.com/noirmn",                      icon: "la-facebook-square", label: "Facebook",  hover: "hover:text-[#60a5fa] hover:border-[#60a5fa]/60" },
-];
+const AVATAR = 168;
 
 const containerVariants = {
   hidden: {},
@@ -19,7 +29,9 @@ const charVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-// Floating pixel sparkle dot
+const pxVars = (vars: Record<string, string>) => vars as React.CSSProperties;
+
+// Floating pixel sparkle around the avatar
 function Sparkle({ x, y, delay }: { x: number; y: number; delay: number }) {
   return (
     <motion.div
@@ -45,33 +57,6 @@ export default function HeroAvatar() {
   const [xpCount, setXpCount] = useState(0);
   const [btnHover, setBtnHover] = useState(false);
 
-  // On mobile, open the Facebook app (deep link) and fall back to the web page
-  // if it isn't installed. On desktop, let the normal link through.
-  const openFacebook = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
-    const isAndroid = /Android/i.test(ua);
-    const isIOS = /iPhone|iPad|iPod/i.test(ua);
-    if (!isAndroid && !isIOS) return; // desktop → default href
-
-    const web = "https://www.facebook.com/noirmn";
-    e.preventDefault();
-
-    if (isAndroid) {
-      // Chrome resolves browser_fallback_url automatically if the app is absent.
-      window.location.href =
-        "intent://www.facebook.com/noirmn#Intent;package=com.facebook.katana;scheme=https;" +
-        "S.browser_fallback_url=" + encodeURIComponent(web) + ";end";
-      return;
-    }
-
-    // iOS — open the URL inside the FB app; if nothing handles fb://, fall back.
-    const start = Date.now();
-    setTimeout(() => {
-      if (Date.now() - start < 1500) window.location.href = web;
-    }, 1000);
-    window.location.href = "fb://facewebmodal/f?href=" + encodeURIComponent(web);
-  };
-
   useEffect(() => {
     const delay = setTimeout(() => {
       const interval = setInterval(() => {
@@ -87,266 +72,210 @@ export default function HeroAvatar() {
   }, [targetXP]);
 
   return (
-    <div className="max-w-4xl mx-auto px-5">
-      <div className="flex flex-col md:flex-row gap-10 md:gap-12 items-center md:items-start">
-
-        {/* ── Left: Avatar + quick stats ── */}
-        <motion.div
-          className="shrink-0 relative"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          {/* Avatar */}
-          <div style={{ width: 180 }}>
-
-            {/* Avatar — full width of container */}
+    <div className="max-w-5xl mx-auto px-5">
+      <motion.div
+        className="px-outer"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        {/* No card on desktop — the elements sit straight on the synthwave
+            scene, aligned to the container edges. Mobile keeps a solid backing
+            panel (the static sun sits right behind the text there). */}
+        <div className="relative isolate">
+          <div
+            aria-hidden
+            className="px-panel md:hidden absolute inset-0 -z-10"
+            style={pxVars({ "--px": "2px", "--px-border": "rgba(122,93,255,0.55)", "--px-bg": "rgba(15,13,38,0.9)" })}
+          />
+          {/* ── Main: avatar | name, bio, XP ── */}
+          <div className="flex flex-col md:flex-row items-center md:items-stretch gap-6 md:gap-8 p-5 md:p-0">
+            {/* Avatar */}
             <motion.div
-              className="relative"
+              className="relative shrink-0"
               initial={{ scale: 0.85 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
             >
-              {/* Character-select frame: notched pixel border + stepped shadow */}
               <div
                 className="px-panel px-dither"
-                style={{
-                  width: 180,
-                  height: 180,
+                style={pxVars({
+                  width: `${AVATAR}px`,
+                  height: `${AVATAR}px`,
                   overflow: "hidden",
-                  ["--px-border" as string]: "#7a5dff",
-                  ["--px-bg" as string]: "#16123a",
-                }}
+                  "--px-border": "#7a5dff",
+                  "--px-bg": "#16123a",
+                })}
               >
-                {/* Faint pixel grid */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(rgba(122,93,255,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(122,93,255,0.09) 1px, transparent 1px)",
-                    backgroundSize: "12px 12px",
-                  }}
-                />
-                {/* Ground shadow under the character */}
-                <div
-                  className="absolute pointer-events-none"
-                  style={{
-                    left: "22%",
-                    right: "22%",
-                    bottom: 6,
-                    height: 8,
-                    backgroundColor: "rgba(0,0,0,0.45)",
-                  }}
-                />
+                {/* Pixel-art bust portrait (the user's own art, transparent bg,
+                    384px WebP from a 1254px source — hi-res, so NO pixelated
+                    rendering). Slight zoom from the bottom so the shoulders
+                    meet the frame's bottom edge. */}
                 <img
-                  src="/images/avatar-manal.png"
-                  alt="Hero Avatar"
+                  src={avatarPortraits[AVATAR_LOOK]}
+                  alt="Manalaa — pixel-art portrait with glasses"
+                  width={AVATAR}
+                  height={AVATAR}
                   style={{
-                    width: 180,
-                    height: 180,
+                    width: AVATAR,
+                    height: AVATAR,
                     objectFit: "cover",
                     display: "block",
                     position: "relative",
-                    // Slight zoom, pushed down so the character meets the bottom edge of the frame
-                    transform: "translateY(8%) scale(1.15)",
+                    transform: "scale(1.06)",
                     transformOrigin: "center bottom",
                   }}
                 />
               </div>
-
-              {/* LV badge — outside the overflow-hidden frame so it can hang
-                  below. Uses the shared .px-lvl style. */}
-              <span className="px-lvl absolute -bottom-4 left-1/2 -translate-x-1/2 font-press-start text-[9px] px-2.5 py-1.5">
-                LVL {level}
-              </span>
-
-              {/* Floating sparkles */}
               <Sparkle x={-8} y={20} delay={0} />
-              <Sparkle x={182} y={10} delay={0.7} />
-              <Sparkle x={175} y={100} delay={1.4} />
+              <Sparkle x={AVATAR + 2} y={10} delay={0.7} />
+              <Sparkle x={AVATAR - 5} y={100} delay={1.4} />
               <Sparkle x={-6} y={90} delay={0.4} />
             </motion.div>
 
-          </div>
-        </motion.div>
+            {/* Name, bio, XP — XP pinned to the bottom so it lines up with the
+                avatar's bottom edge */}
+            <div className="flex flex-col gap-4 flex-1 min-w-0 w-full text-center md:text-left">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-center md:justify-start">
+                <motion.h1
+                  className="font-press-start text-white text-xl leading-relaxed"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {nameChars.map((char, idx) => (
+                    <motion.span key={idx} variants={charVariants}>
+                      {char === " " ? " " : char}
+                    </motion.span>
+                  ))}
+                </motion.h1>
 
-        {/* ── Right: Info panel ── */}
-        <div className="relative isolate flex flex-col gap-4 flex-1 w-full text-center md:text-left px-4 pt-5 pb-6 md:p-0">
-          {/* Mobile-only backing window: on small screens the scene is static
-              and the sun sits right behind this text, so give it a solid pixel
-              panel to stay readable. Desktop keeps the text on the bare sky. */}
-          <div
-            aria-hidden
-            className="px-panel md:hidden absolute inset-0 -z-10"
-            style={{
-              ["--px-bg" as string]: "rgba(15,13,38,0.92)",
-              ["--px-border" as string]: "rgba(122,93,255,0.45)",
-            }}
-          />
-
-          {/* Name + online status */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-center md:justify-start">
-            <motion.h1
-              className="font-press-start text-white text-xl leading-relaxed"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {nameChars.map((char, idx) => (
-                <motion.span key={idx} variants={charVariants}>
-                  {char === " " ? " " : char}
+                {/* Blinking online dot */}
+                <motion.span
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.75, duration: 0.35 }}
+                  className="px-chip font-press-start text-[9px] leading-none px-2 py-1.5 gap-2"
+                  style={pxVars({
+                    color: "#4ade80",
+                    "--px-border": "rgba(74,222,128,0.5)",
+                    "--px-bg": "rgba(74,222,128,0.06)",
+                  })}
+                >
+                  <motion.span
+                    className="flex shrink-0"
+                    animate={{ opacity: [1, 1, 0, 0] }}
+                    transition={{ duration: 1.2, repeat: Infinity, times: [0, 0.5, 0.51, 1] }}
+                  >
+                    <span className="block w-1.5 h-1.5 bg-current" />
+                  </motion.span>
+                  <span className="block leading-none">ONLINE</span>
                 </motion.span>
-              ))}
-            </motion.h1>
 
-            {/* Blinking online dot */}
-            <motion.span
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.75, duration: 0.35 }}
-              className="px-chip font-press-start text-[9px] leading-none px-2 py-1.5 gap-2"
-              style={{
-                color: "#4ade80",
-                ["--px-border" as string]: "rgba(74,222,128,0.5)",
-                ["--px-bg" as string]: "rgba(74,222,128,0.06)",
-              }}
-            >
-              {/* Dot is a flex item (not inline) so it centers on the text,
-                  not on the font's baseline; 6px = 2/3 of the 9px cap height */}
-              <motion.span
-                className="flex shrink-0"
-                animate={{ opacity: [1, 1, 0, 0] }}
-                transition={{ duration: 1.2, repeat: Infinity, times: [0, 0.5, 0.51, 1] }}
+                {/* Level — right end of the name row on desktop */}
+                <span className="px-lvl font-press-start text-[9px] px-2.5 py-1.5 md:ml-auto">LVL {level}</span>
+              </div>
+
+              <motion.p
+                className="font-pixel text-[21px] leading-[1.15] text-white/75 max-w-xl mx-auto md:mx-0"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.35 }}
               >
-                <span className="block w-1.5 h-1.5 bg-current" />
-              </motion.span>
-              <span className="block leading-none">ONLINE</span>
-            </motion.span>
+                Developer with 10+ years of experience in backend architecture and e-commerce platforms.
+              </motion.p>
+
+              {/* XP bar — full width of the column, at the bottom */}
+              <motion.div
+                className="w-full md:mt-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.0, duration: 0.4 }}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-press-start text-[8px] text-white/35">EXPERIENCE</span>
+                  <span className="font-press-start text-[9px] text-[#facc15]">{xpCount.toLocaleString()} / 10,000</span>
+                </div>
+                {/* Slim bar: 2px notched pixel border (px-chip), no drop shadow */}
+                <div
+                  className="px-chip relative"
+                  style={pxVars({
+                    display: "block",
+                    height: "10px",
+                    overflow: "hidden",
+                    "--px-bg": "#0a0920",
+                    "--px-border": "rgba(255,255,255,0.18)",
+                  })}
+                >
+                  <motion.div
+                    style={{
+                      height: "100%",
+                      backgroundColor: "#facc15",
+                      boxShadow: "inset 0 2px 0 rgba(255,255,255,0.4), inset 0 -2px 0 rgba(0,0,0,0.3)",
+                    }}
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${xpPercent}%` }}
+                    transition={{ duration: 1.6, ease: (t: number) => Math.floor(t * 20) / 20, delay: 0.5 }}
+                  />
+                  {/* Segment gaps — the bar fills block by block */}
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      backgroundImage: "linear-gradient(90deg, transparent calc(100% - 2px), #0a0920 calc(100% - 2px))",
+                      backgroundSize: "5% 100%",
+                    }}
+                  />
+                </div>
+              </motion.div>
+            </div>
           </div>
 
-          {/* Bio + current quest */}
+          {/* ── Status bar: current quest | actions ── */}
           <motion.div
-            className="flex flex-col gap-2.5 items-center md:items-start"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.35 }}
-          >
-            <p className="font-pixel text-[21px] leading-[1.15] text-white/75">
-              Developer with 10+ years of experience in backend architecture and e-commerce platforms.
-            </p>
-            <p className="font-press-start text-[8px] leading-relaxed text-white/40">
-              ▶ CURRENT QUEST: <span className="text-[#4edbec]">SEEKING NEW ADVENTURE</span>
-            </p>
-          </motion.div>
-
-          {/* Pixel dotted divider */}
-          <div
-            style={{
-              height: 2,
-              backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.12) 50%, transparent 50%)",
-              backgroundSize: "8px 2px",
-            }}
-          />
-
-          {/* XP bar */}
-          <motion.div
-            className="w-full"
+            className="flex flex-col md:flex-row items-center gap-4 md:justify-between px-5 py-4 md:p-0 md:mt-8 bg-[#0a0920] md:bg-transparent"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.0, duration: 0.4 }}
+            transition={{ delay: 1.15, duration: 0.4 }}
           >
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-press-start text-[8px]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                EXPERIENCE
-              </span>
-              <span className="font-press-start text-[9px]" style={{ color: "#facc15" }}>
-                {xpCount.toLocaleString()} / 10,000
-              </span>
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3 text-center md:text-left">
+              <span className="font-press-start text-[8px] leading-none text-white/40">▶ CURRENT QUEST</span>
+              <span className="font-press-start text-[9px] leading-relaxed text-[#4edbec]">SEEKING NEW ADVENTURE</span>
             </div>
-            <div>
-              {/* Slim bar: 2px notched pixel border (px-chip), no drop shadow */}
-              <div
-                className="px-chip relative"
-                style={{
-                  display: "block",
-                  height: 10,
-                  overflow: "hidden",
-                  ["--px-bg" as string]: "#0a0920",
-                  ["--px-border" as string]: "rgba(255,255,255,0.18)",
-                }}
+
+            <div className="flex items-center gap-3 shrink-0">
+              <a
+                href="/vcard.vcf"
+                download="Manalaa.vcf"
+                className="px-btn font-press-start text-[9px] px-5 py-3.5 inline-flex shrink-0 whitespace-nowrap items-center justify-center gap-2 select-none"
+                style={pxVars({
+                  "--px-bg": btnHover ? "#c084fc" : "#12102e",
+                  color: btnHover ? "#0f0d1b" : "#c084fc",
+                  letterSpacing: "0.08em",
+                })}
+                onMouseEnter={() => setBtnHover(true)}
+                onMouseLeave={() => setBtnHover(false)}
               >
-                <motion.div
-                  style={{
-                    height: "100%",
-                    backgroundColor: "#facc15",
-                    boxShadow: "inset 0 2px 0 rgba(255,255,255,0.4), inset 0 -2px 0 rgba(0,0,0,0.3)",
-                  }}
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${xpPercent}%` }}
-                  transition={{ duration: 1.6, ease: (t: number) => Math.floor(t * 20) / 20, delay: 0.5 }}
-                />
-                {/* Segment gaps — the bar fills block by block */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    backgroundImage: "linear-gradient(90deg, transparent calc(100% - 2px), #0a0920 calc(100% - 2px))",
-                    backgroundSize: "5% 100%",
-                  }}
-                />
-              </div>
+                <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }}>
+                  ▶︎
+                </motion.span>
+                CONTACT ME
+              </a>
+
+              {/* Instagram — raised violet pixel button; hover fills it.
+                  Colours in classes so the hover can override them. */}
+              <a
+                href="https://www.instagram.com/manal.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="px-btn inline-flex items-center justify-center shrink-0 w-11 h-11 text-[#c084fc] [--px-border:#c084fc] [--px-shadow:rgba(192,132,252,0.3)] hover:[--px-bg:#c084fc] hover:text-[#0f0d1b]"
+              >
+                <SocialIcon name="instagram" />
+              </a>
             </div>
           </motion.div>
-
-          {/* Contact button + social links */}
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.25, duration: 0.4 }}
-            className="flex flex-nowrap md:flex-wrap items-center gap-2.5 md:gap-3 justify-center md:justify-start mt-4"
-          >
-            <a
-              href="/vcard.vcf"
-              download="Manalaa.vcf"
-              className="px-btn font-press-start text-[9px] px-4 md:px-6 py-3.5 inline-flex shrink-0 whitespace-nowrap items-center gap-2 select-none"
-              style={{
-                ["--px-bg" as string]: btnHover ? "#c084fc" : "#12102e",
-                color: btnHover ? "#0f0d1b" : "#c084fc",
-                letterSpacing: "0.08em",
-              }}
-              onMouseEnter={() => setBtnHover(true)}
-              onMouseLeave={() => setBtnHover(false)}
-            >
-              {/* Blinking cursor prefix */}
-              <motion.span
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-              >
-                ▶︎
-              </motion.span>
-              CONTACT ME
-            </a>
-
-            {/* Social links — pixel-framed icon buttons */}
-            <div className="flex items-center gap-2 md:gap-3 md:ml-1">
-              {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.label}
-                  onClick={s.label === "Facebook" ? openFacebook : undefined}
-                  className={`px-chip justify-center shrink-0 w-10 h-10 md:w-11 md:h-11 text-gray-400 transition-colors ${s.hover}`}
-                  style={{ ["--px-bg" as string]: "#12102e", ["--px-border" as string]: "rgba(255,255,255,0.14)" }}
-                >
-                  <i className={`lab ${s.icon} text-xl md:text-2xl`} />
-                </a>
-              ))}
-            </div>
-          </motion.div>
-
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
