@@ -4,13 +4,67 @@ import type { Skill, Tool } from "@/types";
 
 export const skills: Skill[] = [
   {
-    name: "Full-Stack Forge",
-    level: 5,
+    name: "Code Strike",
+    level: 4,
     type: "Active",
+    tagline: "Targets complex challenges and delivers clean, high-impact solutions with pinpoint accuracy.",
+    effect:
+      "A precision attack: finds the exact point where a hard problem breaks and solves it there, cleanly, without collateral damage to the rest of the code.",
+    bonus: ["+35% problem-solving efficiency", "+25% implementation accuracy", "+50% vs. complex logic"],
+    stack: ["Debugging", "Algorithms", "Refactoring"],
+    cooldown: "1 BUG",
+    cost: "30 MP",
+    range: "SINGLE TARGET",
+    scaling: [
+      { stat: "BACKEND", value: 90 },
+      { stat: "ARCHITECTURE", value: 80 },
+    ],
+    image: "/images/xp/skills/strike.png",
+  },
+  {
+    name: "Hyperlink",
+    level: 4,
+    type: "Active",
+    tagline: "Connects applications, APIs, and services into one flow.",
+    effect:
+      "Wires separate systems together: REST APIs, third-party services and internal apps, so data moves between them in one reliable flow.",
+    bonus: ["REST API + third-party integration", "+35% connectivity", "Unlocks Automated Workflows"],
+    stack: ["REST APIs", "Webhooks", "Third-party services"],
+    cooldown: "1 SPRINT",
+    cost: "50 MP",
+    range: "APP ↔ APP",
+    scaling: [
+      { stat: "BACKEND", value: 90 },
+      { stat: "ARCHITECTURE", value: 80 },
+    ],
+    image: "/images/xp/skills/sync.png",
+  },
+  {
+    name: "True Sight",
+    level: 4,
+    type: "Passive",
+    tagline: "Spots structural weaknesses before they become problems.",
+    effect:
+      "Always on. Reads a system's structure and finds the weak points (slow queries, tight coupling, fragile code) before they turn into outages.",
+    bonus: ["Detects hidden bottlenecks", "+35% scalability", "-25% technical debt"],
+    stack: ["Code review", "Profiling", "Architecture"],
+    cooldown: "ALWAYS ON",
+    cost: "NONE",
+    range: "WHOLE SYSTEM",
+    scaling: [
+      { stat: "ARCHITECTURE", value: 90 },
+      { stat: "DATABASES", value: 85 },
+    ],
+    image: "/images/xp/skills/scan.png",
+  },
+  {
+    name: "Full-Stack Mode",
+    level: 5,
+    type: "Ultimate",
     tagline: "Builds the whole feature, from database to button.",
     effect:
       "Forges complete features end to end: schema and migrations, Laravel or Node APIs, React front ends, and the deploy at the end. No hand-offs, no gaps between layers.",
-    bonus: ["Front + back in one cast", "+40% ship speed", "+10 yrs Laravel mastery"],
+    bonus: ["Front + back in one workflow", "+40% ship speed", "Empowers all other skills"],
     stack: ["Laravel", "React", "Node.js", "MySQL"],
     cooldown: "1 SPRINT",
     cost: "40 MP",
@@ -19,65 +73,16 @@ export const skills: Skill[] = [
       { stat: "BACKEND", value: 95 },
       { stat: "FRONTEND", value: 75 },
     ],
-    sprite: "forge",
-  },
-  {
-    name: "System Architect",
-    level: 4,
-    type: "Active",
-    tagline: "Draws the map before the party moves.",
-    effect:
-      "Designs systems that hold up in production: splits monoliths into modular services, plans data models that age well, and keeps the infrastructure boring and stable.",
-    bonus: ["+Uptime aura", "-Tech debt per sprint", "Scales without rewrites"],
-    stack: ["Modular services", "REST APIs", "PostgreSQL"],
-    cooldown: "1 QUARTER",
-    cost: "60 MP",
-    range: "WHOLE SYSTEM",
-    scaling: [
-      { stat: "ARCHITECTURE", value: 90 },
-      { stat: "DATABASES", value: 85 },
-    ],
-    sprite: "blueprint",
-  },
-  {
-    name: "Party Leader",
-    level: 4,
-    type: "Passive",
-    tagline: "Allies nearby level up faster.",
-    effect:
-      "Always on. Leads the dev team as CTO and turns juniors into seniors through code review, pairing, and clear standards. The party ships more than the sum of its members.",
-    bonus: ["+5 Leadership", "+4 Mentoring", "Team XP gain +25%"],
-    stack: ["Code review", "Mentoring", "Planning"],
-    cooldown: "ALWAYS ON",
-    cost: "NONE",
-    range: "WHOLE TEAM",
-    scaling: [
-      { stat: "LEADERSHIP", value: 85 },
-      { stat: "MENTORING", value: 80 },
-    ],
-    sprite: "banner",
-  },
-  {
-    name: "Legacy Resurrection",
-    level: 4,
-    type: "Ultimate",
-    tagline: "Raises dead codebases while the shop stays open.",
-    effect:
-      "Brings aging codebases back to life without taking the business offline: untangles old code, adds tests where it hurts, and migrates in small, safe steps. The older the code, the bigger the combo.",
-    bonus: ["+3 Legacy Code Resistance", "Zero-downtime migrations", "+60% refactor power"],
-    stack: ["Refactoring", "Migrations", "PHP"],
-    cooldown: "1 PER LEGACY APP",
-    cost: "100 MP",
-    range: "10+ YR OLD CODE",
-    scaling: [
-      { stat: "REFACTORING", value: 90 },
-      { stat: "PATIENCE", value: 99 },
-    ],
-    sprite: "skull",
+    image: "/images/xp/skills/fullstack.png",
   },
 ];
 
-export const skillKeys = ["Q", "W", "E", "R"] as const;
+// Hotkeys by type: Actives take Q, W, E in order, the Ultimate is always R,
+// Passives have no hotkey (null).
+export const skillKeys: (string | null)[] = (() => {
+  const free = ["Q", "W", "E"];
+  return skills.map((s) => (s.type === "Passive" ? null : s.type === "Ultimate" ? "R" : (free.shift() ?? null)));
+})();
 
 // Equipment slots on the paper doll. Layout (4 columns, WoW-style):
 //   HEAD    | avatar | avatar | AMULET
@@ -103,6 +108,9 @@ export const tools: Tool[] = [
     stats: ["+8 Relational power", "+5 JSON magic"], description: "Advanced database relic. Relational power with JSON sorcery." },
   { name: "Security", sprite: "hoodie", rarity: "Epic", slot: "CHEST", kind: "Hoodie · Security", ilvl: 8,
     stats: ["+8 Defense", "+6 Auth & access control"], description: "Woven from auth flows, input validation and least privilege. Exploits bounce off." },
+  { name: "Node.js", icon: "/images/xp/items/nodejs.png", rarity: "Epic", slot: "RING", kind: "Ring · JS runtime", ilvl: 7,
+    stats: ["+7 Backend", "+6 Real-time"], description: "Ring of the runtime. Runs JavaScript beyond the browser realm." },
+  // ── Bag (no slot) ──
   { name: "Coffee", sprite: "coffee", count: 99, rarity: "Common", kind: "Consumable · Potion", ilvl: 1,
     stats: ["Restores 50 MP", "+10% Focus for 1 hr"], description: "Brewed fresh every morning. Somehow never runs out." },
   { name: "Rubber Duck", sprite: "duck", rarity: "Uncommon", kind: "Companion · Debugging", ilvl: 5,
@@ -111,9 +119,6 @@ export const tools: Tool[] = [
     stats: ["+5 Coding speed", "+3 Happiness"], description: "Trusty forge. +50% coding speed, +30% developer happiness." },
   { name: "Postman", icon: "/images/xp/items/postman.png", rarity: "Common", kind: "Tome · API testing", ilvl: 5,
     stats: ["+5 Debugging", "+3 API insight"], description: "API testing tome. Debugs requests, validates endpoints." },
-  // ── Bag ──
-  { name: "Node.js", icon: "/images/xp/items/nodejs.png", rarity: "Epic", slot: "RING", kind: "Ring · JS runtime", ilvl: 7,
-    stats: ["+7 Backend", "+6 Real-time"], description: "Ring of the runtime. Runs JavaScript beyond the browser realm." },
   { name: "WordPress", icon: "/images/xp/items/wordpress.png", rarity: "Common", kind: "Relic · CMS", ilvl: 6,
     stats: ["+6 Content", "+4 Plugins"], description: "CMS relic. Deep customization and theme enchanting skills." },
   { name: "Figma", icon: "/images/xp/items/figma.png", rarity: "Rare", kind: "Tool · Design", ilvl: 6,
@@ -122,7 +127,7 @@ export const tools: Tool[] = [
 
 export const BAG_SIZE = 10; // 5×2
 
-// Core attributes (0–100) shown on the stats panel.
+// Core attributes shown on the ATTRIBUTES panel.
 // Souls-like stats, DERIVED FROM THE CHARACTER LEVEL so they always add up:
 // every stat starts at BASE_STAT, and each level grants POINTS_PER_LEVEL
 // points, split by these weights (largest-remainder rounding, so the points

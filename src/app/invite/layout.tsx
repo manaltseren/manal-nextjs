@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Playfair_Display } from 'next/font/google';
+// Line Awesome icons are only used on this page
+import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 
 const playfair = Playfair_Display({
   weight: ['400', '500', '600', '700'],

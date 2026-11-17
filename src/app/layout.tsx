@@ -1,8 +1,5 @@
-import { Roboto } from 'next/font/google';
-import { Press_Start_2P, VT323 } from 'next/font/google';
-import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
+import { Press_Start_2P, Roboto, VT323 } from 'next/font/google';
 import './globals.css';
-import '../styles/main.scss';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import SynthwaveBackground from '../components/SynthwaveBackground';

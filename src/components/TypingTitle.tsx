@@ -9,33 +9,31 @@ interface Props {
   speed?: number;
 }
 
+/** Types `text` out one character at a time (starts when `inView`), with a
+ *  blinking terminal cursor. Re-types from scratch each time `inView` turns on. */
 export default function TypingTitle({ text, className, inView = true, speed = 75 }: Props) {
-  const [displayed, setDisplayed] = useState("");
-  const [done, setDone] = useState(false);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (!inView) return;
-    setDisplayed("");
-    setDone(false);
     let i = 0;
     const interval = setInterval(() => {
       i++;
-      setDisplayed(text.slice(0, i));
-      if (i >= text.length) {
-        clearInterval(interval);
-        setDone(true);
-      }
+      setCount(i);
+      if (i >= text.length) clearInterval(interval);
     }, speed);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      setCount(0);
+    };
   }, [inView, text, speed]);
 
   return (
     <span className={className}>
-      {displayed}
+      {text.slice(0, count)}
       <motion.span
         animate={{ opacity: [1, 0] }}
         transition={{ duration: 0.55, repeat: Infinity, repeatType: "reverse" }}
-        // hide cursor once done typing only if you want — keeping it blinks like a terminal
         style={{ marginLeft: 1 }}
       >
         _

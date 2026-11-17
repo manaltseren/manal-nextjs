@@ -15,6 +15,9 @@
 //   • glint.png brightens the laptop's </> on alternate frames.
 // Both are off under reduced motion. Layers are scaled with
 // `image-rendering: pixelated` so every art pixel stays a hard square.
+// Plain <img> on purpose: true pixel-art layers need image-rendering: pixelated
+// at exact sizes, which next/image optimisation would resample.
+/* eslint-disable @next/next/no-img-element */
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 

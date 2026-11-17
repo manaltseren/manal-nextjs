@@ -149,9 +149,9 @@ function QuestCard({ quest, idx, inView, delay }: { quest: Quest; idx: number; i
               </p>
             </motion.div>
 
-            {/* ── Hover overlay: COMPLETED quests ── */}
+            {/* ── Hover overlay: QUEST COMPLETE (yellow) / IN PROGRESS (quest colour) ── */}
             <AnimatePresence>
-              {hovered && quest.completed && (
+              {hovered && (
                 <motion.div
                   className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6"
                   initial={{ opacity: 0 }}
@@ -160,56 +160,24 @@ function QuestCard({ quest, idx, inView, delay }: { quest: Quest; idx: number; i
                   transition={{ duration: 0.18 }}
                 >
                   <motion.div
-                    className="font-press-start text-[15px] text-yellow-400 text-center"
+                    className={`font-press-start text-center ${isActive ? "text-[13px]" : "text-[15px] text-yellow-400"}`}
+                    style={isActive ? { color } : undefined}
                     initial={{ scale: 0.75, y: 12 }}
                     animate={{ scale: 1, y: 0 }}
                     transition={{ type: "spring", stiffness: 220, damping: 16 }}
                   >
-                    ✓ QUEST COMPLETE
+                    {isActive ? "⚔︎ IN PROGRESS" : "✓ QUEST COMPLETE"}
                   </motion.div>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {quest.reward.map((r, i) => (
                       <motion.span
                         key={i}
                         className="font-press-start text-[9px] px-2 py-1"
-                        style={{ color: "#facc15", border: "1px solid rgba(250,204,21,0.4)", backgroundColor: "rgba(250,204,21,0.08)" }}
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.07 }}
-                      >
-                        ⬥ {r}
-                      </motion.span>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* ── Hover overlay: ACTIVE quest ── */}
-            <AnimatePresence>
-              {hovered && isActive && (
-                <motion.div
-                  className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <motion.div
-                    className="font-press-start text-[13px] text-center"
-                    style={{ color }}
-                    initial={{ scale: 0.75, y: 12 }}
-                    animate={{ scale: 1, y: 0 }}
-                    transition={{ type: "spring", stiffness: 220, damping: 16 }}
-                  >
-                    ⚔︎ IN PROGRESS
-                  </motion.div>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {quest.reward.map((r, i) => (
-                      <motion.span
-                        key={i}
-                        className="font-press-start text-[9px] px-2 py-1"
-                        style={{ color, border: `1px solid ${colorDim}`, backgroundColor: colorFaint }}
+                        style={
+                          isActive
+                            ? { color, border: `1px solid ${colorDim}`, backgroundColor: colorFaint }
+                            : { color: "#facc15", border: "1px solid rgba(250,204,21,0.4)", backgroundColor: "rgba(250,204,21,0.08)" }
+                        }
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.07 }}

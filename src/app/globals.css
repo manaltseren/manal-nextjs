@@ -8,16 +8,6 @@
   --font-pixel: var(--font-pixel);
 }
 
-@utility bg-130-auto {
-  background-size: 130% auto;
-}
-@utility bg-auto-960 {
-  background-size: auto 960px;
-}
-@utility bg-top-center {
-  background-position: top center;
-}
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -98,12 +88,6 @@
 body {
   color: var(--foreground);
   background: #0b0a14;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -420,11 +404,9 @@ body {
     background-size: 4px 4px;
     background-position: 0 0, 2px 2px;
   }
-}
 
-/* Level badge — solid yellow pixel chip with a hard bevel and a dark notched
-   outline. Used by the avatar's LVL badge. */
-@layer components {
+  /* Level badge — solid yellow pixel chip with a hard bevel and a dark notched
+     outline. Used by the avatar's LVL badge. */
   .px-lvl {
     display: inline-block;
     white-space: nowrap;

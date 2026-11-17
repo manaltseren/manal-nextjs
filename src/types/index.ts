@@ -18,8 +18,8 @@ export interface Skill {
   range: string;
   /** "Scales with" bars, value 0–100 */
   scaling: { stat: string; value: number }[];
-  /** Key into the PixelSprite `sprites` map */
-  sprite: 'forge' | 'blueprint' | 'banner' | 'skull';
+  /** Full-bleed skill icon (path under /public; 192px PNG filling the slot) */
+  image: string;
 }
 
 export interface Tool {

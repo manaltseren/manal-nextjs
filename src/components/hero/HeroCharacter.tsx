@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import TypingTitle from "@/components/TypingTitle";
 import { useRevealed } from "@/components/PixelReveal";
-import PixelSprite from "@/components/pixel/PixelSprite";
 import CharacterSprite from "./character/CharacterSprite";
 import StageBackdrop from "./character/StageBackdrop";
 import type { Tool } from "@/types";
@@ -19,11 +18,10 @@ import {
   PanelLabel,
   SkillInfo,
   Slot,
-  pxVars,
-  stepped,
   rarityConfig,
   typeConfig,
 } from "./character/ui";
+import { pxVars } from "@/lib/pixel";
 
 type Tip = { id: string; rect: DOMRect } | null; // open item tooltip
 
@@ -33,7 +31,7 @@ const bag = tools.filter((t) => !t.slot);
 const level = characterLevel();
 const attributes = attributesFor(level);
 
-// Inner sub-panel (darker inset) inside the window
+// Sub-panel: its own bordered window, or `bare` (no window, on the scene)
 function SubPanel({ children, className = "", bare = false }: { children: React.ReactNode; className?: string; bare?: boolean }) {
   // bare = no window: content sits straight on the scene (the Equipment side)
   if (bare) return <div className={className}>{children}</div>;
@@ -63,6 +61,10 @@ export default function HeroCharacter() {
   const [activeSkill, setActiveSkill] = useState(0);
   // Bumped on every Coffee click — the character plays the drink animation once
   const [drinkKey, setDrinkKey] = useState(0);
+  // Coffee stack: starts at the data's count, −1 per sip (per page visit)
+  const [coffeeLeft, setCoffeeLeft] = useState(() => tools.find((t) => t.sprite === "coffee")?.count ?? 0);
+  // Tool with its live stack count (the coffee one changes as it's drunk)
+  const live = (t: Tool): Tool => (t.sprite === "coffee" ? { ...t, count: coffeeLeft } : t);
   // Mobile only: ATTRIBUTES list starts collapsed (always open on desktop)
   const [attrOpen, setAttrOpen] = useState(false);
 
@@ -84,14 +86,14 @@ export default function HeroCharacter() {
     };
   }, [tip]);
 
-  // Q/W/E/R select that skill (shown in the inline info)
+  // A skill's hotkey selects it (shown in the inline info); Passives have none
   useEffect(() => {
     if (!onScreen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
-      const i = skillKeys.indexOf(e.key.toUpperCase() as (typeof skillKeys)[number]);
+      const i = skillKeys.indexOf(e.key.toUpperCase());
       if (i >= 0) setActiveSkill(i);
     };
     window.addEventListener("keydown", onKey);
@@ -104,11 +106,13 @@ export default function HeroCharacter() {
 
   let slotIdx = 0; // stagger order for the entrance
 
-  const itemSlot = (t: Tool | undefined, label?: string) => {
+  const itemSlot = (item: Tool | undefined, label?: string) => {
     const idx = slotIdx++;
-    if (!t) return <EmptySlot key={`empty-${label ?? idx}`} label={label} />;
+    if (!item) return <EmptySlot key={`empty-${label ?? idx}`} label={label} />;
+    const t = live(item);
     const cfg = rarityConfig[t.rarity];
-    const usable = t.sprite === "coffee"; // clicking plays the drink animation
+    const isCoffee = t.sprite === "coffee";
+    const usable = isCoffee && coffeeLeft > 0; // clicking plays the drink animation
     return (
       <Slot
         key={t.name}
@@ -122,7 +126,14 @@ export default function HeroCharacter() {
         ariaLabel={`${t.name}, ${cfg.label}${t.slot ? `, equipped: ${t.slot}` : ""}${t.count ? `, ${t.count} in stack` : ""}${usable ? ", usable: click to take a sip" : ""}`}
         onOpen={open(t.name)}
         onClose={close(t.name)}
-        onActivate={usable ? () => setDrinkKey((k) => k + 1) : undefined}
+        onActivate={
+          usable
+            ? () => {
+                setCoffeeLeft((n) => Math.max(0, n - 1));
+                setDrinkKey((k) => k + 1);
+              }
+            : undefined
+        }
       >
         <ItemIcon tool={t} className="w-[52%] h-[52%]" />
         {/* Usable item: blinking "USE" tag so the slot reads as clickable
@@ -138,13 +149,21 @@ export default function HeroCharacter() {
           </motion.span>
         )}
         <span className="absolute bottom-1 right-1.5 font-press-start text-[7px] leading-none" style={{ color: cfg.color }}>
-          {t.count ? <span className="text-white">{t.count}</span> : cfg.symbol}
+          {isCoffee ? (
+            // live stack count; empty stack = dim 0
+            <span className={coffeeLeft > 0 ? "text-white" : "text-white/35"}>{coffeeLeft}</span>
+          ) : t.count ? (
+            <span className="text-white">{t.count}</span>
+          ) : (
+            cfg.symbol
+          )}
         </span>
       </Slot>
     );
   };
 
-  const tipItem = tip ? tools.find((t) => t.name === tip.id) : undefined;
+  const tipFound = tip ? tools.find((t) => t.name === tip.id) : undefined;
+  const tipItem = tipFound ? live(tipFound) : undefined;
 
   return (
     <motion.div
@@ -161,8 +180,6 @@ export default function HeroCharacter() {
       </div>
 
       {/* ── Panels sit directly on the scene — no outer window/card ── */}
-      <div>
-        <div>
           {/* 2×2 grid so paired windows share a row height:
                 row 1: paper doll | SKILLS
                 row 2: ATTRIBUTES | BAG
@@ -178,8 +195,8 @@ export default function HeroCharacter() {
                   <div className="flex flex-col justify-between">{dollLeft.map((s) => itemSlot(equippedBySlot.get(s), s))}</div>
                   {/* Full-body avatar: the user's pixel sprite standing on a
                       pixel "character select" stage (StageBackdrop: banded sky,
-                      stars, stepped spotlight, dithered floor, pedestal). The
-                      frame is 2:3, same as the stage grid. */}
+                      dithered floor, pedestal). The frame is 2:3, same as the
+                      stage grid. */}
                   <div className="px-outer">
                     <div
                       className="px-panel aspect-2/3 overflow-hidden flex items-end justify-center"
@@ -247,34 +264,37 @@ export default function HeroCharacter() {
                   return (
                     <Slot
                       key={s.name}
-                      label={skillKeys[i]}
+                      label={skillKeys[i] ?? undefined}
                       idx={slotIdx++}
                       open={activeSkill === i}
                       borderColor={cfg.colorDim}
                       openColor={cfg.color}
                       inView={isInView}
                       reduce={reduce}
-                      ariaLabel={`${s.name}, ${cfg.label} skill, rank ${s.level} of 5, hotkey ${skillKeys[i]}`}
+                      ariaLabel={`${s.name}, ${cfg.label} skill, rank ${s.level} of 5${skillKeys[i] ? `, hotkey ${skillKeys[i]}` : ""}`}
                       describedBy="skill-info"
+                      bleed
                       onOpen={() => setActiveSkill(i)}
                       onClose={() => {}}
                     >
                       {/* Icon only (bigger); the rank shows beside the name below */}
-                      {/* Active skill: the icon hops in stepped frames (still
-                          under reduced motion) */}
-                      <motion.span
-                        className="flex"
-                        animate={activeSkill === i && !reduce ? { y: [0, -4, 0] } : { y: 0 }}
-                        transition={
-                          activeSkill === i && !reduce
-                            ? { duration: 0.6, repeat: Infinity, ease: stepped(3) }
-                            : { duration: 0 }
-                        }
-                      >
-                        <PixelSprite name={s.sprite} size={48} />
-                      </motion.span>
+                      {/* Full-bleed art icon: no hop (a moving square reads as a
+                          loose box) — selected = full brightness, others
+                          dimmed, stepped */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={s.image}
+                        alt=""
+                        draggable={false}
+                        className="absolute inset-0 w-full h-full object-cover"
+                        style={{
+                          filter: activeSkill === i ? "none" : "brightness(.6) saturate(.7)",
+                          transition: reduce ? "none" : "filter .2s steps(3)",
+                        }}
+                      />
                       {s.type === "Ultimate" && (
-                        <span className="absolute top-1.5 right-1.5 font-press-start text-[7px] leading-none" style={{ color: cfg.color }}>
+                        // solid key-cap like the hotkey, so it reads over the art
+                        <span className="absolute top-0 right-0 z-1 bg-[#0b0a14] px-1 py-0.75 font-press-start text-[7px] leading-none" style={{ color: cfg.color }}>
                           ★
                         </span>
                       )}
@@ -305,8 +325,6 @@ export default function HeroCharacter() {
               </div>
             </SubPanel>
           </div>
-        </div>
-      </div>
 
       {tipItem && tip && <ItemTooltip tool={tipItem} rect={tip.rect} reduce={reduce} />}
     </motion.div>

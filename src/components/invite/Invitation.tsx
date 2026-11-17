@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState, useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
 import Confetti from './Confetti';
 
@@ -61,17 +61,18 @@ const STARS = Array.from({ length: 46 }, (_, i) => {
 
 /* --------------------------- countdown ---------------------------- */
 
+// Одоогийн цаг (секундээр) — секунд бүр шинэчлэгдэнэ.
+const subscribeClock = (cb: () => void) => {
+  const id = setInterval(cb, 1000);
+  return () => clearInterval(id);
+};
+const clockSnapshot = () => Math.floor(Date.now() / 1000) * 1000;
+const serverClock = () => null;
+
 function useCountdown(target: string) {
   const targetMs = useMemo(() => new Date(target).getTime(), [target]);
-  const [now, setNow] = useState<number | null>(null);
-
-  useEffect(() => {
-    setNow(Date.now());
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
   // hydration-safe: серверт null, mount хийсний дараа л тоо гарна
+  const now = useSyncExternalStore(subscribeClock, clockSnapshot, serverClock);
   if (now === null) return null;
 
   const diff = Math.max(0, targetMs - now);

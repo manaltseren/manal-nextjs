@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext, useRef, useState } from "react";
 import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
+import { smooth } from "@/lib/pixel";
 
 /**
  * PixelReveal — smooth top→bottom wipe for a section entering the viewport.
@@ -21,7 +22,6 @@ export const SHOW_AT = 24; // px of scroll before anything reveals
 export const HIDE_AT = 4;  // back (almost) at the very top → hide again
 export const HIDE_DURATION = 0.25; // fade-out time when hiding (s)
 export const SHOW_DELAY = 0.15;    // wait before revealing, so the PRESS START prompt clears first (s)
-const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
 // Overscan so pixel-panel borders/drop shadows aren't cut during the wipe.
 const CLIP_HIDDEN = "inset(-16px -16px 100% -16px)";
@@ -82,9 +82,9 @@ export default function PixelReveal({
             y: 0,
             clipPath: CLIP_SHOWN,
             transition: {
-              clipPath: { delay: SHOW_DELAY, duration, ease: EASE_OUT },
+              clipPath: { delay: SHOW_DELAY, duration, ease: smooth },
               opacity: { delay: SHOW_DELAY, duration: duration * 0.6, ease: "easeOut" },
-              y: { delay: SHOW_DELAY, duration, ease: EASE_OUT },
+              y: { delay: SHOW_DELAY, duration, ease: smooth },
             },
           },
         }}

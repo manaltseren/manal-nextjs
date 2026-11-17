@@ -1,20 +1,12 @@
 "use client";
-// Building blocks for the CHARACTER window: palette configs, pixel helpers,
-// a hover/tap slot button, and the slot-anchored tooltip with its item and
-// skill variants.
+// Building blocks for the CHARACTER window: palette configs, item sprites,
+// a hover/tap slot button, the slot-anchored item tooltip and the inline
+// skill info.
 import { useLayoutEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import type { Rarity, Skill, SkillType, Tool } from "@/types";
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-// CSS custom properties aren't in React.CSSProperties.
-export const pxVars = (vars: Record<string, string>) => vars as React.CSSProperties;
-
-// Stepped easing — motion moves in whole frames, like a sprite.
-export const stepped = (steps: number) => (t: number) => Math.min(1, Math.ceil(t * steps) / steps);
-
-export const smooth = [0.22, 1, 0.36, 1] as const;
+import { pxVars, rand, smooth, stepped } from "@/lib/pixel";
 
 // ── Palettes ─────────────────────────────────────────────────────────────────
 export const rarityConfig: Record<Rarity, { color: string; colorDim: string; colorFaint: string; label: string; symbol: string }> = {
@@ -101,21 +93,20 @@ function GridSprite({ name, className }: { name: keyof typeof itemSprites; class
 export function ItemIcon({ tool, className }: { tool: Tool; className: string }) {
   if (tool.sprite) return <GridSprite name={tool.sprite} className={className} />;
   const src = tool.icon?.replace("/images/xp/items/", "/images/xp/items/pixel/");
+  // eslint-disable-next-line @next/next/no-img-element -- tiny pixel PNG, must stay unresampled
   return <img src={src} alt="" className={`${className} object-contain`} style={{ imageRendering: "pixelated" }} />;
 }
 
 // ── Small bits ───────────────────────────────────────────────────────────────
-export function RankPips({ level, color, size = "sm" }: { level: number; color: string; size?: "sm" | "lg" }) {
-  const w = size === "lg" ? 14 : 6;
-  const h = size === "lg" ? 8 : 4;
+function RankPips({ level, color }: { level: number; color: string }) {
   return (
     <span className="flex gap-1" aria-hidden="true">
       {Array.from({ length: 5 }).map((_, i) => (
         <span
           key={i}
           style={{
-            width: w,
-            height: h,
+            width: 6,
+            height: 4,
             backgroundColor: i < level ? color : "#1a1838",
             boxShadow: i < level ? "inset 0 2px 0 rgba(255,255,255,0.3), 0 0 0 2px #07060e" : "0 0 0 2px #07060e",
           }}
@@ -125,37 +116,7 @@ export function RankPips({ level, color, size = "sm" }: { level: number; color: 
   );
 }
 
-export function Chip({ children, color, faint }: { children: React.ReactNode; color: string; faint: string }) {
-  return (
-    <span className="px-chip font-press-start text-[8px] px-2 py-1 leading-none" style={pxVars({ "--px-border": color, "--px-bg": faint, color })}>
-      {children}
-    </span>
-  );
-}
-
-/** Segmented 10-block stat bar with label and value. */
-export function StatBar({ stat, value, color, labelWidth = "w-24" }: { stat: string; value: number; color: string; labelWidth?: string }) {
-  const filled = Math.round(value / 10);
-  return (
-    <div className="flex items-center gap-3">
-      <span className={`font-press-start text-[8px] leading-none text-white/55 ${labelWidth} shrink-0`}>{stat}</span>
-      <span className="flex gap-0.75 flex-1">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <span
-            key={i}
-            className="h-2.5 flex-1"
-            style={{ backgroundColor: i < filled ? color : "#1a1838", boxShadow: i < filled ? "inset 0 2px 0 rgba(255,255,255,0.25)" : "none" }}
-          />
-        ))}
-      </span>
-      <span className="font-press-start text-[8px] leading-none w-6 text-right" style={{ color }}>
-        {value}
-      </span>
-    </div>
-  );
-}
-
-/** Section title inside the Character area, e.g. "BAG   6 / 8". */
+/** Section title inside the Character area, e.g. "BAG   6 / 10". */
 export function PanelLabel({ children, right }: { children: React.ReactNode; right?: React.ReactNode }) {
   return (
     // Real title: no "▸" prefix (it broke the left alignment), 10px bright
@@ -183,8 +144,11 @@ export function Slot({
   onClose,
   btnRef,
   onActivate,
+  bleed = false,
   children,
 }: {
+  /** Children are full-bleed art filling the slot (no padding/centring) */
+  bleed?: boolean;
   open: boolean;
   label?: string;
   borderColor: string;
@@ -250,12 +214,34 @@ export function Slot({
         className="px-panel aspect-square flex items-center justify-center"
         style={pxVars({ "--px": "3px", "--px-border": open ? openColor : borderColor, "--px-bg": open ? "#1a1640" : "#0a0920" })}
       >
-        {label && (
-          <span className="absolute top-1.5 left-1.5 font-press-start text-[6px] md:text-[7px] leading-none text-white/35">{label}</span>
+        {bleed ? (
+          // Full-bleed art (MOBA-style icon): fills the slot edge to edge so
+          // the slot border frames it, with the bevel redrawn on top
+          <span className="absolute inset-0 overflow-hidden">
+            {children}
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                boxShadow:
+                  "inset 0 3px 0 0 rgba(255,255,255,.14), inset 3px 0 0 0 rgba(255,255,255,.06), inset 0 -3px 0 0 rgba(0,0,0,.45), inset -3px 0 0 0 rgba(0,0,0,.35)",
+              }}
+            />
+          </span>
+        ) : (
+          <span className="flex items-center justify-center w-full h-full">
+            {children}
+          </span>
         )}
-        <span className="flex items-center justify-center w-full h-full">
-          {children}
-        </span>
+        {label &&
+          (bleed ? (
+            // solid key-cap so the hotkey stays readable over the art
+            <span className="absolute top-0 left-0 z-1 bg-[#0b0a14] px-1 py-0.75 font-press-start text-[6px] md:text-[7px] leading-none text-white/70">
+              {label}
+            </span>
+          ) : (
+            <span className="absolute top-1.5 left-1.5 font-press-start text-[6px] md:text-[7px] leading-none text-white/35">{label}</span>
+          ))}
       </div>
     </motion.button>
   );
@@ -332,12 +318,6 @@ function AnchoredTooltip({ rect, tipKey, border, reduce, children }: { rect: DOM
     document.body
   );
 }
-
-// Deterministic pseudo-random in [0,1) — pure (no Math.random).
-const rand = (seed: number) => {
-  const v = Math.sin(seed) * 43758.5453;
-  return v - Math.floor(v);
-};
 
 function Sparkle({ color, seed, delay }: { color: string; seed: number; delay: number }) {
   return (

@@ -42,7 +42,6 @@ const projects: Project[] = [
     description: "For completionist gamers, securing a platinum trophy or hitting 100% execution requires a lot of meticulous planning to avoid missable achievements. This platform solves that headache. By letting users sync their personal gaming accounts, the application scans their real-time progress and serves up curated guides and critical checklists exactly when they need them. This is the foundation for a larger, feature-rich ecosystem focused on deep video game analytics and community tools.",
     features: ["Sync with PSN/Steam", "Progress tracking", "AI guide", "E-commerce"],
     link: "#",
-    image: "",
     shipped: false, featured: true, },
   {
     title: "Wave X Motion - LMS",
@@ -538,7 +537,7 @@ export default function ProjectShowcase() {
     return matchesQuery && matchesCategory;
   });
 
-  // Featured banner only when browsing unfiltered (page 1, ALL, no query) —
+  // Featured banner only when browsing unfiltered (ALL, no query) —
   // otherwise the pinned project just lives in the grid like the rest.
   const featured = projects.find((p) => p.featured);
   const showFeatured = !!featured && category === "ALL" && !q;
@@ -595,11 +594,13 @@ export default function ProjectShowcase() {
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
               placeholder="SEARCH PROJECTS..."
+              aria-label="Search projects"
               className="w-full bg-transparent outline-none font-press-start text-[10px] py-3.5 text-white placeholder:text-white/25"
             />
             {query && (
               <button
                 onClick={() => { setQuery(""); setPage(1); }}
+                aria-label="Clear search"
                 className="font-press-start text-[10px] cursor-pointer"
                 style={{ color: "rgba(255,255,255,0.4)" }}
               >

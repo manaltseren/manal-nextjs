@@ -16,6 +16,8 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useState, useEffect } from "react";
 import SocialIcon from "@/components/pixel/SocialIcon";
 import { AVATAR_LOOK, avatarPortraits } from "@/components/hero/character/look";
+import { characterLevel } from "@/components/hero/character/data";
+import { pxVars, rand } from "@/lib/pixel";
 
 const nameChars = Array.from("MANALAA Bold");
 const AVATAR = 168;
@@ -28,8 +30,6 @@ const charVariants = {
   hidden: { opacity: 0, y: 6 },
   visible: { opacity: 1, y: 0 },
 };
-
-const pxVars = (vars: Record<string, string>) => vars as React.CSSProperties;
 
 // Floating pixel sparkle around the avatar
 function Sparkle({ x, y, delay }: { x: number; y: number; delay: number }) {
@@ -50,10 +50,7 @@ function Sparkle({ x, y, delay }: { x: number; y: number; delay: number }) {
 // deterministic jitter (Math.sin hash, so SSR and client agree). Hard cuts
 // only; skipped under reduced motion.
 const GRID = 12;
-const hash = (n: number) => {
-  const x = Math.sin(n * 12.9898) * 43758.5453;
-  return x - Math.floor(x);
-};
+const hash = (n: number) => rand(n * 12.9898);
 const REVEAL_START = 0.35; // after the frame pops in
 const REVEAL_SPAN = 0.7; // wave duration
 const FLASH = 0.09; // per-block cyan frame + hold
@@ -110,24 +107,32 @@ function calcYearXP() {
 }
 
 export default function HeroAvatar() {
-  const level = new Date().getFullYear() - 2013;
+  const level = characterLevel();
   const targetXP = calcYearXP();
   const xpPercent = Math.round(targetXP / 100);
   const [xpCount, setXpCount] = useState(0);
   const [btnHover, setBtnHover] = useState(false);
 
+  // Count the XP number up after a short delay. Both timers are cleared on
+  // unmount (a cleanup returned from inside the timeout callback would never run).
   useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | undefined;
     const delay = setTimeout(() => {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         setXpCount((prev) => {
           const next = prev + Math.ceil((targetXP - prev) / 20);
-          if (next >= targetXP) { clearInterval(interval); return targetXP; }
+          if (next >= targetXP) {
+            clearInterval(interval);
+            return targetXP;
+          }
           return next;
         });
       }, 16);
-      return () => clearInterval(interval);
     }, 500);
-    return () => clearTimeout(delay);
+    return () => {
+      clearTimeout(delay);
+      clearInterval(interval);
+    };
   }, [targetXP]);
 
   return (
@@ -165,6 +170,7 @@ export default function HeroAvatar() {
                     384px WebP from a 1254px source — hi-res, so NO pixelated
                     rendering). Slight zoom from the bottom so the shoulders
                     meet the frame's bottom edge. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={avatarPortraits[AVATAR_LOOK]}
                   alt="Manalaa — pixel-art portrait with glasses"

@@ -1,23 +1,9 @@
-// Hand-drawn 12×12 pixel social icons (replace the Line Awesome font icons).
+// Hand-drawn 12×12 pixel social icons. Add more to `icons` as needed.
 // "#" = filled pixel in `currentColor` (so hover colour classes still work),
 // "." = transparent (letters/lens are cut-outs). Render at an exact integer
 // multiple (24px = 2×) so every art pixel stays a crisp square.
 
 const icons = {
-  linkedin: [
-    ".##########.",
-    "############",
-    "##..########",
-    "############",
-    "##..#....###",
-    "##..#..#..##",
-    "##..#..#..##",
-    "##..#..#..##",
-    "##..#..#..##",
-    "##..#..#..##",
-    "############",
-    ".##########.",
-  ],
   instagram: [
     ".##########.",
     "#..........#",
@@ -31,20 +17,6 @@ const icons = {
     "#..........#",
     "#..........#",
     ".##########.",
-  ],
-  facebook: [
-    ".##########.",
-    "############",
-    "#######...##",
-    "######..####",
-    "######..####",
-    "####......##",
-    "######..####",
-    "######..####",
-    "######..####",
-    "######..####",
-    "######..####",
-    ".#####..###.",
   ],
 } as const;
 

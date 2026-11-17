@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { ImageResponse } from "next/og";
+import { characterLevel } from "@/components/hero/character/data";
 
 // Dynamic Open Graph / social-share image (1200×630). Rendered to a real PNG by
 // next/og, on-brand with the synthwave theme. Next auto-wires og:image.
@@ -31,7 +32,7 @@ function Corner(style: React.CSSProperties) {
 
 export default async function Image() {
   const press = readFileSync(new URL("./PressStart2P.ttf", import.meta.url));
-  const lvl = new Date().getFullYear() - 2013;
+  const lvl = characterLevel();
 
   const bracket = { borderColor: CYAN, borderStyle: "solid" } as const;
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { rand } from "@/lib/pixel";
 
 /**
  * SynthwaveBackground — global pixel-art backdrop.
@@ -23,12 +24,8 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
  * mid-scroll can't resize it and desync the %-positioned horizon/sun.
  */
 
-// Deterministic pseudo-random in [0,1). Stable across SSR/CSR — values are
-// rounded so tiny float differences can't cause a hydration mismatch.
-const rand = (seed: number) => {
-  const x = Math.sin(seed) * 43758.5453;
-  return x - Math.floor(x);
-};
+// Star positions use the deterministic `rand` hash; values are rounded so tiny
+// float differences can't cause a hydration mismatch.
 const pct = (seed: number) => +(rand(seed) * 100).toFixed(2);
 
 const STARS = Array.from({ length: 72 }, (_, i) => {

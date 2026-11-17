@@ -3,20 +3,12 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
+import { pxVars, smooth, stepped } from "@/lib/pixel";
 
 const navItems = [
   { href: "/", label: "ABOUT ME", key: "1", desc: "Character overview" },
   { href: "/portfolio", label: "PORTFOLIO", key: "2", desc: "Completed quests" },
 ];
-
-// CSS custom properties aren't in React.CSSProperties.
-const pxVars = (vars: Record<string, string>) => vars as React.CSSProperties;
-
-// Stepped easing — motion moves in whole frames, like a sprite.
-const stepped = (steps: number) => (t: number) => Math.min(1, Math.ceil(t * steps) / steps);
-
-// Smooth ease-out for the drawer (a stepped slide over a big panel reads as lag).
-const smooth = [0.22, 1, 0.36, 1] as const;
 
 // ── Pixel sprites (crisp SVG) ────────────────────────────────────────────────
 // Pixel </> code sign: cyan angle brackets, purple slash (11×7 grid, 2px pixels)
