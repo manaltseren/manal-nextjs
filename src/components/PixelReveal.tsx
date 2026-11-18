@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { motion, useInView, useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 import { smooth } from "@/lib/pixel";
 
@@ -46,10 +46,19 @@ export default function PixelReveal({
   const reduce = useReducedMotion();
   const [done, setDone] = useState(false);
 
-  // Has the user scrolled yet? (lazy init covers a page restored mid-scroll)
-  const [scrolled, setScrolled] = useState(
-    () => typeof window !== "undefined" && window.scrollY > SHOW_AT
-  );
+  // Has the user scrolled yet? Always starts false: reading window.scrollY
+  // during render would see the PREVIOUS page's scroll on a client-side
+  // navigation (Next resets it to the top only after this renders), which
+  // revealed the section on the title screen. The real position is checked
+  // after mount instead (one frame later, once Next's scroll reset has run),
+  // which still covers a page restored mid-scroll.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      if (window.scrollY > SHOW_AT) setScrolled(true);
+    });
+    return () => cancelAnimationFrame(id);
+  }, []);
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, "change", (y) => {
     if (!scrolled && y > SHOW_AT) setScrolled(true);
