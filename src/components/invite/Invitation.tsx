@@ -8,56 +8,81 @@ import Confetti from './Confetti';
  *  ЭНД ЗАСНА УУ — бүх текст, огноо, утас энэ нэг объектод байна.
  * ------------------------------------------------------------------ */
 export const INVITE = {
-  name: 'Л.Пүрэврэнцэн',
-  ageLine: '70 насны ойн баярын урилга',
+  name: 'Н.Наранцацрал',
+  /** Зураг — /public доторх зам */
+  photo: '/images/invite/portrait.webp',
   /** ISO огноо — тоолуур үүнээс тоолно */
-  dateISO: '2026-08-30T16:00:00+08:00',
-  dateText: '08.30',
-  year: '2026',
-  weekday: 'Ням',
+  dateISO: '2026-11-25T16:00:00+08:00',
+  dateText: '2026.11.25',
+  weekday: 'Лхагва',
   timeText: '16:00',
-  venue: 'Grand Khaan Irish Pub',
-  venueDetail: 'Чингис ВИП өрөө',
-  /** Google Maps холбоос — Maps дээрх "Share" линкээ энд тавьж болно */
-  mapUrl:
-    'https://maps.app.goo.gl/kq5wKRhPMfB8DUU87',
+  venue: 'Байршил тодорхой болоогүй',
+  venueDetail: 'Удахгүй мэдэгдэнэ',
+  /** Google Maps холбоос — хоосон бол "газрын зураг" товч харагдахгүй */
+  mapUrl: '',
   mapText: 'Газрын зураг дээр харах',
   message:
     'Миний амьдралын онцгой энэ өдрийг хамт өнгөрүүлж, баяр баясгаланг минь хуваалцахыг урьж байна.',
-  host: 'Хүндэтгэсэн: Л.Пүрэврэнцэн',
-  phone: '+97699334877',
+  host: 'Хүндэтгэсэн: Н.Наранцацрал',
 } as const;
 
-/* ---------------------------- balloons ---------------------------- */
+/* -------------------------- gold glitter -------------------------- */
 
-const BALLOONS = [
-  { x: '6%', size: 62, dur: 26, delay: -2, c1: '#f6d365', c2: '#b6862a' },
-  { x: '18%', size: 44, dur: 34, delay: -14, c1: '#d9a7c7', c2: '#8e4f72' },
-  { x: '31%', size: 74, dur: 30, delay: -22, c1: '#a678d6', c2: '#54308c' },
-  { x: '44%', size: 38, dur: 38, delay: -8, c1: '#fff3c4', c2: '#c9992f' },
-  { x: '58%', size: 66, dur: 28, delay: -18, c1: '#f6d365', c2: '#9c6c1f' },
-  { x: '70%', size: 48, dur: 36, delay: -5, c1: '#d9a7c7', c2: '#7d3f61' },
-  { x: '82%', size: 70, dur: 32, delay: -26, c1: '#a678d6', c2: '#432a70' },
-  { x: '93%', size: 40, dur: 40, delay: -11, c1: '#e6c98a', c2: '#8a6a24' },
+/* Тогтмол (deterministic) тоосонцор — SSR ба client ижил гарна.
+   Урт бутархайг браузер өөрөө богиносгодог тул hydration үед зөрөхгүйн
+   тулд браузерын хэвлэдэгтэй ижил богино хэлбэрт урьдчилж бөөрөнхийлнө. */
+const round = (n: number, d = 2) => Math.round(n * 10 ** d) / 10 ** d;
+const hash = (i: number, seed: number) => {
+  const h = Math.sin(i * 12.9898 + seed * 78.233) * 43758.5453;
+  return h - Math.floor(h);
+};
+
+const DUST_COLORS = ['#b8862b', '#d9a93f', '#8a6420', '#f0cf7a', '#6e4f18'];
+
+/** Алтан шороон цацраг — зургийн зүүн дээд, баруун доод буланд */
+const DUST = [
+  { cx: 10, cy: 12, rx: 34, ry: 22, n: 420, seed: 1 },
+  { cx: 90, cy: 76, rx: 34, ry: 30, n: 520, seed: 2 },
+  { cx: 18, cy: 94, rx: 28, ry: 12, n: 200, seed: 3 },
+].flatMap((c) =>
+  Array.from({ length: c.n }, (_, i) => {
+    // хоёр санамсаргүй тооны дундаж → төв рүүгээ шигүү үүл
+    const a = hash(i, c.seed) * Math.PI * 2;
+    const r = (hash(i, c.seed + 10) + hash(i, c.seed + 20)) / 2;
+    const rr = Math.abs(r - 0.5) * 2;
+    return {
+      left: `${round(c.cx + Math.cos(a) * rr * c.rx)}%`,
+      top: `${round(c.cy + Math.sin(a) * rr * c.ry)}%`,
+      size: `${hash(i, c.seed + 30) > 0.7 ? 2 : 1}px`,
+      color: DUST_COLORS[Math.floor(hash(i, c.seed + 40) * DUST_COLORS.length)],
+      opacity: round(0.5 + hash(i, c.seed + 50) * 0.5),
+    };
+  }),
+);
+
+/** Том алтан бөөрөнхий цэгүүд — хажуугаар нь муруй мөр үүсгэнэ */
+const DOTS = [
+  // зүүн тал — доош муруйсан мөр
+  ...Array.from({ length: 16 }, (_, i) => {
+    const t = i / 15;
+    return {
+      left: `${round(3 + Math.sin(t * Math.PI) * 9 + (hash(i, 7) - 0.5) * 3)}%`,
+      top: `${round(34 + t * 30 + (hash(i, 8) - 0.5) * 2)}%`,
+      size: Math.round(3 + hash(i, 9) * 9),
+      delay: `${round(hash(i, 11) * 4, 1)}s`,
+    };
+  }),
+  // баруун дээд тал
+  ...Array.from({ length: 14 }, (_, i) => {
+    const t = i / 13;
+    return {
+      left: `${round(84 + Math.sin(t * Math.PI * 1.2) * 8 + (hash(i, 12) - 0.5) * 3)}%`,
+      top: `${round(5 + t * 28 + (hash(i, 13) - 0.5) * 2)}%`,
+      size: Math.round(3 + hash(i, 14) * 9),
+      delay: `${round(hash(i, 15) * 4, 1)}s`,
+    };
+  }),
 ];
-
-/* Тогтмол одод — SSR ба client ижил гарна.
-   Урт бутархайг браузер өөрөө богиносгодог тул (`5.721816…%` → `5.72182%`)
-   hydration үед зөрөх шалтгаан болдог. Тиймээс браузерын хэвлэдэгтэй ижил
-   богино хэлбэрт нь урьдчилж бөөрөнхийлнө — `toFixed` нь `0.000%` шиг
-   арын тэгүүд үлдээдэг тул тохирохгүй. */
-const round = (n: number, d = 3) => Math.round(n * 10 ** d) / 10 ** d;
-
-const STARS = Array.from({ length: 46 }, (_, i) => {
-  const h = Math.sin(i * 12.9898) * 43758.5453;
-  const h2 = Math.sin(i * 78.233) * 12345.6789;
-  return {
-    left: `${round(Math.abs(h - Math.floor(h)) * 100)}%`,
-    top: `${round(Math.abs(h2 - Math.floor(h2)) * 70)}%`,
-    size: `${(i % 3) + 1}px`,
-    delay: `${round((i % 7) * 0.6, 1)}s`,
-  };
-});
 
 /* --------------------------- countdown ---------------------------- */
 
@@ -99,247 +124,204 @@ export default function Invitation() {
   return (
     <div className="inv-root relative min-h-screen w-full overflow-hidden">
       <style>{`
-        .inv-root {
-          background:
-            radial-gradient(120% 90% at 50% -10%, #4a2a63 0%, rgba(74,42,99,0) 55%),
-            radial-gradient(90% 70% at 80% 110%, #3a1c4d 0%, rgba(58,28,77,0) 60%),
-            linear-gradient(180deg, #150c26 0%, #0d0719 55%, #08050f 100%);
+        .inv-root { background: #050307; }
+        .inv-serif { font-family: var(--font-playfair), 'Playfair Display', Georgia, serif; }
+        .inv-vibes { font-family: var(--font-vibes), 'Great Vibes', cursive; }
+        .inv-brush { font-family: var(--font-brush), 'Kaushan Script', cursive; }
+        /* ягаан-нил → алтан өнгөт текст (урилгын загвараар) */
+        .inv-grad, .inv-grad-d, .inv-gold {
+          -webkit-background-clip: text; background-clip: text; color: transparent;
         }
-        .inv-serif { font-family: var(--font-playfair), 'Playfair Display', Georgia, 'Times New Roman', serif; }
-        .inv-gold {
-          background: linear-gradient(180deg, #fff6d8 0%, #f3d383 38%, #c9992f 72%, #f0d391 100%);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
+        .inv-grad { background-image: linear-gradient(180deg, #9d3fd9 0%, #b468b8 42%, #e6a54a 78%, #f7d34a 100%); }
+        .inv-grad-d { background-image: linear-gradient(100deg, #b05fd8 0%, #d48fa0 45%, #f2c35a 100%); }
+        .inv-gold { background-image: linear-gradient(180deg, #fff3c4 0%, #f0cf7a 40%, #c9992f 75%, #f0d391 100%); }
+        .inv-photo {
+          border-radius: 26px;
+          padding: 5px;
+          background: linear-gradient(160deg, #a5743a, #6b4521 45%, #b8873f);
+          box-shadow: 0 30px 70px -30px rgba(157, 63, 217, .45);
         }
-        /* ---- balloons ---- */
-        .inv-balloon {
-          position: absolute; bottom: -300px; will-change: transform;
-          animation: inv-rise var(--dur) linear infinite;
-          animation-delay: var(--delay);
+        .inv-photo img { border-radius: 21px; }
+        .inv-dot {
+          position: absolute; border-radius: 9999px;
+          background: radial-gradient(circle at 35% 30%, #fff1b8, #e3b64c 55%, #a77a22);
+          animation: inv-shimmer 5s ease-in-out infinite;
         }
-        .inv-balloon__sway { display: block; animation: inv-sway calc(var(--dur) / 7) ease-in-out infinite alternate; }
-        .inv-balloon__body {
-          display: block; position: relative;
-          width: var(--size); height: calc(var(--size) * 1.24);
-          border-radius: 50% 50% 50% 50% / 46% 46% 54% 54%;
-          background:
-            radial-gradient(circle at 32% 26%, rgba(255,255,255,.6), rgba(255,255,255,0) 40%),
-            linear-gradient(155deg, var(--c1), var(--c2));
-        }
-        .inv-balloon__body::after {
-          content: ''; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%);
-          border-left: 5px solid transparent; border-right: 5px solid transparent;
-          border-bottom: 9px solid var(--c2);
-        }
-        .inv-balloon__string {
-          display: block; width: 1px; height: calc(var(--size) * 1.4); margin: 7px auto 0;
-          background: linear-gradient(to bottom, rgba(255,255,255,.4), rgba(255,255,255,0));
-        }
-        @keyframes inv-rise { from { transform: translate3d(0,0,0); } to { transform: translate3d(0,-140vh,0); } }
-        @keyframes inv-sway { from { transform: translateX(-16px) rotate(-5deg); } to { transform: translateX(16px) rotate(5deg); } }
-        /* ---- stars ---- */
-        .inv-star { position: absolute; border-radius: 9999px; background: #fff; animation: inv-twinkle 4s ease-in-out infinite; }
-        @keyframes inv-twinkle { 0%, 100% { opacity: .12; } 50% { opacity: .7; } }
-        @media (prefers-reduced-motion: reduce) {
-          .inv-balloon, .inv-balloon__sway, .inv-star { animation: none !important; }
-          .inv-balloon { bottom: auto; top: 28%; }
-        }
+        .inv-dust { position: absolute; border-radius: 9999px; }
+        @keyframes inv-shimmer { 0%, 100% { opacity: .95; } 50% { opacity: .5; } }
+        @media (prefers-reduced-motion: reduce) { .inv-dot { animation: none !important; } }
       `}</style>
 
-      {/* stars */}
+      {/* gold dust + dots */}
       <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
-        {STARS.map((s, i) => (
+        {DUST.map((d, i) => (
           <span
-            key={i}
-            className="inv-star"
+            key={`d${i}`}
+            className="inv-dust"
             style={{
-              left: s.left,
-              top: s.top,
-              width: s.size,
-              height: s.size,
-              animationDelay: s.delay,
+              left: d.left,
+              top: d.top,
+              width: d.size,
+              height: d.size,
+              background: d.color,
+              opacity: d.opacity,
+            }}
+          />
+        ))}
+        {DOTS.map((d, i) => (
+          <span
+            key={`o${i}`}
+            className="inv-dot"
+            style={{
+              left: d.left,
+              top: d.top,
+              width: d.size,
+              height: d.size,
+              animationDelay: d.delay,
             }}
           />
         ))}
       </div>
 
-      {/* balloons */}
-      <div className="pointer-events-none absolute inset-0 z-10" aria-hidden="true">
-        {BALLOONS.map((b, i) => (
-          <span
-            key={i}
-            className="inv-balloon"
-            style={
-              {
-                left: b.x,
-                opacity: 0.8,
-                '--size': `${b.size}px`,
-                '--dur': `${b.dur}s`,
-                '--delay': `${b.delay}s`,
-                '--c1': b.c1,
-                '--c2': b.c2,
-              } as React.CSSProperties
-            }
-          >
-            <span className="inv-balloon__sway">
-              <span className="inv-balloon__body" />
-              <span className="inv-balloon__string" />
-            </span>
-          </span>
-        ))}
-      </div>
-
       <Confetti burst={burst} />
 
-      {/* card */}
-      <div className="relative z-30 flex min-h-screen items-center justify-center px-4 py-14 sm:py-20">
-        <motion.div
-          initial="hidden"
-          animate="show"
-          transition={{ staggerChildren: 0.12, delayChildren: 0.1 }}
-          className="relative w-full max-w-[580px] rounded-[28px] border border-[#c9a24d]/35 bg-white/[0.045] px-6 py-12 text-center backdrop-blur-md sm:px-12 sm:py-14"
-          style={{ boxShadow: '0 40px 90px -40px rgba(0,0,0,.95)' }}
+      {/* content */}
+      <motion.div
+        initial="hidden"
+        animate="show"
+        transition={{ staggerChildren: 0.12, delayChildren: 0.1 }}
+        className="relative z-30 mx-auto flex min-h-screen w-full max-w-[560px] flex-col items-center px-5 py-12 text-center sm:py-16"
+      >
+        <motion.h1
+          variants={fade}
+          className="inv-vibes inv-grad-d whitespace-nowrap px-2 pb-[0.15em] text-[clamp(2.3rem,10vw,4rem)] leading-[1.15]"
         >
-          {/* corner ornaments */}
-          {[
-            'left-4 top-4 border-l border-t rounded-tl-lg',
-            'right-4 top-4 border-r border-t rounded-tr-lg',
-            'left-4 bottom-4 border-l border-b rounded-bl-lg',
-            'right-4 bottom-4 border-r border-b rounded-br-lg',
-          ].map((cls) => (
-            <span
-              key={cls}
-              aria-hidden="true"
-              className={`pointer-events-none absolute h-8 w-8 border-[#c9a24d]/50 ${cls}`}
-            />
-          ))}
+          {INVITE.name}
+        </motion.h1>
 
-          <motion.h1
-            variants={fade}
-            className="inv-serif inv-gold pb-[0.1em] text-[clamp(1.9rem,8.6vw,4rem)] leading-[1.18] font-semibold text-balance"
-          >
-            {INVITE.name}
-          </motion.h1>
+        {/* photo */}
+        <motion.div
+          variants={fade}
+          className="inv-photo mt-4 w-[min(78vw,340px)]"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={INVITE.photo}
+            alt={INVITE.name}
+            width={382}
+            height={528}
+            className="block aspect-[382/528] w-full object-cover"
+          />
+        </motion.div>
 
-          <motion.p
-            variants={fade}
-            className="inv-serif mt-2 text-lg text-white/75 sm:text-xl"
-          >
-            {INVITE.ageLine}
-          </motion.p>
+        {/* Happy Birthday / Урилга */}
+        <motion.div variants={fade} className="relative mt-3 select-none">
+          <span className="inv-vibes inv-grad-d absolute left-[14%] top-[-0.05em] z-10 -rotate-6 text-[clamp(2.2rem,9vw,3.4rem)] leading-none">
+            Happy
+          </span>
+          <span className="inv-brush inv-grad block pt-[0.55em] pb-[0.1em] text-[clamp(3.6rem,17vw,6.4rem)] leading-[1.05]">
+            Birthday
+          </span>
+        </motion.div>
+        <motion.p
+          variants={fade}
+          className="inv-serif inv-grad -mt-1 pb-[0.08em] text-[clamp(3rem,14vw,5.2rem)] leading-[1.05] font-medium"
+        >
+          Урилга
+        </motion.p>
+        <motion.p
+          variants={fade}
+          className="inv-serif inv-grad-d mt-1 text-[clamp(1.7rem,7.5vw,2.6rem)] leading-tight font-extrabold tabular-nums"
+        >
+          {INVITE.dateText}
+        </motion.p>
 
-          {/* ornament divider */}
-          <motion.div
-            variants={fade}
-            className="mx-auto mt-7 flex w-full max-w-[240px] items-center gap-3"
-            aria-hidden="true"
-          >
-            <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[#c9a24d]/60" />
-            <span className="h-1.5 w-1.5 rotate-45 bg-[#c9a24d]" />
-            <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[#c9a24d]/60" />
-          </motion.div>
+        {/* message */}
+        <motion.p
+          variants={fade}
+          className="inv-serif mx-auto mt-8 max-w-[430px] text-[clamp(1rem,4.4vw,1.2rem)] leading-[1.9] tracking-[0.015em] text-white/75 italic"
+        >
+          {INVITE.message}
+        </motion.p>
 
-          {/* message */}
-          <motion.p
-            variants={fade}
-            className="inv-serif mx-auto mt-7 max-w-[430px] text-[clamp(1rem,4.4vw,1.2rem)] leading-[1.9] tracking-[0.015em] text-white/75 italic"
-          >
-            {INVITE.message}
-          </motion.p>
+        {/* weekday | time */}
+        <motion.div
+          variants={fade}
+          className="mt-7 flex items-center justify-center gap-5 text-[13px] tracking-[0.22em] text-[#e6c98a] uppercase"
+        >
+          <span>{INVITE.weekday}</span>
+          <span className="h-1.5 w-1.5 rotate-45 bg-[#b05fd8]" aria-hidden="true" />
+          <span className="tabular-nums">{INVITE.timeText}</span>
+        </motion.div>
 
-          {/* date & time — гараг | өдөр | цаг гэсэн богино гурван багана */}
-          <motion.div
-            variants={fade}
-            className="mx-auto mt-8 flex w-full max-w-[380px] items-center justify-center"
-          >
-            <div className="flex-1 text-[13px] tracking-[0.2em] text-[#e6c98a] uppercase">
-              {INVITE.weekday}
-            </div>
-            <div className="mx-4 h-10 w-px bg-[#c9a24d]/35 sm:mx-5" />
-            <div className="shrink-0">
-              <div className="inv-serif whitespace-nowrap text-[clamp(1.5rem,7vw,2.15rem)] leading-none tabular-nums text-white">
-                {INVITE.dateText}
-              </div>
-              <div className="mt-1.5 text-[10px] tracking-[0.28em] text-[#c9a24d]/70 tabular-nums">
-                {INVITE.year}
-              </div>
-            </div>
-            <div className="mx-4 h-10 w-px bg-[#c9a24d]/35 sm:mx-5" />
-            <div className="flex-1 text-[13px] tracking-[0.2em] text-[#e6c98a] tabular-nums">
-              {INVITE.timeText}
-            </div>
-          </motion.div>
-
-          {/* venue */}
-          <motion.div variants={fade} className="mt-6">
-            <p className="inv-serif text-lg text-white/90">{INVITE.venue}</p>
+        {/* venue */}
+        <motion.div variants={fade} className="mt-6">
+          <p className="inv-serif flex items-center justify-center gap-1.5 text-lg text-white/90">
+            <i className="las la-map-marker-alt text-[#c98ae6]" aria-hidden="true" />
+            {INVITE.venue}
+          </p>
+          {INVITE.venueDetail && (
             <p className="mt-1 text-sm text-white/55">{INVITE.venueDetail}</p>
+          )}
+          {INVITE.mapUrl && (
             <a
               href={INVITE.mapUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-3 inline-flex items-center gap-1.5 border-b border-[#c9a24d]/40 pb-0.5 text-[13px] tracking-[0.06em] text-[#e6c98a] transition-colors duration-200 hover:border-[#c9a24d] hover:text-[#f3d383]"
             >
-              <i className="las la-map-marker-alt text-base" aria-hidden="true" />
+              <i className="las la-external-link-alt text-base" aria-hidden="true" />
               {INVITE.mapText}
             </a>
-          </motion.div>
-
-          {/* countdown */}
-          <motion.div
-            variants={fade}
-            className="mt-9 grid grid-cols-4 gap-2 sm:gap-3"
-          >
-            {[
-              { v: left?.days, l: 'Өдөр' },
-              { v: left?.hours, l: 'Цаг' },
-              { v: left?.minutes, l: 'Минут' },
-              { v: left?.seconds, l: 'Секунд' },
-            ].map((c) => (
-              <div
-                key={c.l}
-                className="rounded-xl border border-[#c9a24d]/25 bg-black/25 py-3"
-              >
-                <div className="inv-serif text-2xl tabular-nums text-[#f3d383] sm:text-3xl">
-                  {left ? String(c.v).padStart(2, '0') : '--'}
-                </div>
-                <div className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-white/45">
-                  {c.l}
-                </div>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* actions */}
-          <motion.div
-            variants={fade}
-            className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
-          >
-            <a
-              href={`tel:${INVITE.phone}`}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-b from-[#f6dfa0] to-[#c9992f] px-7 py-3.5 text-sm font-semibold tracking-wide text-[#2a1a05] transition-transform duration-200 hover:-translate-y-0.5 sm:w-auto"
-            >
-              <i className="las la-phone text-lg" aria-hidden="true" />
-              Утсаар холбогдох
-            </a>
-            <button
-              type="button"
-              onClick={() => setBurst((b) => b + 1)}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#c9a24d]/45 px-7 py-3.5 text-sm text-[#e6c98a] transition-colors duration-200 hover:bg-[#c9a24d]/10 sm:w-auto"
-            >
-              🎉 Баяр хүргэе
-            </button>
-          </motion.div>
-
-          <motion.p
-            variants={fade}
-            className="inv-serif mt-8 text-sm italic text-[#c9a24d]/85"
-          >
-            {INVITE.host}
-          </motion.p>
+          )}
         </motion.div>
-      </div>
+
+        {/* countdown */}
+        <motion.div
+          variants={fade}
+          className="mt-9 grid w-full grid-cols-4 gap-2 sm:gap-3"
+        >
+          {[
+            { v: left?.days, l: 'Өдөр' },
+            { v: left?.hours, l: 'Цаг' },
+            { v: left?.minutes, l: 'Минут' },
+            { v: left?.seconds, l: 'Секунд' },
+          ].map((c) => (
+            <div
+              key={c.l}
+              className="rounded-2xl border border-[#9d3fd9]/35 bg-[#1a0d24]/70 py-3"
+            >
+              <div className="inv-serif inv-gold text-2xl tabular-nums sm:text-3xl">
+                {left ? String(c.v).padStart(2, '0') : '--'}
+              </div>
+              <div className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-white/45">
+                {c.l}
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* actions */}
+        <motion.div
+          variants={fade}
+          className="mt-9 flex w-full justify-center"
+        >
+          <button
+            type="button"
+            onClick={() => setBurst((b) => b + 1)}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#8e3cc9] to-[#c58a3a] px-7 py-3.5 text-sm font-semibold tracking-wide text-white transition-transform duration-200 hover:-translate-y-0.5 sm:w-auto"
+          >
+            🎉 Баяр хүргэе
+          </button>
+        </motion.div>
+
+        <motion.p
+          variants={fade}
+          className="inv-serif mt-8 text-sm italic text-[#c9a24d]/85"
+        >
+          {INVITE.host}
+        </motion.p>
+      </motion.div>
     </div>
   );
 }
