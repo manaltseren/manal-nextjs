@@ -16,10 +16,10 @@ export const INVITE = {
   dateText: '2026.11.25',
   weekday: 'Лхагва',
   timeText: '19:00',
-  venue: 'Байршил тодорхой болоогүй',
-  venueDetail: 'Удахгүй мэдэгдэнэ',
+  venue: 'Mid River Club',
+  venueDetail: 'БГД, 26 хороо, ТСТ барилга, 7 давхарт',
   /** Google Maps холбоос — хоосон бол "газрын зураг" товч харагдахгүй */
-  mapUrl: '',
+  mapUrl: 'https://maps.app.goo.gl/98rdBwiJ2RtsJcMN8',
   mapText: 'Газрын зураг дээр харах',
   message:
     'Миний амьдралын онцгой энэ өдрийг хамт өнгөрүүлж, баярыг минь хуваалцахыг урьж байна.',
